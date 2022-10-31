@@ -56,9 +56,12 @@ class BuyFeatureController extends Controller
             'psc_amount' => 0,
         ]);
 
+        $time = $buyer->variables->withdraw_profit * 3600;
+
         $feature->hourlyProfit()->create([
             'user_id' => $buyer->id,
-            'asset' => AssetHelper::getAssetColor($feature)
+            'asset' => AssetHelper::getAssetColor($feature),
+            'dead_line' => now()->addSeconds($time)
         ]);
 
         event(new FeatureTraded($trade));

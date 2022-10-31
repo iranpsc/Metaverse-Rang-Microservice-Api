@@ -50,8 +50,10 @@ class BuyFeatureNotification extends Notification implements ShouldQueue
     }
 
     public function toSms($notifiable) {
-        if($this->trade->buyer->code == 'hm-20000')
-            $template = 'buy-land-rgb';
+        if($this->trade->seller->code == 'hm-20000')
+        {
+            $template = 'buy-land-metarang';
+        }
 
         return [
             'phone' => $notifiable->phone,

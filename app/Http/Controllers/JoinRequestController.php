@@ -376,16 +376,16 @@ class JoinRequestController extends Controller
         $user = auth()->user();
         $familyMemberProfit = DynastyPrize::where('member', $joinRequest->relation)->first();
         // soode moarefi member
-        $introductionProfit = 240 * $familyMemberProfit->introduction_profit_increase;
+        $introductionProfit = $user->variables->referral_profit * $familyMemberProfit->introduction_profit_increase;
         // zakhire ye soode sarmayeh anbashteh
-        $accumulatedCapitalReserve = 240 * $familyMemberProfit->accumulated_capital_reserver;
+        $accumulatedCapitalReserve = $user->variables->withdraw_profit * $familyMemberProfit->accumulated_capital_reserve;
         // data storage
-        $dataStorage = 240 * $familyMemberProfit->data_storage;
+        $dataStorage = $user->variables->data_storage * $familyMemberProfit->data_storage;
 
         // increment user variable
         $user->variables->increment('data_storage', $dataStorage);
-        $user->variables->increment('withdraw_profit', $introductionProfit);
-        $user->variables->increment('referral_profit', $accumulatedCapitalReserve);
+        $user->variables->increment('withdraw_profit', $accumulatedCapitalReserve);
+        $user->variables->increment('referral_profit', $introductionProfit);
 
         // increment user assets
         $user->assets->increment('psc',$familyMemberProfit->psc);

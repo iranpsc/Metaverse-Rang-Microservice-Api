@@ -149,12 +149,12 @@ class BuyRequestsController extends Controller
         $priceDiffPercentage = ($requestedTotalPrice / $totalColorPrice) * 100;
 
         $featureSellRequest = SellFeatureRequest::where('seller_id', $seller->id)
-        ->where('feature_id', $feature->id)
-        ->where('status', 0)
-        ->first();
+            ->where('feature_id', $feature->id)
+            ->where('status', 0)
+            ->first();
 
-        if($featureSellRequest) {
-            if($priceDiffPercentage < $featureSellRequest->limit) {
+        if ($featureSellRequest) {
+            if ($priceDiffPercentage < $featureSellRequest->limit) {
                 abort(403, 'شما مجاز به ارسال درخواست خرید به کمتر از کف قیمت تعیین شده نمی باشید');
             }
         }
@@ -235,9 +235,14 @@ class BuyRequestsController extends Controller
 
             $seller->assets->increment($profit->asset, $profit->amount);
 
+            $time = $buyer->variables->withdraw_profit * 3600;
             $feature->hourlyProfit()->updateOrCreate(
                 ['user_id' => $buyer->id],
-                ['asset' => AssetHelper::getAssetColor($feature)]
+                [
+                    'asset' => AssetHelper::getAssetColor($feature),
+                    'amount' => 0,
+                    'dead_line' => now()->addSeconds($time)
+                ]
             );
 
             return response()->json(['success' => 'معامله با موفقیت انجام شد']);
@@ -249,6 +254,7 @@ class BuyRequestsController extends Controller
         $feature = $buyFeatureRequest->feature;
         $property = $feature->properties;
         $buyer = $buyFeatureRequest->buyer;
+        $seller = $buyFeatureRequest->seller;
 
         AssetHelper::releaseAsset($buyFeatureRequest);
 
@@ -257,6 +263,21 @@ class BuyRequestsController extends Controller
             'rgb' => FeatureHelper::getSoldAndNotPricedFeatureStatusColor($feature),
             'owner' => $buyer->name,
         ]);
+
+        $profit = $feature->hourlyProfit->where('user_id', $seller->id)->first();
+
+        $seller->assets->increment($profit->asset, $profit->amount);
+
+        $time = $buyer->variables->withdraw_profit * 3600;
+        $feature->hourlyProfit()->updateOrCreate(
+            ['user_id' => $buyer->id],
+            [
+                'asset' => AssetHelper::getAssetColor($feature),
+                'amount' => 0,
+                'dead_line' => now()->addSeconds($time)
+            ]
+        );
+
         return true;
     }
 

@@ -60,7 +60,7 @@ class GetOtpNotification extends Notification
 
     public function toSms($notifiable) {
         return [
-            'phone' => $this->phone ?? $notifiable->phone,
+            'phone' => is_null($this->phone) ? $notifiable->phone : $this->phone,
             'token' => $this->code,
             'template' => 'verify'
         ];

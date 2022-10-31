@@ -22,6 +22,13 @@ class FeatureResource extends JsonResource
             'id' => $this->id,
             'map_id' => $this->map_id,
             'owner_id' => $this->owner_id,
+            $this->mergeWhen($this->latestTraded, [
+                'seller' => [
+                    'id' => $this->latestTraded->seller->id ?? "",
+                    'name' => $this->latestTraded->seller->name ?? "",
+                    'code' => $this->latestTraded->seller->code ?? "",
+                ],
+            ]),
             'type' => $this->type,
             'properties' => [
                 'id' => $this->properties->id,

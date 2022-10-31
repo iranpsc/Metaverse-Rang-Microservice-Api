@@ -27,6 +27,8 @@ use App\Http\Controllers\VerificationController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OtpController;
+use App\Http\Controllers\ResetInfo\ResetEmailController;
+use App\Http\Controllers\ResetInfo\ResetPhoneController;
 use App\Http\Controllers\UserEventsController;
 
 /*
@@ -40,8 +42,12 @@ use App\Http\Controllers\UserEventsController;
 |
 */
 
-Route::get('/home', [HomeController::class, 'index'])->middleware('api');
-Route::get('/get-user-info/{user}', [HomeController::class, 'showUserDetails'])->middleware('api');
+Route::controller(HomeController::class)->middleware('api')->group(function() {
+    Route::get('/home', 'index');
+    Route::get('/get-user-info/{user}', 'showUserDetails');
+    Route::get('/store', 'store');
+});
+
 
 Route::middleware('api')->group(function () {
     Route::post('/register/{referral?}', [RegisterController::class, 'register']);
@@ -96,7 +102,7 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
 
     Route::middleware(['verified.phone', 'check.otp'])->group(function () {
         Route::controller(BuyFeatureController::class)->prefix('feature')->group(function () {
-            Route::get('/{feature}', 'show')->withoutMiddleware(['verified.phone', 'check.otp']);
+            Route::get('/{feature}', 'show')->withoutMiddleware(['verified.phone', 'check.otp', 'auth:sanctum']);
             Route::post('/buy/{feature}', 'buy')
                 ->middleware(['verified.phone', 'can:buy,feature'])->missing(function () {
                     return response()->json(['error' => 'ملک مورد نظر یافت نشد']);
@@ -159,19 +165,34 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
         Route::post('/settings', 'update');
         Route::post('/general-settings', 'generalSettingsUpdate');
         Route::post('/settings/upload-profile-photo', 'uploadProfilePhoto');
+        Route::post('/phone/send-otp', 'sendPhoneVerificationOtp');
+        Route::post('/phone/verify', 'verifyPhone');
     });
 
     Route::post('/order', [OrderController::class, 'create']);
 
-    Route::controller(VerificationController::class)->prefix('verify')->group(function () {
-        Route::post('/phone/send-code', 'sendPhoneVerificationCode');
-        Route::post('/phone/verify-code', 'verifyPhone');
+    // Route::controller(VerificationController::class)->prefix('verify')->group(function () {
+    //     Route::post('/phone/send-code', 'sendPhoneVerificationCode');
+    //     Route::post('/phone/verify-code', 'verifyPhone');
 
-        Route::post('/email/send-code', 'sendEmailVerificationCode');
-        Route::post('/email/verify-code', 'verifyEmail');
+    //     Route::post('/email/send-code', 'sendEmailVerificationCode');
+    //     Route::post('/email/verify-code', 'verifyEmail');
+    // });
+
+    Route::prefix('reset')->group(function() {
+        Route::controller(ResetPhoneController::class)->prefix('phone')->group(function() {
+            Route::post('/old/send-code', 'sendOtpToOldPhone');
+            Route::post('/old/verify-code', 'verifyOldPhoneOtp');
+            Route::post('/new/verify-code', 'verifyNewPhoneOtp');
+        });
+        Route::controller(ResetEmailController::class)->prefix('email')->group(function() {});
     });
 
-    Route::post('/change-password', [ResetPasswordController::class, 'changePassword']);
+    Route::controller(ResetPasswordController::class)->group(function() {
+        Route::post('/reset-password/send-otp-code', 'sendOtpCode');
+        Route::post('/reset-password', 'resetPassword');
+    });
+
 
     Route::get('/online', function () {
     })->name('user-is-online');

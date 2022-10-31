@@ -21,6 +21,8 @@ class SettingResource extends JsonResource
             'details' => $this->details,
             'checkout_days_count' => $this->checkout_days_count,
             'automatic_logout' => $this->automatic_logout,
+            'phone_reset_count' => 1 - ($this->user->resetPhone->count ?? 0),
+            'email_reset_count' => 1 - ($this->user->resetEmail->count ?? 0),
         ];
     }
 }

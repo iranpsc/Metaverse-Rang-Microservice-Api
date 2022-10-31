@@ -25,7 +25,7 @@ class ResetPasswordRequest extends FormRequest
     {
         return [
                 'old_password' => 'required',
-                'password' => 'required|min:8',
+                'password' => 'required|min:8|confirmed',
         ];
     }
 
@@ -33,7 +33,8 @@ class ResetPasswordRequest extends FormRequest
     {
         return [
             'old_password.required' => 'رمز عبور را وارد کنید',
-            'password.required' => 'رمز عبور جدید را وارد کنید'
+            'password.required' => 'رمز عبور جدید را وارد کنید',
+            'password.confirmed' => 'رمز عبور جدید با تکرار آن مطابقت ندارد'
         ];
     }
 }

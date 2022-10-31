@@ -24,6 +24,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\SellFeatureRequest;
 use App\Models\Note;
+use App\Models\Reset\ResetEmail;
+use App\Models\Reset\ResetPhone;
 use App\Models\User\Custom;
 use App\Models\User\Passion;
 use App\Models\User\UserEvent;
@@ -442,5 +444,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function events()
     {
         return $this->hasMany(UserEvent::class);
+    }
+
+    public function resetPhone()
+    {
+        return $this->hasOne(ResetPhone::class);
+    }
+
+    public function resetEmail()
+    {
+        return $this->hasOne(ResetEmail::class);
     }
 }
