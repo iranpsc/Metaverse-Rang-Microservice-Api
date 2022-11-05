@@ -94,6 +94,6 @@ class RegisterController extends Controller
             return 'hm-' . $codeNum;
         }
 
-        return 'hm-20000';
+        return 'hm-2000000';
     }
 }

@@ -630,3 +630,19 @@
 
    INFO  Processing jobs from the [default] queue.  
 
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-05 10:28:54 App\Notifications\LogedInNotification  2022-11-05 10:28:54 App\Notifications\LogedInNotification .... 397.89ms DONE
+ .. 4,374.08ms FAIL
+  2022-11-05 10:28:58 App\Notifications\LogedInNotification .. 4,256.53ms FAIL
+  2022-11-05 10:29:02 App\Notifications\LogedInNotification .. 9,471.85ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
