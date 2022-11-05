@@ -35,7 +35,7 @@ class HomeController extends Controller
                 return [
                     'id'         => $feature->id,
                     'owner_id'   => $feature->owner_id,
-                    'porperties' => [
+                    'properties' => [
                         'id'                       => $feature->properties->id,
                         'address'                  => $feature->properties->address,
                         'density'                  => $feature->properties->density,
