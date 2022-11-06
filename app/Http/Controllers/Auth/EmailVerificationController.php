@@ -16,7 +16,8 @@ class EmailVerificationController extends Controller
         if ($user->hasVerifiedEmail()) {
             return response()->json(['error' => 'آدرس ایمیل قبلا تایید شده است']);
         }
+        
         $user->markEmailAsVerified();
-        return response()->json(['success' => 'آدرس ایمیل تایید شد']);
+        return redirect('https://rgb.irpsc.com');
     }
 }
