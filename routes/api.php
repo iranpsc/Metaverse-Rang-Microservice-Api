@@ -69,11 +69,10 @@ Route::get('/email/verification-notification', function (Request $request) {
     return response()->json(['message' => 'لینک تایید حساب کاربری ارسال شد']);
 })->middleware(['auth:sanctum', 'throttle:6,1', 'api'])->name('verification.send');
 
-Route::middleware(['auth:sanctum', 'api'])->group(function () {
+Route::middleware(['auth:sanctum', 'api', 'verified'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/profile', 'index');
     });
-
 
     Route::controller(FeatureController::class)->scopeBindings()->prefix('my-features')->group(function () {
         Route::get('/', 'index');

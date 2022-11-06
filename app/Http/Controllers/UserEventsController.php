@@ -81,7 +81,7 @@ class UserEventsController extends Controller
         return response()->json(['success' => 'پاسخ شما ارسال گردید'], 200);
     }
 
-    public function closeEventClose(UserEvent $userEvent)
+    public function closeEventReport(UserEvent $userEvent)
     {
         $userEvent->report->update(['closed' => 1]);
         return response()->json(['success' => 'گزارش بسته شد'], 200);

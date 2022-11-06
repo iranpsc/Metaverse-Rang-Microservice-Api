@@ -124,25 +124,16 @@ class OrderController extends Controller
 
                 $user->notify(new TransactionNotification($order));
                 $user->deposit();
-                return view('payment-result',[
-                    'message' => 'پرداخت انجام شد',
-                    'payment' => $payment,
-                ]);
+                return redirect()->to('https://rgb.irpsc.com/payment/verifed?status=OK?trackID=' . $payment->ref_id);
             }
         } else {
             if($result['errors']['code'] == -51) {
                 $transaction->update(['status' => -1]);
                 $next_transaction->update(['status' => -1]);
                 $order->update(['status' => -1]);
-                return view('payment-result',[
-                    'payment' => null,
-                    'message' => 'شما از پراخت صرف نظر کردید'
-                ]);
+                return redirect()->to('https://rgb.irpsc.com/payment/verifed?status=NOK');
             } else {
-                return view('payment-result' , [
-                    'payment' => null,
-                    'message' => 'Error: ' . $result['errors']['message'],
-                ]);
+                return redirect()->to('https://rgb.irpsc.com/payment/verifed?status=NOK');
             }
         }
     }
