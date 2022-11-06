@@ -724,3 +724,83 @@
  .. 9,549.46ms FAIL
   2022-11-05 21:21:37 App\Notifications\LogedInNotification .. 4,518.34ms FAIL
   2022-11-05 21:21:41 App\Notifications\LogedInNotification .. 4,513.04ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 08:27:26 App\Notifications\LogedInNotification  2022-11-06 08:27:29 App\Notifications\LogedInNotification .. 4,345.82ms FAIL
+  2022-11-06 08:27:30 App\Notifications\LogedInNotification .. 4,389.46ms FAIL
+  2022-11-06 08:27:34 App\Notifications\LogedInNotification .. 4,282.08ms FAIL
+  2022-11-06 08:27:34 App\Notifications\LogedInNotification .. 4,249.26ms FAIL
+  2022-11-06 08:27:38 App\Notifications\LogedInNotification .. 4,248.19ms FAIL
+ .. 4,243.71ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 09:52:19 App\Notifications\LogedInNotification .... 500.75ms DONE
+  2022-11-06 09:55:01 App\Notifications\LogedInNotification .... 359.13ms DONE

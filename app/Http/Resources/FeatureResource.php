@@ -50,7 +50,7 @@ class FeatureResource extends JsonResource
             $this->mergeWhen($this->images, [
                 'images' => $this->images->map(function($image) {
                     return [
-                        'url' => $this->image->url
+                        'url' => $this->image->url ?? ""
                     ];
                 }),
             ]),
