@@ -19,6 +19,6 @@ class EmailVerificationController extends Controller
 
         $user->markEmailAsVerified();
 
-        return redirect()->to('https://rgb.irpsc.com/email/verified=true');
+        return redirect()->to('https://rgb.irpsc.com/email/verified/true');
     }
 }

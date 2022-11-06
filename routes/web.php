@@ -38,7 +38,6 @@ Route::get('/', function () {
 
 Route::get('/send', function() {
     $user = User::find(3);
-    $user->email = 'reza.ajorloo@yahoo.com';
     Mail::to($user)->send(new TestMail($user));
     return 'mail sent';
 });
