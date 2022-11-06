@@ -867,3 +867,39 @@
 
    INFO  Processing jobs from the [default] queue.  
 
+  2022-11-06 17:11:50 App\Mail\TestMail ......................... 59.41ms FAIL
+  2022-11-06 17:11:50 App\Mail\TestMail .......................... 5.19ms FAIL
+  2022-11-06 17:11:50 App\Mail\TestMail .......................... 6.63ms FAIL
+  2022-11-06 17:13:05 App\Mail\TestMail .......................... 8.69ms FAIL
+  2022-11-06 17:13:05 App\Mail\TestMail .......................... 7.40ms FAIL
+  2022-11-06 17:13:05 App\Mail\TestMail .......................... 4.84ms FAIL
+  2022-11-06 17:14:53 App\Mail\TestMail ......................... 10.23ms FAIL
+  2022-11-06 17:14:53 App\Mail\TestMail .......................... 5.97ms FAIL
+  2022-11-06 17:14:53 App\Mail\TestMail .......................... 4.90ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 17:21:52 App\Mail\TestMail ......................... 50.35ms FAIL
+  2022-11-06 17:21:52 App\Mail\TestMail .......................... 6.10ms FAIL
+  2022-11-06 17:21:53 App\Mail\TestMail .......................... 5.78ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
