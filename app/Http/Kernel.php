@@ -44,6 +44,7 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\UserActivity::class,
+            \App\Http\Middleware\CheckIp::class,
         ],
     ];
 
@@ -68,6 +69,7 @@ class Kernel extends HttpKernel
         'verified.phone' => \App\Http\Middleware\VerifyPhone::class,
         'check.otp' => \App\Http\Middleware\CheckOtp::class,
         'turnOff.otp' => \App\Http\Middleware\TurnOffOtp::class,
+        'check.ip' => \App\Http\Middleware\CheckIp::class,
     ];
 
     /**

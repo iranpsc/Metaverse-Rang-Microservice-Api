@@ -41,35 +41,40 @@ use App\Http\Controllers\UserEventsController;
 |
 */
 
-Route::controller(HomeController::class)->middleware('api')->group(function() {
-    Route::get('/home', 'index');
-    Route::get('/get-user-info/{user}', 'showUserDetails');
-    Route::get('/store', 'store');
+
+Route::middleware(['api', 'check.ip'])->group(function() {
+    Route::controller(HomeController::class)->middleware(['api', 'check.ip'])->group(function() {
+        Route::get('/home', 'index');
+        Route::get('/get-user-info/{user}', 'showUserDetails');
+        Route::get('/store', 'store');
+    });
+
+
+    Route::middleware('api')->group(function () {
+        Route::post('/register/{referral?}', [RegisterController::class, 'register']);
+        Route::post('/login', [LoginController::class, 'login']);
+        Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
+    });
+    Route::get('/email/verification/notice', function () {
+        return response()->json([
+            'error' => 'ایمیل خود را تایید کنید'
+        ]);
+    })->name('verification.notice');
+
+    Route::get('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'لینک تایید حساب کاربری ارسال شد']);
+    })->middleware(['auth:sanctum', 'throttle:6,1', 'api'])->name('verification.send');
 });
 
 
-Route::middleware('api')->group(function () {
-    Route::post('/register/{referral?}', [RegisterController::class, 'register']);
-    Route::post('/login', [LoginController::class, 'login']);
-    Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
-});
-
-Route::get('/email/verification/notice', function () {
-    return response()->json([
-        'error' => 'ایمیل خود را تایید کنید'
-    ]);
-})->name('verification.notice');
 
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, '__invoke'])
     ->middleware(['signed'])->name('verification.verify');
 
-Route::get('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
 
-    return response()->json(['message' => 'لینک تایید حساب کاربری ارسال شد']);
-})->middleware(['auth:sanctum', 'throttle:6,1', 'api'])->name('verification.send');
-
-Route::middleware(['auth:sanctum', 'api', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/profile', 'index');
     });
