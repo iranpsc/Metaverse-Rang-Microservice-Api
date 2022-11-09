@@ -18,4 +18,6 @@ class Payment extends Model
         'amount',
         'status',
     ];
+
+
 }

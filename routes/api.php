@@ -67,6 +67,7 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, '__
 Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/profile', 'index');
+        Route::get('/payments/latest', 'getUserLatestTransaction');
     });
 
     Route::controller(FeatureController::class)->scopeBindings()->prefix('my-features')->group(function () {

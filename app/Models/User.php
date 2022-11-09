@@ -455,4 +455,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(ResetEmail::class);
     }
+
+    public function latestOrder()
+    {
+        return $this->hasOne(Order::class)->latestOfMany();
+    }
+
+    public function latestPayment()
+    {
+        return $this->hasOne(Payment::class)->latestOfMany();
+    }
 }
