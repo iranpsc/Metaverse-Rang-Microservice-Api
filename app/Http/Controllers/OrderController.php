@@ -126,7 +126,6 @@ class OrderController extends Controller
                 $transaction->update(['status' => -1]);
                 $next_transaction->update(['status' => -1]);
                 $order->update(['status' => -1]);
-                dd($response);
                 return redirect()->to('https://rgb.irpsc.com/payment/verify');
             }
         }
