@@ -31,8 +31,10 @@ class CalculateFeatureProfit extends Command
      */
     public function handle()
     {
-        foreach (FeatureHourlyProfit::lazy() as $profit) {
-            if (now() < $profit->dead_line) {
+        foreach (FeatureHourlyProfit::lazy() as $profit)
+        {
+            if (now() < $profit->dead_line)
+            {
                 if($profit->updated_at->diffInHours(now()) >= 3) {
                     $feature = Feature::with('properties')->where('id', $profit->feature_id)->first();
                     $profit->increment('amount', $feature->properties->stability * 0.000041666);

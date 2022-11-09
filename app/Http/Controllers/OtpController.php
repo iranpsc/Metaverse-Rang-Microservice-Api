@@ -30,6 +30,11 @@ class OtpController extends Controller
             ]
         );
 
+        if(! $request->has('phone') && is_null($request->user()->phone))
+        {
+            abort(404, 'کاربر شماره تلفن ثبت شده ای ندارد. جهت ادامه شماره تلفن همراه را وارد کنید');
+        }
+
         $otps = $user->otps;
         if($otps) {
             $otp = $otps->where('otp_reason', $request->otp_reason)->first();
@@ -55,15 +60,13 @@ class OtpController extends Controller
             ]
         );
 
-        if ($request->has('phone') && ! $request->user()->phone) {
+        if ($request->has('phone')) {
             $phone = $request->phone;
             Cache::put('user-phone-' . $request->user()->id, $phone, now()->addMinutes(5));
         } else {
-            if(! $request->user()->phone) {
-                abort(404, 'کاربر شما تلفن همراه ثبت شده ای ندارد');
-            }
             $phone = $request->user()->phone;
         }
+
         $user->notify(new GetOtpNotification($phone, $otp->code));
         return response()->json([
             'success' => 'کد تایید به شماره تلفن همراه شما ارسال گردید'

@@ -29,6 +29,7 @@ use App\Http\Controllers\OtpController;
 use App\Http\Controllers\ResetInfo\ResetEmailController;
 use App\Http\Controllers\ResetInfo\ResetPhoneController;
 use App\Http\Controllers\UserEventsController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,33 +43,22 @@ use App\Http\Controllers\UserEventsController;
 */
 
 
-Route::middleware(['api', 'check.ip'])->group(function() {
-    Route::controller(HomeController::class)->middleware(['api', 'check.ip'])->group(function() {
+Route::middleware(['api', 'check.ip'])->group(function () {
+    Route::controller(HomeController::class)->group(function () {
         Route::get('/home', 'index');
         Route::get('/get-user-info/{user}', 'showUserDetails');
         Route::get('/store', 'store');
     });
 
-
-    Route::middleware('api')->group(function () {
-        Route::post('/register/{referral?}', [RegisterController::class, 'register']);
-        Route::post('/login', [LoginController::class, 'login']);
-        Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
-    });
-    Route::get('/email/verification/notice', function () {
-        return response()->json([
-            'error' => 'ایمیل خود را تایید کنید'
-        ]);
-    })->name('verification.notice');
+    Route::post('/register/{referral?}', [RegisterController::class, 'register']);
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 
     Route::get('/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
-
         return response()->json(['message' => 'لینک تایید حساب کاربری ارسال شد']);
-    })->middleware(['auth:sanctum', 'throttle:6,1', 'api'])->name('verification.send');
+    })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 });
-
-
 
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, '__invoke'])
     ->middleware(['signed'])->name('verification.verify');
@@ -93,9 +83,9 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(functi
         Route::get('/otp/turn-on', 'turnOnOtp');
 
         Route::post('/{user}/features/{feature}', 'updateFeature')
-        ->missing(function () {
-            return response()->json(['error' => 'ملک متعلق به شما نمی باشد']);
-        });
+            ->missing(function () {
+                return response()->json(['error' => 'ملک متعلق به شما نمی باشد']);
+            });
     });
 
     Route::controller(OtpController::class)->prefix('otp')->group(function () {
@@ -174,20 +164,20 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(functi
 
     Route::post('/order', [OrderController::class, 'create']);
 
-    Route::prefix('reset')->group(function() {
-        Route::controller(ResetPhoneController::class)->prefix('phone')->group(function() {
+    Route::prefix('reset')->group(function () {
+        Route::controller(ResetPhoneController::class)->prefix('phone')->group(function () {
             Route::post('/old/send-code', 'sendOtpToOldPhone');
             Route::post('/old/verify-code', 'verifyOldPhoneOtp');
             Route::post('/new/verify-code', 'verifyNewPhoneOtp');
         });
-        Route::controller(ResetEmailController::class)->prefix('email')->group(function() {
+        Route::controller(ResetEmailController::class)->prefix('email')->group(function () {
             Route::post('/old/send-code', 'sendOtpToOldEmail');
             Route::post('/old/verify-code', 'verifyOldEmailOtp');
             Route::post('/new/verify-code', 'verifyNewEmailOtp');
         });
     });
 
-    Route::controller(ResetPasswordController::class)->group(function() {
+    Route::controller(ResetPasswordController::class)->group(function () {
         Route::post('/reset-password/send-otp-code', 'sendOtpCode');
         Route::post('/reset-password', 'resetPassword');
     });
@@ -213,9 +203,9 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(functi
     });
 
 
-    Route::controller(FeatureHourlyProfitController::class)->scopeBindings()->prefix('get-hourly-profits')->group(function(){
+    Route::controller(FeatureHourlyProfitController::class)->scopeBindings()->prefix('get-hourly-profits')->group(function () {
         Route::get('/{karbari?}', 'getHourlyProfits');
-        Route::get('/{user}/features/{feature}', 'getHourlyProfit')->missing(function() {
+        Route::get('/{user}/features/{feature}', 'getHourlyProfit')->missing(function () {
             return response()->json([
                 'error' => 'درخواست نا معتبر است'
             ]);
@@ -224,7 +214,7 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(functi
 
     Route::apiResource('customs', CustomController::class);
 
-    Route::controller(UserEventsController::class)->prefix('events')->group(function() {
+    Route::controller(UserEventsController::class)->prefix('events')->group(function () {
         Route::get('/', 'index');
         Route::post('/report/{userEvent}', 'store');
         Route::post('/report/response/{userEvent}', 'sendResponse');

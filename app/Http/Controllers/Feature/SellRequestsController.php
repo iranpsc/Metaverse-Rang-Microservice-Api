@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Feature;
 
 use App\Events\FeaturePriced;
-use App\Events\SellRequestSent;
 use App\Helpers\AssetHelper;
 use App\Http\Controllers\Controller;
 use App\Helpers\FeatureHelper;
@@ -35,7 +34,7 @@ class SellRequestsController extends Controller
         }
 
         if (isset($request->minimum_price_percentage)) {
-            if($request->minimum_price_percentage < $pricingLimit->public_limit) {
+            if($request->minimum_price_percentage < $pricingLimit->public_price_limit) {
                 abort(403, 'شما مجاز به فروش زمین خود به کمتر از ۸۰٪ قیمت خرید ملک نمی باشید');
             }
             $color = AssetHelper::getAssetColor($feature);
@@ -58,7 +57,7 @@ class SellRequestsController extends Controller
             $latestTraded = $feature->latestTraded;
 
             //If user bought this feature from RGB
-            if ($latestTraded->seller->code == 'hm-20000') {
+            if ($latestTraded->seller->code == 'hm-2000000') {
                 $tradedColor = AssetHelper::getAssetColor($feature);
                 $totalTradedPrice = $feature->properties->stability * currentColorPrice($tradedColor);
 

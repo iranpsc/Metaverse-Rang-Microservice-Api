@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Feature;
 
-use App\Events\BuyRequestSent;
 use App\Events\FeatureTraded;
 use App\Http\Controllers\Controller;
 use App\Models\BuyFeatureRequest;
@@ -11,17 +10,12 @@ use App\Http\Requests\BuyFeatureRequestValidate;
 use App\Helpers\AssetHelper;
 use App\Models\Feature;
 use App\Models\Trade;
-use App\Models\Variable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Morilog\Jalali\Jalalian;
 use App\Helpers\FeatureHelper;
 use App\Http\Resources\BuyRequestResource;
 use App\Models\Comission;
-use Illuminate\Validation\ValidationException;
-use App\Models\FeatureProperties;
 use App\Http\Resources\FeatureResource;
-use App\Models\Feature\FeaturePricingLimit;
 use App\Models\SellFeatureRequest;
 use App\Models\User;
 use App\Notifications\BuyRequestNotification;
@@ -117,10 +111,11 @@ class BuyRequestsController extends Controller
 
         $seller->assets->increment($profit->asset, $profit->amount);
 
-        $feature->hourlyProfit()->updateOrCreate(
-            ['user_id' => $buyer->id],
-            ['amount' => 0]
-        );
+        $feature->hourlyProfit->update([
+            'user_id' => $buyer->id,
+            'amount' => 0,
+            'dead_line' => now()->addSeconds($buyer->variables->withdraw_profit * 3600),
+        ]);
 
         $message = 'خرید با موفقیت انجام شد';
         $feature->message = $message;
@@ -216,34 +211,17 @@ class BuyRequestsController extends Controller
         }
 
         if ($this->changeOwnerShip($buyFeatureRequest)) {
-            $buyer = $buyFeatureRequest->buyer;
-            $seller = $buyFeatureRequest->seller;
             $buyFeatureRequest->update(['status' => '1']);
             //Execute The Traded Event Observer
             $pscPrice = $buyFeatureRequest->price_psc * currentPscPrice();
             $irrPrice = $buyFeatureRequest->price_irr;
 
-            if ($pscPrice + $irrPrice > 10000000) {
+            if ($pscPrice + $irrPrice > 7000000) {
                 $buyFeatureRequest->buyer->traded();
                 $buyFeatureRequest->seller->traded();
             }
 
-            $feature = $buyFeatureRequest->feature;
             $feature->sellRequests->each->update(['status' => 1]);
-
-            $profit = $feature->hourlyProfit->where('user_id', $seller->id)->first();
-
-            $seller->assets->increment($profit->asset, $profit->amount);
-
-            $time = $buyer->variables->withdraw_profit * 3600;
-            $feature->hourlyProfit()->updateOrCreate(
-                ['user_id' => $buyer->id],
-                [
-                    'asset' => AssetHelper::getAssetColor($feature),
-                    'amount' => 0,
-                    'dead_line' => now()->addSeconds($time)
-                ]
-            );
 
             return response()->json(['success' => 'معامله با موفقیت انجام شد']);
         }
@@ -268,15 +246,11 @@ class BuyRequestsController extends Controller
 
         $seller->assets->increment($profit->asset, $profit->amount);
 
-        $time = $buyer->variables->withdraw_profit * 3600;
-        $feature->hourlyProfit()->updateOrCreate(
-            ['user_id' => $buyer->id],
-            [
-                'asset' => AssetHelper::getAssetColor($feature),
-                'amount' => 0,
-                'dead_line' => now()->addSeconds($time)
-            ]
-        );
+        $feature->hourlyProfit->update([
+            'user_id' => $buyer->id,
+            'amount' => 0,
+            'dead_line' => now()->addSeconds($buyer->variables->withdraw_profit * 3600),
+        ]);
 
         return true;
     }

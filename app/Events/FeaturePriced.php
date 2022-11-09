@@ -25,7 +25,7 @@ class FeaturePriced implements ShouldBroadcast
 
     public function __construct($sellRequest)
     {
-        $this->sellRequest = new SellRequestResource($sellRequest);
+        $this->sellRequest = $sellRequest;
     }
 
     /**
