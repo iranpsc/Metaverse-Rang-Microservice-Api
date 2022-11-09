@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LatestTransactionResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -29,16 +30,7 @@ class DashboardController extends Controller
                 'error' => 'تراکنشی برای کاربر ثبت نشده است.'
             ], 200);
         }
-        return response()->json([
-            'payment-info' => [
-                'ref_id' => $user->latestPayment->ref_id,
-                'date' => Jalalian::forge($user->latestPayment->created_at)->format('Y/m/d'),
-                'hour' => Jalalian::forge($user->latestPayment->created_at)->format('H:m:s'),
-                'product' => $user->latestOrder->asset,
-                'count' => $user->latestOrder->amount,
-                'amount' => $user->latestTransaction->amount,
-                'status' => $user->latestTransaction->status,
-            ]
-        ], 200);
+
+        return new LatestTransactionResource($user);
     }
 }

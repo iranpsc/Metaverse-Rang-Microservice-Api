@@ -1,0 +1,1139 @@
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-01 11:00:50 App\Notifications\LogedInNotification .... 371.53ms DONE
+  2022-11-01 11:02:35 App\Notifications\LogedInNotification .... 433.95ms DONE
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-01 11:10:51 App\Notifications\LogedInNotification .... 387.57ms DONE
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-01 21:45:05 App\Notifications\LogedInNotification .. 4,344.76ms FAIL
+  2022-11-01 21:45:09 App\Notifications\LogedInNotification .. 4,247.69ms FAIL
+  2022-11-01 21:45:13 App\Notifications\LogedInNotification .. 4,260.28ms FAIL
+  2022-11-01 21:57:24 App\Notifications\LogedInNotification  2022-11-01 21:57:25 App\Notifications\LogedInNotification .... 411.77ms DONE
+ .. 9,324.88ms FAIL
+  2022-11-01 21:57:34 App\Notifications\LogedInNotification .. 4,211.79ms FAIL
+  2022-11-01 21:57:38 App\Notifications\LogedInNotification .. 4,248.58ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-02 11:42:04 App\Notifications\LogedInNotification .. 4,324.85ms FAIL
+  2022-11-02 11:42:08 App\Notifications\LogedInNotification .. 4,244.77ms FAIL
+  2022-11-02 11:42:12 App\Notifications\LogedInNotification .. 4,194.35ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-02 13:32:25 App\Notifications\LogedInNotification  2022-11-02 13:32:25 App\Notifications\LogedInNotification .... 391.99ms DONE
+ .. 4,373.15ms FAIL
+  2022-11-02 13:32:29 App\Notifications\LogedInNotification .. 4,211.95ms FAIL
+  2022-11-02 13:32:33 App\Notifications\LogedInNotification .. 4,255.12ms FAIL
+  2022-11-02 13:40:35 App\Notifications\LogedInNotification .. 4,247.11ms FAIL
+  2022-11-02 13:45:38 App\Notifications\LogedInNotification .. 4,363.95ms FAIL
+  2022-11-02 13:45:42 App\Notifications\LogedInNotification .. 4,217.30ms FAIL
+  2022-11-02 13:45:47 App\Notifications\LogedInNotification .. 4,221.92ms FAIL
+  2022-11-02 14:08:50 App\Notifications\LogedInNotification .. 9,407.90ms FAIL
+  2022-11-02 14:09:00 App\Notifications\LogedInNotification .. 4,431.54ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-02 14:13:36 App\Events\FeatureTraded .................. 95.59ms FAIL
+  2022-11-02 14:13:36 App\Events\FeatureTraded .................. 35.78ms FAIL
+  2022-11-02 14:13:36 App\Events\FeatureTraded .................. 25.05ms FAIL
+  2022-11-02 14:13:54 App\Events\FeatureTraded .................. 39.72ms FAIL
+  2022-11-02 14:13:55 App\Events\FeatureTraded .................. 92.34ms FAIL
+  2022-11-02 14:13:55 App\Events\FeatureTraded .................. 21.14ms FAIL
+  2022-11-02 14:14:04 App\Events\FeatureTraded .................. 25.66ms FAIL
+  2022-11-02 14:14:04 App\Events\FeatureTraded .................. 21.25ms FAIL
+  2022-11-02 14:35:53 App\Notifications\LogedInNotification .... 422.48ms DONE
+  2022-11-02 14:58:46 App\Notifications\LogedInNotification .. 4,349.33ms FAIL
+  2022-11-02 14:58:50 App\Notifications\LogedInNotification .. 4,259.50ms FAIL
+  2022-11-02 14:58:55 App\Notifications\LogedInNotification .. 4,257.91ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-02 17:46:28 App\Notifications\LogedInNotification  2022-11-02 17:46:28 App\Notifications\LogedInNotification .... 347.62ms DONE
+ .. 4,377.05ms FAIL
+  2022-11-02 17:46:32 App\Notifications\LogedInNotification .. 4,269.86ms FAIL
+  2022-11-02 17:46:37 App\Notifications\LogedInNotification .. 4,269.37ms FAIL
+  2022-11-02 18:08:51 App\Notifications\LogedInNotification  2022-11-02 18:08:51 App\Notifications\LogedInNotification .... 294.91ms DONE
+ .. 4,295.73ms FAIL
+  2022-11-02 18:08:55 App\Notifications\LogedInNotification .. 4,217.87ms FAIL
+  2022-11-02 18:09:00 App\Notifications\LogedInNotification .. 4,208.91ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-05 07:03:29 App\Notifications\LogedInNotification .. 4,353.56ms FAIL
+  2022-11-05 07:03:34 App\Notifications\LogedInNotification .. 4,235.95ms FAIL
+  2022-11-05 07:03:38 App\Notifications\LogedInNotification .. 4,251.16ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-05 07:30:45 App\Notifications\LogedInNotification  2022-11-05 07:30:46 App\Notifications\LogedInNotification .... 431.39ms DONE
+ .. 4,400.93ms FAIL
+  2022-11-05 07:30:50 App\Notifications\LogedInNotification .. 4,253.45ms FAIL
+  2022-11-05 07:30:54 App\Notifications\LogedInNotification .. 4,249.03ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-05 10:28:54 App\Notifications\LogedInNotification  2022-11-05 10:28:54 App\Notifications\LogedInNotification .... 397.89ms DONE
+ .. 4,374.08ms FAIL
+  2022-11-05 10:28:58 App\Notifications\LogedInNotification .. 4,256.53ms FAIL
+  2022-11-05 10:29:02 App\Notifications\LogedInNotification .. 9,471.85ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-05 14:05:07 App\Notifications\LogedInNotification  2022-11-05 14:05:08 App\Notifications\LogedInNotification .... 370.05ms DONE
+ .. 4,341.42ms FAIL
+  2022-11-05 14:05:12 App\Notifications\LogedInNotification .. 4,191.60ms FAIL
+  2022-11-05 14:05:16 App\Notifications\LogedInNotification .. 4,244.75ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-05 14:35:06 App\Notifications\LogedInNotification .. 4,349.41ms FAIL
+  2022-11-05 14:35:10 App\Notifications\LogedInNotification .. 4,232.83ms FAIL
+  2022-11-05 14:35:14 App\Notifications\LogedInNotification .. 4,244.80ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-05 15:30:51 App\Notifications\LogedInNotification .. 4,354.24ms FAIL
+  2022-11-05 15:30:55 App\Notifications\LogedInNotification .. 4,198.53ms FAIL
+  2022-11-05 15:30:59 App\Notifications\LogedInNotification .. 9,149.11ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-05 16:19:58 App\Notifications\LogedInNotification  2022-11-05 16:19:59 App\Notifications\LogedInNotification .... 394.22ms DONE
+ .. 4,283.73ms FAIL
+  2022-11-05 16:20:02 App\Notifications\LogedInNotification .. 4,245.38ms FAIL
+  2022-11-05 16:20:07 App\Notifications\LogedInNotification .. 4,236.56ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-05 21:21:27 App\Notifications\LogedInNotification  2022-11-05 21:21:27 App\Notifications\LogedInNotification .... 462.01ms DONE
+ .. 9,549.46ms FAIL
+  2022-11-05 21:21:37 App\Notifications\LogedInNotification .. 4,518.34ms FAIL
+  2022-11-05 21:21:41 App\Notifications\LogedInNotification .. 4,513.04ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 08:27:26 App\Notifications\LogedInNotification  2022-11-06 08:27:29 App\Notifications\LogedInNotification .. 4,345.82ms FAIL
+  2022-11-06 08:27:30 App\Notifications\LogedInNotification .. 4,389.46ms FAIL
+  2022-11-06 08:27:34 App\Notifications\LogedInNotification .. 4,282.08ms FAIL
+  2022-11-06 08:27:34 App\Notifications\LogedInNotification .. 4,249.26ms FAIL
+  2022-11-06 08:27:38 App\Notifications\LogedInNotification .. 4,248.19ms FAIL
+ .. 4,243.71ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 09:52:19 App\Notifications\LogedInNotification .... 500.75ms DONE
+  2022-11-06 09:55:01 App\Notifications\LogedInNotification .... 359.13ms DONE
+  2022-11-06 10:08:08 App\Notifications\LogedInNotification .... 410.35ms DONE
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 10:48:55 App\Events\FeaturePriced .................. 84.68ms FAIL
+  2022-11-06 11:00:02 App\Notifications\LogedInNotification .... 397.99ms DONE
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 11:27:44 App\Notifications\LogedInNotification  2022-11-06 11:27:45 App\Notifications\LogedInNotification .. 2,090.12ms DONE
+ . 20,357.88ms FAIL
+  2022-11-06 11:28:05 App\Notifications\LogedInNotification .. 4,209.77ms FAIL
+  2022-11-06 11:28:09 App\Notifications\LogedInNotification .. 4,244.64ms FAIL
+  2022-11-06 11:36:44 App\Notifications\LogedInNotification  2022-11-06 11:36:44 App\Notifications\LogedInNotification .... 339.10ms DONE
+ .. 4,265.05ms FAIL
+  2022-11-06 11:36:48 App\Notifications\LogedInNotification .. 4,253.40ms FAIL
+  2022-11-06 11:36:52 App\Notifications\LogedInNotification .. 4,244.17ms FAIL
+  2022-11-06 11:38:03 App\Notifications\LogedInNotification .. 4,314.11ms FAIL
+  2022-11-06 11:38:07 App\Notifications\LogedInNotification .. 4,206.20ms FAIL
+  2022-11-06 11:38:11 App\Notifications\LogedInNotification .. 4,199.44ms FAIL
+  2022-11-06 11:52:07 App\Notifications\LogedInNotification .. 4,233.16ms FAIL
+  2022-11-06 11:52:11 App\Notifications\LogedInNotification .. 4,247.79ms FAIL
+  2022-11-06 11:52:15 App\Notifications\LogedInNotification .. 4,241.04ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 13:46:25 App\Notifications\LogedInNotification  2022-11-06 13:46:25 App\Notifications\LogedInNotification .... 435.39ms DONE
+ .. 4,316.84ms FAIL
+  2022-11-06 13:46:29 App\Notifications\LogedInNotification .. 4,210.76ms FAIL
+  2022-11-06 13:46:33 App\Notifications\LogedInNotification .. 4,262.83ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 17:11:50 App\Mail\TestMail ......................... 59.41ms FAIL
+  2022-11-06 17:11:50 App\Mail\TestMail .......................... 5.19ms FAIL
+  2022-11-06 17:11:50 App\Mail\TestMail .......................... 6.63ms FAIL
+  2022-11-06 17:13:05 App\Mail\TestMail .......................... 8.69ms FAIL
+  2022-11-06 17:13:05 App\Mail\TestMail .......................... 7.40ms FAIL
+  2022-11-06 17:13:05 App\Mail\TestMail .......................... 4.84ms FAIL
+  2022-11-06 17:14:53 App\Mail\TestMail ......................... 10.23ms FAIL
+  2022-11-06 17:14:53 App\Mail\TestMail .......................... 5.97ms FAIL
+  2022-11-06 17:14:53 App\Mail\TestMail .......................... 4.90ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+  2022-11-06 17:21:52 App\Mail\TestMail ......................... 50.35ms FAIL
+  2022-11-06 17:21:52 App\Mail\TestMail .......................... 6.10ms FAIL
+  2022-11-06 17:21:53 App\Mail\TestMail .......................... 5.78ms FAIL
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
+
+   INFO  Processing jobs from the [default] queue.  
+
