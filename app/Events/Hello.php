@@ -31,6 +31,10 @@ class Hello implements ShouldBroadcast
         ];
     }
 
+    public function broadcastAs() {
+        return 'event';
+    }
+
     /**
      * Get the channels the event should broadcast on.
      *
