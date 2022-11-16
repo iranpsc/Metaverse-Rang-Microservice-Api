@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class CheckIp
 {
@@ -16,11 +17,15 @@ class CheckIp
      */
     public function handle(Request $request, Closure $next)
     {
-        if(! in_array($request->ip(), ['37.156.11.126', '127.0.0.1', '5.115.215.209']))
-        {
-            return abort(403, 'Access Denied');
-        }
+        $response = Http::post(env('ADMIN_PANEL_URL') . 'api/check/ip', ['ip' => $request->ip()]);
 
-        return $next($request);
+        if ($response->successful()) {
+            $response = $response->json();
+            if ($response['code'] == '200') {
+                return $next($request);
+            }
+            abort(403, 'Access Denied');
+        }
+        abort(403, 'Access Denied');
     }
 }
