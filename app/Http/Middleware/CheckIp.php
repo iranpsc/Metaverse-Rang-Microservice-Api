@@ -16,7 +16,7 @@ class CheckIp
      */
     public function handle(Request $request, Closure $next)
     {
-        if(! in_array($request->ip(), ['37.156.11.126', '127.0.0.1']))
+        if(! in_array($request->ip(), ['37.156.11.126', '127.0.0.1', '5.115.215.209']))
         {
             return abort(403, 'Access Denied');
         }
