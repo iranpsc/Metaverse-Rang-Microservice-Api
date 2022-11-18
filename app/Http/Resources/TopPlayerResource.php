@@ -20,6 +20,7 @@ class TopPlayerResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'profile-photo' => $this->profilePhoto->url ?? "",
+            'score' => $this->score,
             'level' => $this->level ?? null,
             'score_percentage_to_next_level' => getScorePercentageToNextLevel($this->level, $this->score),
             'assets' => new AssetResource($this->assets),

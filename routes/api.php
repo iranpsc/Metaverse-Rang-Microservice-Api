@@ -225,6 +225,8 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(functi
         Route::post('/report/response/{userEvent}', 'sendResponse');
         Route::get('/report/close/{userEvent}', 'closeEventReport');
     });
+
+    Route::get('/ping', function() {});
 });
 
 Route::any('/order/callback/{order}', [OrderController::class, 'callback'])->name('order.callback');

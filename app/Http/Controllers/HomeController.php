@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\PackageResource;
 use App\Http\Resources\TopPlayerResource;
+use App\Models\Feature\FeatureHourlyProfit;
 use Morilog\Jalali\Jalalian;
 
 class HomeController extends Controller
@@ -19,9 +20,10 @@ class HomeController extends Controller
      */
     public function index(Request $request): array
     {
+        $user = $request->user('sanctum');
         return [
-            'user' => $request->user('sanctum') ? new UserResource($request->user('sanctum')) : [],
-            'top_players' => !$request->user('sanctum')
+            'user' => $user ? new UserResource($user) : [],
+            'top_players' => !$user
                 ? User::orderBy('score', 'DESC')->take(10)->get()->map(function($user) {
                     return [
                         'id' => $user->id,
@@ -31,7 +33,7 @@ class HomeController extends Controller
                         'level' => $user->level,
                     ];
                 })  : [],
-            'features' => Feature::with(['properties', 'geometry.coordinates'])->lazyById()->map(function ($feature) {
+            'features' => Feature::with(['properties', 'geometry','geometry.coordinates'])->lazyById()->map(function ($feature) {
                 return [
                     'id'         => $feature->id,
                     'owner_id'   => $feature->owner_id,
@@ -61,7 +63,9 @@ class HomeController extends Controller
                         })
                     ]
                 ];
-            })
+            }),
+            'feature_hourly_profit_info' => $user && $user->features ?
+            hourlyProfitInfo($user) : null,
         ];
     }
 

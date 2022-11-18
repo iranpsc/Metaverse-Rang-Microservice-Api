@@ -2,12 +2,12 @@
 
 use App\Constants\FamilyMembersType;
 use App\Models\Feature;
+use App\Models\Feature\FeatureHourlyProfit;
 use App\Models\Level\Level;
 use App\Models\User;
 use App\Models\Variable;
 use Carbon\Carbon;
-
-use function PHPUnit\Framework\returnSelf;
+use Illuminate\Http\Request;
 
 function fee(Feature $feature)
 {
@@ -22,7 +22,7 @@ function fee(Feature $feature)
 */
 function totalPrice(Feature $feature, string $type, array $comissions)
 {
-    switch($type) {
+    switch ($type) {
         case 'buyer':
             return [
                 'psc' => $feature->properties->price_psc + $comissions['psc'],
@@ -53,7 +53,7 @@ function addSeller(User $seller, $feature)
     $seller->assets->increment('irr', $seller_add_amount['irr']);
 }
 
-function iszero($value) : bool
+function iszero($value): bool
 {
     return $value == 0;
 }
@@ -72,55 +72,60 @@ function isUnderEighteen(User $user)
     $birthdate = Carbon::parse($user->kyc->birthdate)->format('Y-m-d');
     $birthdate = Carbon::createFromDate($birthdate);
     $now = Carbon::now();
-    if($birthdate->diffInYears($now) < 18) return true;
+    if ($birthdate->diffInYears($now) < 18) return true;
     return false;
 }
 
- function getFamilyRelationship($relationship) {
-     switch($relationship){
-         case FamilyMembersType::BROTHER :
-             return 'برادر';
-             break;
-         case FamilyMembersType::FATHER :
-             return 'بدر';
-             break;
-         case FamilyMembersType::MOTHER :
-             return 'مادر';
-             break;
-         case FamilyMembersType::HUSBAND :
-             return 'شوهر';
-             break;
-         case FamilyMembersType::WIFE :
-             return 'همسر';
-             break;
-         case FamilyMembersType::SISTER :
-             return 'خواهر';
-             break;
-         case FamilyMembersType::OWNER :
-             return 'صاحب سلسله';
-             break;
-         case FamilyMembersType::OFFSPRING :
-             return 'فرزند';
-             break;
-     }
- }
+function getFamilyRelationship($relationship)
+{
+    switch ($relationship) {
+        case FamilyMembersType::BROTHER:
+            return 'برادر';
+            break;
+        case FamilyMembersType::FATHER:
+            return 'بدر';
+            break;
+        case FamilyMembersType::MOTHER:
+            return 'مادر';
+            break;
+        case FamilyMembersType::HUSBAND:
+            return 'شوهر';
+            break;
+        case FamilyMembersType::WIFE:
+            return 'همسر';
+            break;
+        case FamilyMembersType::SISTER:
+            return 'خواهر';
+            break;
+        case FamilyMembersType::OWNER:
+            return 'صاحب سلسله';
+            break;
+        case FamilyMembersType::OFFSPRING:
+            return 'فرزند';
+            break;
+    }
+}
 
- function currentColorPrice($color) {
+function currentColorPrice($color)
+{
     return Variable::getRate($color);
- }
+}
 
- function currentPscPrice() {
+function currentPscPrice()
+{
     return Variable::getRate('psc');
- }
+}
 
-function validateOtp(User $user, int $code) {
+function validateOtp(User $user, int $code)
+{
     $otp = $user->otp->where('otp_reason', 'trade-feature')->first();
-    if($otp->code != $code || $otp->updated_at->diffInMinutes(now()) > 60) return false;
+    if ($otp->code != $code || $otp->updated_at->diffInMinutes(now()) > 60) return false;
     return true;
 }
 
-function ticketDepartmentsTitle($department) {
-    switch($department) {
+function ticketDepartmentsTitle($department)
+{
+    switch ($department) {
         case 'technical_support':
             return 'پشتیبانی فنی';
             break;
@@ -132,18 +137,19 @@ function ticketDepartmentsTitle($department) {
             break;
         case 'inspection':
             return 'بازرسی';
-        break;
+            break;
         case 'protection':
             return 'حراست';
-        break;
+            break;
         case 'ztb':
             return 'مدیریت کل ز ت ب';
-        break;
+            break;
     }
 }
 
-function ticketStatusTitle($status) {
-    switch($status) {
+function ticketStatusTitle($status)
+{
+    switch ($status) {
         case 0:
             return 'جدید';
             break;
@@ -155,15 +161,14 @@ function ticketStatusTitle($status) {
             break;
         case 3:
             return 'بسته شده';
-        break;
+            break;
     }
 }
 
-function getScorePercentageToNextLevel(?Level $level, int $score) : int
+function getScorePercentageToNextLevel(?Level $level, int $score): int
 {
-    if(! $level)
-    {
-        if($score == 0) return 100;
+    if (!$level) {
+        if ($score == 0) return 100;
 
         $firstLevel = Level::first();
         return ($score / $firstLevel->score) * 100;
@@ -173,3 +178,20 @@ function getScorePercentageToNextLevel(?Level $level, int $score) : int
     }
 }
 
+function getRemainedTimePercentage($date)
+{
+}
+
+function hourlyProfitInfo(User $user): array
+{
+    $firstHourlyProfit = FeatureHourlyProfit::with(['feature', 'feature.properties'])->firstWhere('user_id', $user->id);
+    if($firstHourlyProfit) {
+        $dead_line = new Carbon($firstHourlyProfit->dead_line);
+        $user_withdraw_profit_limit = $user->variables->withdraw_profit * 86400;
+        return [
+            'percentage' => floor(($dead_line->diffInSeconds(now()) / $user_withdraw_profit_limit) * 100),
+            'karbari' => $firstHourlyProfit->feature->properties->karbari,
+        ];
+    }
+    return [];
+}
