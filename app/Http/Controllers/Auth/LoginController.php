@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Events\LogedIn;
+use App\Events\UserStatusChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Contracts\Foundation\Application;
@@ -55,6 +56,11 @@ class LoginController extends Controller
 
                     LogedIn::dispatch($user);
 
+                    broadcast(new UserStatusChanged([
+                        'code' => $user->code,
+                        'status' => 'online'
+                    ]));
+
                     $user->events()->create([
                         'event' => 'ورود به حساب کاربری',
                         'ip' => $request->ip(),
@@ -93,6 +99,10 @@ class LoginController extends Controller
                     ]);
                 }
         $request->user()->tokens()->delete();
+        broadcast(new UserStatusChanged([
+            'code' => $request->user()->code,
+            'status' => 'offline'
+        ]));
         return response('شما با موفقیت خارج شدید', 200);
     }
 

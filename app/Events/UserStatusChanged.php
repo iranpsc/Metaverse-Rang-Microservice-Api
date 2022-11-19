@@ -7,11 +7,10 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class LogedIn
+class UserStatusChanged implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -21,11 +20,23 @@ class LogedIn
      * @return void
      */
 
-    public $user;
+    public $data;
 
-    public function __construct($user)
+    public function __construct(array $data)
     {
-        $this->user = $user;
+        $this->data = $data;
+    }
+    public function broadcastAs()
+    {
+        return 'user-status-changed';
+    }
+
+    public function broadcastWith()
+    {
+        return [
+            'code' => $this->data['code'],
+            'status' => $this->data['status']
+        ];
     }
 
     /**
@@ -35,6 +46,6 @@ class LogedIn
      */
     public function broadcastOn()
     {
-        return new Channel('channel-name');
+        return new Channel('user-status');
     }
 }
