@@ -34,7 +34,7 @@ class DashboardController extends Controller
     }
 
     public function home(Request $request, string $code) {
-        $user = User::with('kyc', 'customs', 'customs.passions', 'profilePhoto', 'level')
+        $user = User::with('kyc', 'customs', 'customs.passions', 'profilePhotos', 'level')
         ->where('code', $code)->first();
         if(!$user) {
             return response()->json(['error' => 'کاربر یافت نشد'], 404);

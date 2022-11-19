@@ -429,8 +429,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(FeatureOtp::class);
     }
 
-    public function profilePhoto() {
-        return $this->morphOne(Image::class, 'imageable');
+    public function profilePhotos() {
+        return $this->morphMany(Image::class, 'imageable');
     }
 
     public function variables() {

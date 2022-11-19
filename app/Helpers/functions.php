@@ -195,3 +195,16 @@ function hourlyProfitInfo(User $user): array
     }
     return [];
 }
+
+function getLevelsImages($userLevel) {
+    $images = [];
+    if($userLevel) {
+        $levels = Level::orderBy('score')->lazy();
+        foreach($levels as $level) {
+            if($userLevel->score >= $level->score) {
+                array_push($images, $level->image?->url);
+            }
+        }
+    }
+    return $images;
+}

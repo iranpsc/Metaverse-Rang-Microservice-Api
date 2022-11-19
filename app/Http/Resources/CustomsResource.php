@@ -16,7 +16,6 @@ class CustomsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'profile_code' => $this->profile_code,
             'occupation' => $this->occupation,
             'education' => $this->education,
             'memory' => $this->memory,
@@ -25,6 +24,7 @@ class CustomsResource extends JsonResource
             'loved_language' => $this->loved_language,
             'problem_solving' => $this->problem_solving,
             'prediction' => $this->prediction,
+            'about' => $this->about,
             'passions' => [
                 'music' => $this->passions->music,
                 'sport_health' => $this->passions->sport_health,

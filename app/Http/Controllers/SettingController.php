@@ -74,12 +74,9 @@ class SettingController extends Controller
 
         );
         $url = env('FTP_ENDPOINT') . $request->file('image')->store('/user/profile/' . $request->user()->id);
-        $request->user()->profilePhoto()->updateOrCreate(
-            ['imageable_id' => $request->user()->id],
-            [
-                'url' => $url
-            ]
-        );
+        $request->user()->profilePhotos()->create([
+            'url' => $url
+        ]);
         return response()->json([
             'message' => 'تصویر بارگذاری شد'
         ], 200);
@@ -87,13 +84,11 @@ class SettingController extends Controller
 
     public function sendPhoneVerificationOtp(Request $request)
     {
-        if($request->user()->phone)
-        {
+        if ($request->user()->phone) {
             abort(403, 'کاربر قبلا شماره تلفن خود را ثبت کرده است');
         }
 
-        if(Cache::has('verify-phone-'. $request->user()->id))
-        {
+        if (Cache::has('verify-phone-' . $request->user()->id)) {
             abort(403, 'کد تایید قبلا ارسال شده است');
         }
 
@@ -113,7 +108,7 @@ class SettingController extends Controller
             'phone' => $request->phone,
             'code' => random_int(100000, 999999)
         ];
-        Cache::put('verify-phone-'. $request->user()->id, $data, now()->addMinutes(5));
+        Cache::put('verify-phone-' . $request->user()->id, $data, now()->addMinutes(5));
         $request->user()->notify(new GetOtpNotification($request->phone, $data['code']));
 
         return response()->json(['success' => 'کد تایید ارسال گردید'], 200);
@@ -130,7 +125,7 @@ class SettingController extends Controller
             ]
         );
 
-        $cachedData = Cache::get('verify-phone-'. $request->user()->id);
+        $cachedData = Cache::get('verify-phone-' . $request->user()->id);
 
         if (!$cachedData || $cachedData['code'] != $request->code) {
             abort(401, 'کد تایید وارد صحیح نیست');
