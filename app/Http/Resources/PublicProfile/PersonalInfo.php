@@ -16,11 +16,12 @@ class PersonalInfo extends JsonResource
     public function toArray($request)
     {
         return [
-            $this->mergeWhen($this->profilePhoto, [
-                'profilePhoto' => $this->profilePhoto?->url,
+            $this->mergeWhen($this->profilePhotos, [
+                'profilePhotos' => $this->profilePhotos,
             ]),
             'kyc' => [
                 $this->mergeWhen($this->verified(), [
+                    'nationality' => 'https://dl.qzparadise.ir/public/flags/iran.png',
                     'fname' => $this->kyc?->fname,
                     'lname' => $this->kyc?->lname,
                     'birth_date' => Jalalian::forge($this->kyc?->birthdate)->format('Y/m/d'),
@@ -29,11 +30,10 @@ class PersonalInfo extends JsonResource
                     'address' => $this->kyc?->address,
                 ]),
             ],
-            'about' => '',
+
             'code' => $this->code,
             'name' => $this->name,
-            'score' => $this->score,
-            'score_percentage_to_next_level' => getScorePercentageToNextLevel($this->level, $this->score),
+            'position' => 'مدیریت موازی',
             'registered_at' => Jalalian::forge($this->email_verified_at)->format('Y/m/d'),
             $this->mergeWhen($this->customs, [
                 'customs' => [
@@ -43,30 +43,78 @@ class PersonalInfo extends JsonResource
                     'loved_country' => $this->customs?->loved_country,
                     'loved_language' => $this->customs?->loved_language,
                     'prediction' => $this->customs?->prediction,
+                    'memory' => $this->customs?->memory,
+                    'about' => $this->customs?->about,
                     $this->mergeWhen($this->customs?->passions, [
                         'passions' => [
-                            "music" =>  $this->customs?->passions->music,
-                            "sport_health" =>  $this->customs?->passions->sport_health,
-                            "art" =>  $this->customs?->passions->art,
-                            "language_culture" =>  $this->customs?->passions->language_culture,
-                            "philosophy" =>  $this->customs?->passions->philosophy,
-                            "animals_nature" =>  $this->customs?->passions->animals_nature,
-                            "aliens" =>  $this->customs?->passions->aliens,
-                            "food_cooking" =>  $this->customs?->passions->food_cooking,
-                            "travel_leature" =>  $this->customs?->passions->travel_leature,
-                            "manufacturing" =>  $this->customs?->passions->manufacturing,
-                            "science_technology" =>  $this->customs?->passions->science_technology,
-                            "space_time"  =>  $this->customs?->passions->space_time,
-                            "history" =>  $this->customs?->passions->history,
-                            "politics_economy" =>  $this->customs?->passions->politics_economy,
+                            $this->mergeWhen($this->customs?->passions->music, [
+                                "music"=>  'https://dl.qzparadise.ir/public/customs/music.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->sport_health , [
+
+                                "sport_health" => 'https://dl.qzparadise.ir/public/customs/sport_health.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->art, [
+
+                                "art" =>   'https://dl.qzparadise.ir/public/customs/art.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->language_culture, [
+
+                                "language_culture" =>'https://dl.qzparadise.ir/public/customs/language_culture.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->philosophy, [
+
+                                "philosophy" =>  'https://dl.qzparadise.ir/public/customs/philosophy.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->animals_nature, [
+
+                                "animals_nature" =>  'https://dl.qzparadise.ir/public/customs/animals_nature.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->aliens,[
+
+                                "aliens" =>  'https://dl.qzparadise.ir/public/customs/aliens.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->food_cooking, [
+
+                                "food_cooking" =>  'https://dl.qzparadise.ir/public/customs/food_cooking.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->travel_leature, [
+
+                                "travel_leature" => 'https://dl.qzparadise.ir/public/customs/travel_leature.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->manufacturing, [
+
+                                "manufacturing" =>  'https://dl.qzparadise.ir/public/customs/manufacturing.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->science_technology, [
+
+                                "science_technology" => 'https://dl.qzparadise.ir/public/customs/science_technology.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->space_time, [
+
+                                "space_time"  =>  'https://dl.qzparadise.ir/public/customs/space_time.png',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->history, [
+
+                                "history" =>  'https://dl.qzparadise.ir/public/customs/history',
+                            ]),
+                            $this->mergeWhen($this->customs?->passions->politics_economy, [
+
+                                "politics_economy" =>  'https://dl.qzparadise.ir/public/customs/politics_economy',
+                            ])
                         ]
                     ]),
                 ]
             ]),
+            'score' => $this->score,
+            'score_percentage_to_next_level' => getScorePercentageToNextLevel($this->level, $this->score),
             $this->mergeWhen($this->level, [
                 'level' => [
                     'name' => $this->level?->name,
-                    'image' => $this->level?->image?->url,
+                    'levels_images' => [
+                        // 'images' => $this->level?->image?->url,
+                        'images' => getLevelsImages($this->level),
+                    ]
                 ]
             ]),
             'avatar' => 'https://irpsc.com/gb.glb',

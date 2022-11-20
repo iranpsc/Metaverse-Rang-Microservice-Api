@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DynastyController;
 use App\Http\Controllers\JoinRequestController;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,13 @@ Route::middleware(['api', 'check.ip'])->group(function () {
         Route::get('/home', 'index');
         Route::get('/get-user-info/{user}', 'showUserDetails');
         Route::get('/store', 'store');
+    });
+
+    Route::controller(CalendarController::class)->prefix('calendar')->group(function() {
+        Route::get('/', 'getEvents');
+        Route::get('/{event}', 'getSingleEvent');
+        Route::get('/{event}/like', 'like');
+        Route::get('/{event}/dislike', 'dislike');
     });
 
     Route::post('/register/{referral?}', [RegisterController::class, 'register']);
