@@ -24,7 +24,6 @@ class CreateCustomRequest extends FormRequest
     public function rules()
     {
         return [
-            'profile_code' => 'nullable|string',
             'occupation' => 'nullable|string',
             'education' =>  'nullable|string',
             'memory' => 'nullable|string',
@@ -33,12 +32,12 @@ class CreateCustomRequest extends FormRequest
             'loved_languege' => 'nullable|string',
             'problem_solving' => 'nullable|string',
             'prediction' => 'nullable|string',
+            'about' => 'required|string'
         ];
     }
 
     public function messages(){
         return [
-            'profile_code.string' => ' متن قالب شخصی صحیح نیست',
             'occupation.string' => 'شغل کاربر تحصیل صحیح نمی باشد',
             'education.string'=>'تحصیلات صحیح نمی باشد',
             'memory.string' => 'خاطرات صحیح نمی باشد ',
@@ -47,6 +46,7 @@ class CreateCustomRequest extends FormRequest
             'loved_languege.string' => 'زبانی که وارد کردید صحیح نیست ',
             'problem_solving.string' => 'متن فرصتی  برای  حل مشکل صحیح نیست',
             'prediction.string' => 'متن  پیش بینی صحیح نمی باشد',
+            'about.required' => 'متن درباره خود را وارد کنید'
         ];
     }
 }

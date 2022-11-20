@@ -5,15 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Image extends Model
+class Dislike extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['url'];
-    protected $hidden = ['imageable_type', 'imageable_id', 'created_at', 'updated_at'];
+    protected $fillable = ['ip'];
 
-    public function imageable()
-    {
+    public function dislikeable() {
         return $this->morphTo();
     }
 }
