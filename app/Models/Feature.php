@@ -90,11 +90,19 @@ class Feature extends Model
 
     public function underPriced() {
         $sellRequest = $this->latestSellRequest;
-        return $sellRequest->limit < 100;
+        if($sellRequest) {
+            return $sellRequest->limit < 100;
+        }
+        return false;
     }
 
     public function hourlyProfit()
     {
         return $this->hasOne(FeatureHourlyProfit::class);
+    }
+
+    public function priced()
+    {
+        return count($this->sellRequests) > 0;
     }
  }

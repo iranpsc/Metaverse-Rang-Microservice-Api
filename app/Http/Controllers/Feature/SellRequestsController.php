@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Feature;
 
-use App\Events\FeaturePriced;
-use App\Events\SellRequestSent;
+use App\Events\FeatureStatusChanged;
 use App\Helpers\AssetHelper;
 use App\Http\Controllers\Controller;
 use App\Helpers\FeatureHelper;
@@ -12,6 +11,7 @@ use App\Http\Resources\SellRequestResource;
 use App\Models\Feature;
 use App\Models\Feature\FeaturePricingLimit;
 use App\Models\SellFeatureRequest;
+use App\Notifications\SellRequestNotification;
 use Illuminate\Validation\ValidationException;
 
 class SellRequestsController extends Controller
@@ -23,7 +23,13 @@ class SellRequestsController extends Controller
      */
     public function index()
     {
-        return SellRequestResource::collection(auth()->user()->sellRequests);
+        if(count(request()->user()->sellRequests) === 0)
+        {
+            return response()->json([
+                'error' => 'درخواست فروشی ثبت نشده است'
+            ]);
+        }
+        return SellRequestResource::collection(request()->user()->sellRequests);
     }
 
     public function store(SellFeatureRequestValidate $request, Feature $feature)
@@ -35,7 +41,7 @@ class SellRequestsController extends Controller
         }
 
         if (isset($request->minimum_price_percentage)) {
-            if($request->minimum_price_percentage < $pricingLimit->public_limit) {
+            if($request->minimum_price_percentage < $pricingLimit->public_price_limit) {
                 abort(403, 'شما مجاز به فروش زمین خود به کمتر از ۸۰٪ قیمت خرید ملک نمی باشید');
             }
             $color = AssetHelper::getAssetColor($feature);
@@ -58,7 +64,7 @@ class SellRequestsController extends Controller
             $latestTraded = $feature->latestTraded;
 
             //If user bought this feature from RGB
-            if ($latestTraded->seller->code == 'hm-20000') {
+            if ($latestTraded->seller->code == 'hm-2000000') {
                 $tradedColor = AssetHelper::getAssetColor($feature);
                 $totalTradedPrice = $feature->properties->stability * currentColorPrice($tradedColor);
 
@@ -94,7 +100,12 @@ class SellRequestsController extends Controller
             'minimum_price_percentage' => $price_limit
         ]);
 
-        event(new FeaturePriced($sellRequest));
+        broadcast(new FeatureStatusChanged([
+            'id' => $feature->properties->id,
+            'rgb' => $feature->properties->rgb,
+        ]));
+
+        $request->user()->notify(new SellRequestNotification($feature->properties->id));
 
         $sellRequest->message = 'ملک مورد نظر با موفقیت به فروش گذاشته شد';
         return new SellRequestResource($sellRequest);
@@ -114,7 +125,11 @@ class SellRequestsController extends Controller
             'rgb' => FeatureHelper::cancelSellRequest($feature)
         ]);
 
-        $sellRequest->update(['status' => -1]);
+        $sellRequest->delete();
+        broadcast(new FeatureStatusChanged([
+            'id' => $feature->properties->id,
+            'rgb' => FeatureHelper::cancelSellRequest($feature)
+        ]));
 
         return response()->json(['success' => 'قیمت گذاری لغو شد']);
     }

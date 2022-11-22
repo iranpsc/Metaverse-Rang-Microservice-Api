@@ -1,10 +1,6 @@
 <?php
 
-use App\Events\TestEvent;
-use App\Mail\TestMail;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,14 +15,6 @@ use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return view('welcome');
-});
-
-Route::get('/send', function() {
-    $user = User::find(3);
-    $user->email = 'reza.ajorloo@yahoo.com';
-    Mail::to($user)->send(new TestMail($user));
-    event(new TestEvent('fasdfasdf'));
-    return 'mail sent';
 });
 
 

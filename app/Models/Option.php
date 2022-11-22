@@ -41,4 +41,8 @@ class Option extends Model
         'updated_at'
     ];
 
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
 }

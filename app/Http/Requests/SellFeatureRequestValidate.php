@@ -26,7 +26,7 @@ class SellFeatureRequestValidate extends FormRequest
         return [
             'price_psc' => 'nullable|numeric|min:0|max:100000000',
             'price_irr' => 'nullable|numeric|min:0|max:100000000',
-            'minimum_price_percentage' => 'nullable|integer|min:80',
+            'minimum_price_percentage' => 'nullable|integer|min:0',
         ];
     }
 

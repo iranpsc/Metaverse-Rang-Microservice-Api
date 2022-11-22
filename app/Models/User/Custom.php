@@ -21,6 +21,7 @@ class Custom extends Model
         'loved_language',
         'problem_solving',
         'prediction',
+        'about'
     ];
 
     public function user() {

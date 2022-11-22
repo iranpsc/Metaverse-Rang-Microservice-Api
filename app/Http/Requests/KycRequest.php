@@ -40,7 +40,7 @@ class KycRequest extends FormRequest
             'melli_code' => 'required|ir_national_code',
             'province' => 'required|string',
             'city' => 'required|string',
-            'number' => 'required|numeric|integer',
+            'number' => 'required|integer',
             'postal_code' => 'required|ir_postal_code',
             'address' => 'required',
             'site' => 'nullable|url'

@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Http\Resources\FeatureResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class FeatureTraded implements ShouldBroadcast
+class FeatureStatusChanged implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -21,11 +20,16 @@ class FeatureTraded implements ShouldBroadcast
      * @return void
      */
 
-    public $trade;
+    public $data;
 
-    public function __construct($trade)
+    public function __construct($data)
     {
-        $this->trade = $trade;
+        $this->data = $data;
+    }
+
+    public function broadcastAs()
+    {
+        return 'feature-status-changed';
     }
 
     /**
@@ -35,18 +39,6 @@ class FeatureTraded implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('features-event');
-    }
-
-    /**
-     * Get the data to broadcast to the channel.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastWith()
-    {
-        return [
-            new FeatureResource($this->trade->feature)
-        ];
+        return new Channel('feature-status');
     }
 }

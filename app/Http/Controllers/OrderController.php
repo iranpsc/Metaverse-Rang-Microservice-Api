@@ -16,11 +16,7 @@ class OrderController extends Controller
 {
     public function create(BuyAssetRequest $request)
     {
-        if($request->asset == 'irr') {
-            $rate = 1;
-        } else {
-            $rate = Variable::getRate($request->asset);
-        }
+        $rate = Variable::getRate($request->asset);
 
         $user = $request->user();
 
@@ -45,7 +41,6 @@ class OrderController extends Controller
             'action' => 'deposit',
             'status' => 0
         ]);
-
 
         $response = Http::post(config('rgb.curl.post'), [
             "merchant_id" => env('ZARINPAL_MERCHANT_ID'),
@@ -73,7 +68,7 @@ class OrderController extends Controller
             $order->update(['status' => -1]);
             $transaction->update(['status' => -1]);
             return response()->json([
-                'error' => $response->clientError()
+                'error' => $response->serverError()
             ]);
         }
     }
@@ -124,25 +119,14 @@ class OrderController extends Controller
 
                 $user->notify(new TransactionNotification($order));
                 $user->deposit();
-                return view('payment-result',[
-                    'message' => 'پرداخت انجام شد',
-                    'payment' => $payment,
-                ]);
+                return redirect()->to(env('FRONT_URL').'/payment/verify');
             }
         } else {
             if($result['errors']['code'] == -51) {
                 $transaction->update(['status' => -1]);
                 $next_transaction->update(['status' => -1]);
                 $order->update(['status' => -1]);
-                return view('payment-result',[
-                    'payment' => null,
-                    'message' => 'شما از پراخت صرف نظر کردید'
-                ]);
-            } else {
-                return view('payment-result' , [
-                    'payment' => null,
-                    'message' => 'Error: ' . $result['errors']['message'],
-                ]);
+                return redirect()->to(env('FRONT_URL').'/payment/verify');
             }
         }
     }

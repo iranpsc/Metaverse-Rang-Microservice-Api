@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Morilog\Jalali\Jalalian;
 
@@ -16,7 +17,7 @@ class FeatureResource extends JsonResource
     public function toArray($request)
     {
         return [
-            $this->mergeWhen(! empty($this->message), [
+            $this->mergeWhen(!empty($this->message), [
                 'message' => $this->message,
             ]),
             'id' => $this->id,
@@ -48,6 +49,14 @@ class FeatureResource extends JsonResource
             ],
             'geometry' => $this->geometry->load('coordinates'),
             'images' => $this->images,
+            $this->mergeWhen($this->hourlyProfit, [
+                'hourly_profit' => [
+                    'asset' => $this->hourlyProfit?->asset,
+                    'amount' => $this->hourlyProfit?->amount,
+                    'deadline_date' => Jalalian::forge($this->hourlyProfit?->dead_line)->format('Y/m/d'),
+                    'deadline_time' => Jalalian::forge($this->hourlyProfit?->dead_line)->format('H:m:s'),
+                ]
+            ]),
         ];
     }
 }

@@ -23,16 +23,6 @@ class PrizePolicy
 
     public function recievePrize(User $user, Prize $prize)
     {
-        if($user->recievedPrizes)
-        {
-            foreach($user->recievedPrizes as $recievedPrize)
-            {
-                if($recievedPrize->id === $prize->id)
-                {
-                    return Response::deny();
-                }
-            }
-        }
-        return Response::allow();
+        return $user->recievedPrizes->where('prize_id', $prize->id)->first() ? false : true;
     }
 }

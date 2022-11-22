@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Feature;
 
+use App\Events\FeatureStatusChanged;
 use App\Events\FeatureTraded;
 use App\Http\Controllers\Controller;
 use App\Models\FeatureProperties;
@@ -10,6 +11,7 @@ use App\Helpers\AssetHelper;
 use App\Http\Resources\FeatureResource;
 use App\Models\Trade;
 use App\Models\Feature;
+use App\Notifications\BuyFeatureNotification;
 use Illuminate\Http\JsonResponse;
 
 class BuyFeatureController extends Controller
@@ -56,7 +58,7 @@ class BuyFeatureController extends Controller
             'psc_amount' => 0,
         ]);
 
-        $time = $buyer->variables->withdraw_profit * 3600;
+        $time = $buyer->variables->withdraw_profit * 86400;
 
         $feature->hourlyProfit()->create([
             'user_id' => $buyer->id,
@@ -64,7 +66,18 @@ class BuyFeatureController extends Controller
             'dead_line' => now()->addSeconds($time)
         ]);
 
-        event(new FeatureTraded($trade));
+        broadcast(new FeatureStatusChanged([
+            'id' => $feature->properties->id,
+            'rgb' => $feature->properties->rgb,
+        ]));
+
+        $buyer->notify(new BuyFeatureNotification([
+            'feature' => $feature,
+            'id' => $feature->properties->id,
+            'buyer' => $buyer->name,
+            'seller' => "",
+            'template' => 'buy-land-metarang'
+        ]));
 
         return new FeatureResource($feature);
     }

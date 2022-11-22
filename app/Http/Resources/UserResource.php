@@ -6,7 +6,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\AssetResource;
 use Morilog\Jalali\Jalalian;
 use App\Http\Resources\FollowResource;
-
 class UserResource extends JsonResource
 {
     /**
@@ -21,14 +20,16 @@ class UserResource extends JsonResource
             'id' => (string)$this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'token' => $this->token,
+            $this->mergeWhen($this->token, [
+                'token' => $this->token,
+            ]),
             'score' => $this->score,
             'phone' => $this->phone,
             'automatic_logout' => $this->settings->automatic_logout,
             'level' => $this->level ?? null,
             'score_percentage_to_next_level' => getScorePercentageToNextLevel($this->level, $this->score),
-            $this->mergeWhen(isset($this->profilePhoto), [
-                'profile-photo' => $this->profilePhoto->url ?? ""
+            $this->mergeWhen(isset($this->profilePhotos), [
+                'profile-photos' => $this->profilePhotos
             ]),
             'email_verified_at' => Jalalian::forge($this->email_verified_at)->format('Y/m/d'),
             'assets' => new AssetResource($this->assets),

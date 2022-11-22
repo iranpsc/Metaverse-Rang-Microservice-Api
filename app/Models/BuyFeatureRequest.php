@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BuyFeatureRequest extends Model
 {
-    // use SoftDeletes;
+    use SoftDeletes;
 
 	protected $casts = [
 		'seller_id' => 'int',

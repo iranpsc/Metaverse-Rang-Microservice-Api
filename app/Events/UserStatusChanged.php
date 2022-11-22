@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class LevelReached
+class UserStatusChanged implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,12 +19,25 @@ class LevelReached
      *
      * @return void
      */
-    public $user, $level;
 
-    public function __construct($user, $level)
+    public $data;
+
+    public function __construct(array $data)
     {
-        $this->level = $level;
-        $this->user = $user;
+        $this->data = $data;
+    }
+
+    public function broadcastAs()
+    {
+        return 'user-status-changed';
+    }
+
+    public function broadcastWith()
+    {
+        return [
+            'code' => $this->data['code'],
+            'status' => $this->data['status'],
+        ];
     }
 
     /**
@@ -34,6 +47,6 @@ class LevelReached
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new Channel('user-status');
     }
 }

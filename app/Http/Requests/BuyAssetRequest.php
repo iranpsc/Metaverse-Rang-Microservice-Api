@@ -25,13 +25,14 @@ class BuyAssetRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:1|max:50000',
-            'asset' => 'in:psc,red,blue,yellow,irr',
+            'asset' => 'required|in:psc,red,blue,yellow,irr',
         ];
     }
 
     public function messages()
     {
         return [
+            'asset.required' => 'نوع دارایی را مشخص کنید',
             'asset.in' => 'دارایی باید یا psc, رنگ قرمز، آبی و زرد باشد',
             'amount.required' => 'وارد کردن مبلغ الزامیست',
             'amount.numeric' => 'مبلغ باید عدد باشد',

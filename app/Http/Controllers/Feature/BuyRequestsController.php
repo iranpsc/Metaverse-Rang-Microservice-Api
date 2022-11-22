@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Feature;
 
-use App\Events\BuyRequestSent;
+use App\Events\FeatureStatusChanged;
 use App\Events\FeatureTraded;
 use App\Http\Controllers\Controller;
 use App\Models\BuyFeatureRequest;
@@ -11,20 +11,17 @@ use App\Http\Requests\BuyFeatureRequestValidate;
 use App\Helpers\AssetHelper;
 use App\Models\Feature;
 use App\Models\Trade;
-use App\Models\Variable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Morilog\Jalali\Jalalian;
 use App\Helpers\FeatureHelper;
 use App\Http\Resources\BuyRequestResource;
 use App\Models\Comission;
-use Illuminate\Validation\ValidationException;
-use App\Models\FeatureProperties;
 use App\Http\Resources\FeatureResource;
-use App\Models\Feature\FeaturePricingLimit;
 use App\Models\SellFeatureRequest;
 use App\Models\User;
+use App\Notifications\BuyFeatureNotification;
 use App\Notifications\BuyRequestNotification;
+use Illuminate\Validation\ValidationException;
 
 class BuyRequestsController extends Controller
 {
@@ -35,6 +32,9 @@ class BuyRequestsController extends Controller
      */
     public function index()
     {
+        if (count(auth()->user()->buyRequests) === 0) {
+            return response()->json(['error' => 'درخواست خرید ثبت نشده است']);
+        }
         return BuyRequestResource::collection(auth()->user()->buyRequests);
     }
 
@@ -44,7 +44,6 @@ class BuyRequestsController extends Controller
      */
     public function buy(Feature $feature): FeatureResource|JsonResponse
     {
-
         if ($feature->underPriced()) {
             // Get the latest under priced sell request for the owner of this feature
             $latestUnderPricedRequest = SellFeatureRequest::latestUnderPriceRequests($feature->owner, $feature)->last();
@@ -81,7 +80,7 @@ class BuyRequestsController extends Controller
             'date' => now()
         ]);
 
-        $rgb = User::firstWhere('code', 'hm-20000');
+        $rgb = User::firstWhere('code', 'hm-2000000');
 
         $fees = fee($feature);
 
@@ -90,8 +89,8 @@ class BuyRequestsController extends Controller
 
         Comission::create([
             'trade_id' => $trade->id,
-            'psc' => $fees['psc'],
-            'irr' => $fees['irr'],
+            'psc' => $fees['psc'] * 2,
+            'irr' => $fees['irr'] * 2,
         ]);
 
         $feature->update(['owner_id' => $buyer->id]);
@@ -117,14 +116,27 @@ class BuyRequestsController extends Controller
 
         $seller->assets->increment($profit->asset, $profit->amount);
 
-        $feature->hourlyProfit()->updateOrCreate(
-            ['user_id' => $buyer->id],
-            ['amount' => 0]
-        );
+        $feature->hourlyProfit->update([
+            'user_id' => $buyer->id,
+            'amount' => 0,
+            'dead_line' => now()->addSeconds($buyer->variables->withdraw_profit * 86400),
+        ]);
 
         $message = 'خرید با موفقیت انجام شد';
         $feature->message = $message;
-        event(new FeatureTraded($trade));
+        broadcast(new FeatureStatusChanged([
+            'id' => $feature->properties->id,
+            'rgb' => FeatureHelper::getSoldAndNotPricedFeatureStatusColor($feature),
+        ]));
+
+        $buyer->notify(new BuyFeatureNotification([
+            'feature' => $feature,
+            'id' => $feature->properties->id,
+            'buyer' => $buyer->name,
+            'seller' => $seller->name,
+            'template' => 'buy-land-user',
+        ]));
+
         return new FeatureResource($feature);
     }
 
@@ -141,30 +153,13 @@ class BuyRequestsController extends Controller
         $price_psc = $request->input('price_psc', 0);
         $price_irr = $request->input('price_irr', 0);
 
-        $color = AssetHelper::getAssetColor($feature);
-        $totalColorPrice = currentColorPrice($color) * $feature->properties->stability;
-
-        $requestedTotalPrice = $price_irr + $price_psc * currentPscPrice();
-
-        $priceDiffPercentage = ($requestedTotalPrice / $totalColorPrice) * 100;
-
-        $featureSellRequest = SellFeatureRequest::where('seller_id', $seller->id)
-            ->where('feature_id', $feature->id)
-            ->where('status', 0)
-            ->first();
-
-        if ($featureSellRequest) {
-            if ($priceDiffPercentage < $featureSellRequest->limit) {
-                abort(403, 'شما مجاز به ارسال درخواست خرید به کمتر از کف قیمت تعیین شده نمی باشید');
-            }
+        if (iszero($request->price_irr) && iszero($request->price_psc)) {
+            throw ValidationException::withMessages([
+                'error' => 'قیمت قیمت پیشنهادی خود را یا به تومان یا به psc مشخص کنید'
+            ]);
         }
 
-        if ($priceDiffPercentage < $feature->properties->minimum_price_percentage) {
-            abort(403, 'شما مجاز به ارسال درخواست خرید به کمتر از کف قیمت تعیین شده نمی باشید');
-        }
-
-
-        $error = BuyFeatureRequestHelper::checkErrors($buyer, $request, $feature);
+        $error = AssetHelper::checkErrors($buyer, $request, $feature);
 
         if (!empty($error)) {
             return response()->json(['error' => $error]);
@@ -181,7 +176,11 @@ class BuyRequestsController extends Controller
 
         AssetHelper::lockAsset($buyFeatureRequest, $request);
 
-        $buyer->notify(new BuyRequestNotification($buyFeatureRequest));
+        $buyer->notify(new BuyRequestNotification([
+            'id' => $feature->properties->id,
+            'price_psc' => $buyFeatureRequest->price_psc,
+            'price_irr' => $buyFeatureRequest->price_irr,
+        ]));
 
         $message = 'درخواست خرید شما با موفقیت ثبت شد';
 
@@ -191,7 +190,10 @@ class BuyRequestsController extends Controller
 
     public function recievedBuyRequests()
     {
-        $requests = auth()->user()->recievedBuyRequests;
+        $requests = request()->user()->recievedBuyRequests;
+        if (count($requests) === 0) {
+            return response()->json(['error' => 'درخواست خریدی دریافت نکرده اید.']);
+        }
         return BuyRequestResource::collection($requests);
     }
 
@@ -216,36 +218,24 @@ class BuyRequestsController extends Controller
         }
 
         if ($this->changeOwnerShip($buyFeatureRequest)) {
-            $buyer = $buyFeatureRequest->buyer;
-            $seller = $buyFeatureRequest->seller;
             $buyFeatureRequest->update(['status' => '1']);
-            //Execute The Traded Event Observer
-            $pscPrice = $buyFeatureRequest->price_psc * currentPscPrice();
-            $irrPrice = $buyFeatureRequest->price_irr;
-
-            if ($pscPrice + $irrPrice > 10000000) {
-                $buyFeatureRequest->buyer->traded();
-                $buyFeatureRequest->seller->traded();
-            }
-
-            $feature = $buyFeatureRequest->feature;
+            $buyFeatureRequest->buyer->traded();
+            $buyFeatureRequest->seller->traded();
             $feature->sellRequests->each->update(['status' => 1]);
+            broadcast(new FeatureStatusChanged([
+                'id' => $feature->properties->id,
+                'rgb' => $feature->properties->rgb,
 
-            $profit = $feature->hourlyProfit->where('user_id', $seller->id)->first();
-
-            $seller->assets->increment($profit->asset, $profit->amount);
-
-            $time = $buyer->variables->withdraw_profit * 3600;
-            $feature->hourlyProfit()->updateOrCreate(
-                ['user_id' => $buyer->id],
-                [
-                    'asset' => AssetHelper::getAssetColor($feature),
-                    'amount' => 0,
-                    'dead_line' => now()->addSeconds($time)
-                ]
-            );
-
-            return response()->json(['success' => 'معامله با موفقیت انجام شد']);
+            ]));
+            $buyFeatureRequest->buyer->notify(new BuyFeatureNotification([
+                'feature' => $feature,
+                'id' => $feature->properties->id,
+                'buyer' => $buyFeatureRequest->buyer->name,
+                'seller' => $buyFeatureRequest->seller->name,
+                'template' => 'buy-land-user',
+            ]));
+            $feature->message = 'معامله با موفقیت انجام شد';
+            return new FeatureResource($feature);
         }
     }
 
@@ -268,23 +258,19 @@ class BuyRequestsController extends Controller
 
         $seller->assets->increment($profit->asset, $profit->amount);
 
-        $time = $buyer->variables->withdraw_profit * 3600;
-        $feature->hourlyProfit()->updateOrCreate(
-            ['user_id' => $buyer->id],
-            [
-                'asset' => AssetHelper::getAssetColor($feature),
-                'amount' => 0,
-                'dead_line' => now()->addSeconds($time)
-            ]
-        );
+        $feature->hourlyProfit->update([
+            'user_id' => $buyer->id,
+            'amount' => 0,
+            'dead_line' => now()->addSeconds($buyer->variables->withdraw_profit * 86400),
+        ]);
 
         return true;
     }
 
     public function rejectBuyRequest(BuyFeatureRequest $buyFeatureRequest)
     {
-        $buyFeatureRequest->update(['status' => '-1']);
         AssetHelper::releaseAsset($buyFeatureRequest, true);
+        $buyFeatureRequest->delete();
         return response()->json(['error' => 'درخواست خرید رد شد']);
     }
 

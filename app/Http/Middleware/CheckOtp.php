@@ -17,15 +17,12 @@ class CheckOtp
     public function handle(Request $request, Closure $next)
     {
         $feature_otp = $request->user()->featureOtp;
-
         if( $feature_otp->otp_off && $feature_otp->updated_at->addMinutes($feature_otp->time) > now()) {
             return $next($request);
          }
-
         return response()->json([
             'code' => 403,
             'message' => 'جهت ادامه شماره تلفن همراه خود را تایید کنید'
         ]);
-
     }
 }

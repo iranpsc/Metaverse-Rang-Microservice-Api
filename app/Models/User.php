@@ -64,7 +64,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'avatar',
         'dark_mode',
         'messenger_color',
-        'last_activity',
+        'last_seen',
         'code',
         'score'
     ];
@@ -429,8 +429,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(FeatureOtp::class);
     }
 
-    public function profilePhoto() {
-        return $this->morphOne(Image::class, 'imageable');
+    public function profilePhotos() {
+        return $this->morphMany(Image::class, 'imageable');
     }
 
     public function variables() {
@@ -454,5 +454,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function resetEmail()
     {
         return $this->hasOne(ResetEmail::class);
+    }
+
+    public function latestOrder()
+    {
+        return $this->hasOne(Order::class)->latestOfMany();
+    }
+
+    public function latestPayment()
+    {
+        return $this->hasOne(Payment::class)->latestOfMany();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\Level\Level;
 use App\Models\User;
 use App\Models\Variable;
 use Illuminate\Support\Facades\DB;
@@ -50,16 +51,17 @@ class UserLogObserver
     public function traded(User $user): void
     {
         $psc_value = Variable::getRate('psc');
+        $psc_count = 7000000 / $psc_value;
         $trades = DB::table('trades')
             ->where('buyer_id', $user->id)
-            ->where(function ($query) use ($psc_value) {
-                $query->where('irr_amount', '>', 1000000)
-                    ->orWhere('psc_amount', '>', $psc_value);
+            ->where(function ($query) use ($psc_count) {
+                $query->where('irr_amount', '>', 7000000)
+                    ->orWhere('psc_amount', '>', $psc_count);
             })
             ->orWhere('seller_id', $user->id)
-            ->where(function ($query) use ($psc_value) {
-                $query->where('irr_amount', '>', 1000000)
-                    ->orWhere('psc_amount', '>', $psc_value);
+            ->where(function ($query) use ($psc_count) {
+                $query->where('irr_amount', '>', 7000000)
+                    ->orWhere('psc_amount', '>', $psc_count);
             })->count();
 
         $user->log->update([
@@ -81,44 +83,49 @@ class UserLogObserver
         $this->calculateScore($user);
     }
 
-
-
     private function calculateScore(User $user)
     {
         $log = $user->log;
-        $sum = $log->followers_count + $log->transactions_count
-            + $log->acitivity_hours + $log->deposit_amount;
-        $log->update([
-            'score' => $sum
+        $sum = array_sum([
+            $log->followers_count,
+            $log->transactions_count,
+            $log->acitivity_hours,
+            $log->deposit_amount,
         ]);
-        $user->update([
-            'score' => $sum
-        ]);
-        DB::table('levels')->orderBy('score')->each(function ($level) use ($user, $sum) {
-            if ($sum >= $level->score) {
-                UserLevel::updateOrcreate(
-                    ['user_id' => $user->id],
-                    ['level_id' => $level->id]
-                );
-                $prize = DB::table('prizes')->where('level_id', $level->id)->first();
-                $alreadyRecievedPrize = DB::table('recieved_level_prizes')
-                                            ->where('user_id', $user->id)
-                                            ->where('prize_id', $prize->id)
-                                            ->exists();
-                if (/*$user->can('recievePrize', $prize)*/ ! $alreadyRecievedPrize) {
-                    foreach ($prize as $key => $value) {
-                        if (
-                            in_array($key, ['psc', 'blue', 'red', 'yellow', 'satisfaction', 'effect'])
-                            && !is_null($value)
-                        ) {
-                            $user->assets->increment($key, $value);
-                        }
-                    }
-                    $user->recievedPrizes()->create([
-                        'prize_id' => $prize->id
-                    ]);
-                }
+        $log->increment('score', $sum);
+        $user->increment('score', $sum);
+
+        $next_level = null;
+
+        foreach(Level::lazy() as $level)
+        {
+            if($sum >= $level->score)
+            {
+                $next_level = $level;
             }
-        });
+        }
+
+        if(! $next_level) return;
+        if ($sum >= $next_level->score)
+        {
+            UserLevel::updateOrCreate(
+                ['user_id' => $user->id],
+                ['level_id' => $next_level->id]
+            );
+            $prize = $next_level->prize;
+            if ($user->can('recievePrize', $prize))
+            {
+                $assets = $user->assets;
+                $assets->increment('psc', $prize->psc);
+                $assets->increment('blue', $prize->blue);
+                $assets->increment('red', $prize->red);
+                $assets->increment('yellow', $prize->yellow);
+                $assets->increment('effect', $prize->effect);
+                $assets->increment('satisfaction', $prize->satisfaction);
+                $user->recievedPrizes()->create([
+                    'prize_id' => $prize->id
+                ]);
+            }
+        }
     }
 }

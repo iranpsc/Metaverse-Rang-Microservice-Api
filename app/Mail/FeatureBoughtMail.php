@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Feature;
 use App\Models\Trade;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,11 +18,11 @@ class FeatureBoughtMail extends Mailable
      *
      * @return void
      */
-    public $trade;
+    public $feature;
 
-    public function __construct(Trade $trade)
+    public function __construct(Feature $feature)
     {
-        $this->trade = $trade;
+        $this->feature = $feature;
     }
 
     /**

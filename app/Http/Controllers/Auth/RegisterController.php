@@ -4,12 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
-use App\Models\Level\Level;
-use App\Models\Level\UserLevel;
 use App\Models\Referal;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Events\Registered;
 
@@ -41,7 +38,7 @@ class RegisterController extends Controller
             'password' => bcrypt($request->password),
             'code' => $code,
             'referal_link' => $referralLink,
-            'ip' => $request->ip()
+            'ip' => ""
         ]);
 
         if (isset($referral)) {
@@ -94,6 +91,6 @@ class RegisterController extends Controller
             return 'hm-' . $codeNum;
         }
 
-        return 'hm-20000';
+        return 'hm-2000000';
     }
 }
