@@ -20,10 +20,11 @@ class FollowResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'score' => $this->score,
-            $this->mergeWhen(isset($this->profilePhoto), [
-                'image' => $this->profilePhoto->url ?? "",
+            'code' =>
+            $this->mergeWhen(isset($this->profilePhotos), [
+                'image' => $this->profilePhotos->url ?? "",
             ]),
-            'followed_at' => Jalalian::forge($this->created_at)->format('Y/m/d H:m:s')
+            'followed_at' => Jalalian::forge($this->created_at)->format('Y/m/d')
         ];
     }
 }

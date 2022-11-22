@@ -72,8 +72,7 @@ function isUnderEighteen(User $user)
 {
     $birthdate = Carbon::parse($user->kyc->birthdate)->format('Y-m-d');
     $birthdate = Carbon::createFromDate($birthdate);
-    $now = Carbon::now();
-    if ($birthdate->diffInYears($now) < 18) return true;
+    if ($birthdate->diffInYears(now()) < 18) return true;
     return false;
 }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Morilog\Jalali\Jalalian;
 
 class DynastyResource extends JsonResource
 {
@@ -18,7 +19,7 @@ class DynastyResource extends JsonResource
             'id' => $this->id,
             'feature_id' => $this->feature_id,
             'user_id' => $this->user_id,
-            'created_at' => $this->created_at
+            'created_at' => Jalalian::forge($this->created_at)->format('Y/m/d')
         ];
     }
 }

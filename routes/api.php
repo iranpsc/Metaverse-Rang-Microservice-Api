@@ -3,8 +3,8 @@
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\DynastyController;
-use App\Http\Controllers\JoinRequestController;
+use App\Http\Controllers\Dynasty\DynastyController;
+use App\Http\Controllers\Dynasty\SendJoinRequestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Feature\BuyRequestsController;
 use App\Http\Controllers\Feature\SellRequestsController;
@@ -30,7 +30,7 @@ use App\Http\Controllers\OtpController;
 use App\Http\Controllers\ResetInfo\ResetEmailController;
 use App\Http\Controllers\ResetInfo\ResetPhoneController;
 use App\Http\Controllers\UserEventsController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use PhpParser\Node\Expr\FuncCall;
 
 /*
 |--------------------------------------------------------------------------
@@ -202,19 +202,15 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(functi
     })->name('user-is-online');
     //    DYNASTY SECTION
     Route::prefix('/dynasty')->group(function () {
-
         Route::get('/create/{feature}', [DynastyController::class, 'store'])
-            ->can('create', 'App\\Models\Dynasty\Dynasty');
-
-        Route::post('/send-join-request', [JoinRequestController::class, 'store']);
-
-        Route::post('/verify-otp', [JoinRequestController::class, 'verifyOtp']);
-        Route::post('/resend-otp', [JoinRequestController::class, 'resendOtp']);
-        Route::get('/accept-join-request/{joinRequest}/send-otp', [JoinRequestController::class, 'acceptRequest']);
-        Route::post('/verify-accept-otp/{joinRequest}', [JoinRequestController::class, 'verifyAcceptOtp']);
-        Route::post('/permission/{user}', [ChildernPermissionsController::class, 'update']);
-        Route::post('/reject-join-request', [JoinRequestController::class, 'rejectRequest']);
-        Route::patch('/change-dynasty-feature', [DynastyController::class, 'updateDynastyFeature']);
+        ->can('create', 'App\\Models\Dynasty\Dynasty');
+        Route::controller(SendJoinRequestController::class)->scopeBindings()->group(function() {
+            Route::post('/add/member', 'store');
+            Route::post('/add/member/{user}/verify/{joinRequest}', 'verify')
+            ->missing(function() {
+                return 'درخواست معتبر نمی باشد';
+            });
+        });
     });
 
 

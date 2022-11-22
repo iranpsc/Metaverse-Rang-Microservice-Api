@@ -2,6 +2,7 @@
 
 namespace App\Models\Dynasty;
 
+use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,5 +41,10 @@ class JoinRequest extends Model
     public function scopelatestSentJoinRequest($query, $from_user, $to_user)
     {
         return $query->where('from_user', $from_user)->where('to_user', $to_user)->latest()->first();
+    }
+
+    public function otp()
+    {
+        return $this->morphOne(Otp::class, 'verifiable');
     }
 }

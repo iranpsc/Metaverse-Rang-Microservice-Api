@@ -20,7 +20,7 @@ class GetOtpNotification extends Notification
 
     private $code, $phone;
 
-    public function __construct($phone = null, $code)
+    public function __construct($code, $phone = null)
     {
         $this->code = $code;
         $this->phone = $phone;

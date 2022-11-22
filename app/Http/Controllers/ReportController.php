@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ReportRequest;
 use App\Models\Report;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
@@ -36,7 +34,7 @@ class ReportController extends Controller
             'subject' => $request->subject,
             'title'   => $request->title,
             'content' => $request->content,
-            'url'     => $request->url()
+            'url'     => $request->url
         ]);
         return response()->json([
             'success' => 'گزارش شما ثبت شد و در حال بررسی می باشد',
@@ -71,7 +69,7 @@ class ReportController extends Controller
             'subject' => $request->subject,
             'title'   => $request->title,
             'content' => $request->content,
-            'url'     => $request->url()
+            'url'     => $request->url
         ]);
         return response()->json([
             'success' => 'گزارش بروزرسانی شد',
