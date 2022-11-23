@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\PackageResource;
 use App\Http\Resources\TopPlayerResource;
 use App\Models\Feature\FeatureHourlyProfit;
+use Carbon\Carbon;
 use Morilog\Jalali\Jalalian;
 
 class HomeController extends Controller
@@ -31,6 +32,7 @@ class HomeController extends Controller
                         'score' => $user->score,
                         'profile-photo' => $user->profilePhoto->url ?? "",
                         'level' => $user->level,
+                        'online' => Carbon::parse($user->last_seen)->diffInMinutes(now()) > 2 ? false : true,
                     ];
                 })  : [],
             'features' => Feature::with(['properties', 'geometry','geometry.coordinates'])->lazyById()->map(function ($feature) {

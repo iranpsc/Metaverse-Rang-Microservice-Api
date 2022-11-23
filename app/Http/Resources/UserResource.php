@@ -6,7 +6,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\AssetResource;
 use Morilog\Jalali\Jalalian;
 use App\Http\Resources\FollowResource;
-
 class UserResource extends JsonResource
 {
     /**

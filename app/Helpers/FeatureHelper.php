@@ -120,22 +120,4 @@ class FeatureHelper
             }
         }
     }
-
-    public static function updateMapFile(Feature $feature, $status) {
-        $fileName = $feature->map->name;
-
-        $file_open = file_get_contents(public_path('/map/layers/'.$fileName.'.js'));
-
-        $map = json_decode(explode('=', $file_open)[1], true);
-
-        foreach($map['features'] as $key => $map_feature) {
-            if($map['features'][$key]['properties']['id'] === $feature->properties->id) {
-                $map['features'][$key]['properties']['rgb'] = $status;
-                $map['features'][$key]['properties']['owner'] = $feature->owner->name;
-            }
-        }
-
-        file_put_contents(public_path('map/layers/' . $fileName . '.js'),
-         'var json_' . $fileName . ' = ' . json_encode($map));
-    }
 }

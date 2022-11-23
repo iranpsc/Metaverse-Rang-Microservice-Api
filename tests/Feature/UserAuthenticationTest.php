@@ -13,13 +13,12 @@ class UserAuthenticationTest extends TestCase
      *
      * @return void
      */
-    public function test_users_can_login()
+    public function test_users_can_logout()
     {
-        $response = $this->withoutExceptionHandling()->post('/api/login', [
+        $response = $this->post('/api/login', [
             'email' => 'abbas.ajorlou1371@gmail.com',
             'password' => '1234568@Amir'
         ]);
-
         $response->assertOk();
     }
 }

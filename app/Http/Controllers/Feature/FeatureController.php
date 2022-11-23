@@ -81,7 +81,6 @@ class FeatureController extends Controller
             ]
         );
         return response()->json([
-            // 'message' => 'قفل معاملات به مدت ' . $request->time . 'دقیقه غیر فعال گردید'
             'message' => sprintf('قفل معاملات شما به مدت"%s" دقیقه غیر فعال گردید',$request->time)
         ], 200);
     }

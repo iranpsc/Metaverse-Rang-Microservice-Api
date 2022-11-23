@@ -5,11 +5,9 @@ namespace App\Helpers;
 use App\Models\BuyFeatureRequest;
 use App\Models\Comission;
 use App\Models\Feature;
-use App\Models\LockedAsset;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Trade;
-use App\Events\FeatureTraded;
 
 class AssetHelper
 {
@@ -53,43 +51,39 @@ class AssetHelper
         $buyer->assets->decrement('psc', $psc_amount);
         $buyer->assets->decrement('irr', $irr_amount);
 
-        LockedAsset::create([
-            'user_id' => $buyer->id,
+        $buyer->lockedAssets()->create([
             'buy_feature_request_id' => $buyFeatureRequest->id,
             'feature_id' => $buyFeatureRequest->feature->id,
             'psc' => $psc_amount,
             'irr' => $irr_amount
         ]);
-
     }
 
     public static function releaseAsset(BuyFeatureRequest $buyFeatureRequest, $rejectOrCancel = false)
     {
-        $psc_amount = $buyFeatureRequest->lockedAsset->psc;
-        $irr_amount = $buyFeatureRequest->lockedAsset->irr;
+        $psc_amount = $buyFeatureRequest->price_psc;
+        $irr_amount = $buyFeatureRequest->price_irr;
+        $buyer = $buyFeatureRequest->buyer;
+        $seller = $buyFeatureRequest->seller;
 
         if ($rejectOrCancel) {
-            $buyFeatureRequest->buyer->assets->increment('psc', $psc_amount);
-            $buyFeatureRequest->buyer->assets->increment('irr', $irr_amount);
-            $buyFeatureRequest->lockedAsset->delete();
+            $buyer->assets->increment('psc', $psc_amount);
+            $buyer->assets->increment('irr', $irr_amount);
         } else {
+            $seller->assets->increment('psc', ($psc_amount - ($psc_amount * config('rgb.fee'))));
+            $seller->assets->increment('irr', ($irr_amount - ($irr_amount * config('rgb.fee'))));
+            $rgb = User::firstWhere('code', 'hm-2000000');
             $psc_total_fee = $psc_amount * config('rgb.fee') * 2;
             $irr_total_fee = $irr_amount * config('rgb.fee') * 2;
-
-            $rgb = User::firstWhere('code', 'hm-20000');
-
             $rgb->assets->increment('psc', $psc_total_fee);
             $rgb->assets->increment('irr', $irr_total_fee);
 
-            chargeBuyer($buyFeatureRequest->buyer, $buyFeatureRequest->feature);
-            addSeller($buyFeatureRequest->seller, $buyFeatureRequest->feature);
-
             $trade = Trade::create([
                 'feature_id' => $buyFeatureRequest->feature->id,
-                'buyer_id' => $buyFeatureRequest->buyer->id,
-                'seller_id' => $buyFeatureRequest->seller->id,
-                'irr_amount' => $buyFeatureRequest->price_irr,
-                'psc_amount' => $buyFeatureRequest->price_psc,
+                'buyer_id' => $buyer->id,
+                'seller_id' => $seller->id,
+                'irr_amount' => $irr_amount,
+                'psc_amount' => $psc_amount,
                 'date' => now()
             ]);
 
@@ -98,9 +92,10 @@ class AssetHelper
                 'psc' => $psc_total_fee,
                 'irr' => $irr_total_fee,
             ]);
-            event(new FeatureTraded($trade));
             self::cancelOthereRequests($buyFeatureRequest);
         }
+        $buyFeatureRequest->lockedAsset->delete();
+        $buyFeatureRequest->delete();
     }
     private static function cancelOthereRequests(BuyFeatureRequest $buyFeatureRequest)
     {
@@ -108,13 +103,12 @@ class AssetHelper
 
         foreach ($feature->buyRequests as $buyRequest) {
             if ($buyRequest->id == $buyFeatureRequest->id) continue;
-            $buyRequest->update(['status' => -1]);
-            $price_psc = $buyRequest->lockedAssets->psc;
-            $price_irr = $buyRequest->lockedAssets->irr;
-
+            $price_psc = $buyRequest->lockedAsset->psc;
+            $price_irr = $buyRequest->lockedAsset->irr;
             $buyRequest->buyer->assets->increment('psc', $price_psc);
             $buyRequest->buyer->assets->increment('irr', $price_irr);
-            $buyFeatureRequest->lockedAsset->delete();
+            $buyRequest->lockedAsset->delete();
+            $buyRequest->delete();
         }
     }
 
@@ -122,35 +116,65 @@ class AssetHelper
     {
         $totalPrice = totalPrice($feature, 'buyer', fee($feature));
 
-        if(! iszero($feature->properties->price_psc)
-           && ! iszero($feature->properties->price_irr)
-        )
-        {
-            if( $buyer->assets->psc < $totalPrice['psc'] )
-            {
+        if (
+            !iszero($feature->properties->price_psc)
+            && !iszero($feature->properties->price_irr)
+        ) {
+            if ($buyer->assets->psc < $totalPrice['psc']) {
                 return ['error' => 'موجودی psc شما کافی نمی باشد'];
             }
 
-            if( $buyer->assets->irr < $totalPrice['irr'])
-            {
+            if ($buyer->assets->irr < $totalPrice['irr']) {
                 return ['error' => 'موجودی ریال شما کافی نمی باشد'];
             }
         }
 
-        if( ! iszero($feature->properties->price_psc) ) {
-            if( $buyer->assets->psc < $totalPrice['psc'] )
-            {
+        if (!iszero($feature->properties->price_psc)) {
+            if ($buyer->assets->psc < $totalPrice['psc']) {
                 return ['error' => 'موجودی psc شما کافی نمی باشد'];
             }
         }
 
-        if(! iszero($feature->properties->price_irr)) {
-            if( $buyer->assets->irr < $totalPrice['irr'] )
-            {
+        if (!iszero($feature->properties->price_irr)) {
+            if ($buyer->assets->irr < $totalPrice['irr']) {
                 return ['error' => 'موجودی ریال شما کافی نمی باشد'];
             }
         }
 
+        return null;
+    }
+
+    public static function checkErrors(User $buyer, Request $request, Feature $feature)
+    {
+        $totalRequestedPrice = [
+            'psc' => $request->price_psc + $request->price_psc * config('rgb.fee'),
+            'irr' => $request->price_irr + $request->price_irr * config('rgb.fee'),
+        ];
+
+        if (!iszero($request->price_psc) && !iszero($request->price_irr)) {
+            if ($request->price_psc < $feature->properties->price_psc) {
+                return 'مقدار psc پیشنهادی شما کمتر از کف قیمت تعیین شده است';
+            } else if ($totalRequestedPrice['psc'] > $buyer->assets->psc) {
+                return 'موجودی psc شما کافی نمی باشد.';
+            }
+            if ($request->price_irr < $feature->properties->price_irr) {
+                return 'مقدار ریال پیشنهادی شما کمتر از کف قیمت تعیین شده است';
+            } else if ($totalRequestedPrice['irr'] > $buyer->assets->irr) {
+                return 'موجودی ریال شما کافی نمی باشد.';
+            }
+        } else if (!iszero($request->price_psc)) {
+            if ($totalRequestedPrice['psc'] < ($feature->properties->price_psc + $feature->properties->price_irr / currentPscPrice())) {
+                return 'مقدار psc پیشنهادی شما کمتر از کف قیمت تعیین شده است';
+            } else if ($totalRequestedPrice['psc'] > $buyer->assets->psc) {
+                return 'موجودی psc شما کافی نمی باشد.';
+            }
+        } else if (!iszero($request->price_irr)) {
+            if ($totalRequestedPrice['irr'] < ($feature->properties->price_irr + $feature->properties->price_psc * currentPscPrice())) {
+                return 'مقدار ریال پیشنهادی شما کمتر از کف قیمت تعیین شده است';
+            } else if ($totalRequestedPrice['irr'] > $buyer->assets->irr) {
+                return 'موجودی ریال شما کافی نمی باشد.';
+            }
+        }
         return null;
     }
 }

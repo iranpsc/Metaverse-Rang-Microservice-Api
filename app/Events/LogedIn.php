@@ -7,6 +7,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -20,7 +21,7 @@ class LogedIn
      * @return void
      */
 
-     public $user;
+    public $user;
 
     public function __construct($user)
     {
@@ -34,7 +35,6 @@ class LogedIn
      */
     public function broadcastOn()
     {
-        // return new PrivateChannel('user-login' . $this->user->id);
-        return new Channel('user-login');
+        return new Channel('channel-name');
     }
 }

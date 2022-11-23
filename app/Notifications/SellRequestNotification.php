@@ -17,11 +17,11 @@ class SellRequestNotification extends Notification implements ShouldQueue
      * @return void
      */
 
-     public $feature;
+     public $feature_id;
 
-    public function __construct($feature)
+    public function __construct($feature_id)
     {
-        $this->feature = $feature;
+        $this->feature_id = $feature_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class SellRequestNotification extends Notification implements ShouldQueue
     public function toSms($notifiable) {
         return [
             'phone' => $notifiable->phone,
-            'token' => $this->feature->properties->id,
+            'token' => $this->feature_id,
             'template' => 'sell-request',
         ];
     }

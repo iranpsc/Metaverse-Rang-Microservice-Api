@@ -95,6 +95,8 @@ class UserLogObserver
         $log->increment('score', $sum);
         $user->increment('score', $sum);
 
+        $next_level = null;
+
         foreach(Level::lazy() as $level)
         {
             if($sum >= $level->score)
@@ -102,6 +104,8 @@ class UserLogObserver
                 $next_level = $level;
             }
         }
+
+        if(! $next_level) return;
         if ($sum >= $next_level->score)
         {
             UserLevel::updateOrCreate(

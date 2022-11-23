@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Feature;
 
-use App\Events\FeaturePriced;
+use App\Events\FeatureStatusChanged;
 use App\Helpers\AssetHelper;
 use App\Http\Controllers\Controller;
 use App\Helpers\FeatureHelper;
@@ -11,6 +11,7 @@ use App\Http\Resources\SellRequestResource;
 use App\Models\Feature;
 use App\Models\Feature\FeaturePricingLimit;
 use App\Models\SellFeatureRequest;
+use App\Notifications\SellRequestNotification;
 use Illuminate\Validation\ValidationException;
 
 class SellRequestsController extends Controller
@@ -22,7 +23,13 @@ class SellRequestsController extends Controller
      */
     public function index()
     {
-        return SellRequestResource::collection(auth()->user()->sellRequests);
+        if(count(request()->user()->sellRequests) === 0)
+        {
+            return response()->json([
+                'error' => 'درخواست فروشی ثبت نشده است'
+            ]);
+        }
+        return SellRequestResource::collection(request()->user()->sellRequests);
     }
 
     public function store(SellFeatureRequestValidate $request, Feature $feature)
@@ -93,7 +100,12 @@ class SellRequestsController extends Controller
             'minimum_price_percentage' => $price_limit
         ]);
 
-        event(new FeaturePriced($sellRequest));
+        broadcast(new FeatureStatusChanged([
+            'id' => $feature->properties->id,
+            'rgb' => $feature->properties->rgb,
+        ]));
+
+        $request->user()->notify(new SellRequestNotification($feature->properties->id));
 
         $sellRequest->message = 'ملک مورد نظر با موفقیت به فروش گذاشته شد';
         return new SellRequestResource($sellRequest);
@@ -113,7 +125,11 @@ class SellRequestsController extends Controller
             'rgb' => FeatureHelper::cancelSellRequest($feature)
         ]);
 
-        $sellRequest->update(['status' => -1]);
+        $sellRequest->delete();
+        broadcast(new FeatureStatusChanged([
+            'id' => $feature->properties->id,
+            'rgb' => FeatureHelper::cancelSellRequest($feature)
+        ]));
 
         return response()->json(['success' => 'قیمت گذاری لغو شد']);
     }

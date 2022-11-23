@@ -64,7 +64,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'avatar',
         'dark_mode',
         'messenger_color',
-        'last_activity',
+        'last_seen',
         'code',
         'score'
     ];

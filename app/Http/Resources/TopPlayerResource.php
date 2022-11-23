@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Feature;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TopPlayerResource extends JsonResource
@@ -16,6 +17,7 @@ class TopPlayerResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'online' => Carbon::parse($this->last_seen)->diffInMinutes(now()) > 2 ? false : true,
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,

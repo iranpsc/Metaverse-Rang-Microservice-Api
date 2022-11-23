@@ -7,7 +7,6 @@ use App\Models\Level\Level;
 use App\Models\User;
 use App\Models\Variable;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 function fee(Feature $feature)
 {
@@ -35,22 +34,24 @@ function totalPrice(Feature $feature, string $type, array $comissions)
                 'irr' => $feature->properties->price_irr - $comissions['irr'],
             ];
             break;
+        default:
+            return null;
     }
 }
 
 
 function chargeBuyer(User $buyer, $feature)
 {
-    $buyer_charge_amount = totalPrice($feature, 'buyer', fee($feature));
-    $buyer->assets->decrement('psc', $buyer_charge_amount['psc']);
-    $buyer->assets->decrement('irr', $buyer_charge_amount['irr']);
+    $amount = totalPrice($feature, 'buyer', fee($feature));
+    $buyer->assets->decrement('psc', $amount['psc']);
+    $buyer->assets->decrement('irr', $amount['irr']);
 }
 
 function addSeller(User $seller, $feature)
 {
-    $seller_add_amount = totalPrice($feature, 'seller', fee($feature));
-    $seller->assets->increment('psc', $seller_add_amount['psc']);
-    $seller->assets->increment('irr', $seller_add_amount['irr']);
+    $amount = totalPrice($feature, 'seller', fee($feature));
+    $seller->assets->increment('psc', $amount['psc']);
+    $seller->assets->increment('irr', $amount['irr']);
 }
 
 function iszero($value): bool

@@ -18,11 +18,11 @@ class BuyFeatureNotification extends Notification implements ShouldQueue
      * @return void
      */
 
-     public $trade;
+     public $data;
 
-    public function __construct($trade)
+    public function __construct($data)
     {
-        $this->trade = $trade;
+        $this->data = $data;
     }
 
     /**
@@ -44,23 +44,18 @@ class BuyFeatureNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new FeatureBoughtMail($this->trade))
+        return (new FeatureBoughtMail($this->data['feature']))
                     ->to($notifiable->email)
                     ->subject('خریداری ملک');
     }
 
     public function toSms($notifiable) {
-        if($this->trade->seller->code == 'hm-20000')
-        {
-            $template = 'buy-land-metarang';
-        }
-
         return [
             'phone' => $notifiable->phone,
-            'token' => $this->trade->feature->properties->id,
-            'token20' => $this->trade->buyer->name,
-            'token10' => $this->trade->seller->name,
-            'template' => $template ?? 'buy-land-user'
+            'token' => $this->data['id'],
+            'token20' => $this->data['buyer'],
+            'token10' => $this->data['seller'],
+            'template' => $this->data['template']
         ];
     }
 

@@ -46,6 +46,7 @@ class UserActivity
                     $user->hourReached();
                 }
             }
+            $request->user()->update(['last_seen' => now()]);
         }
 
         return $next($request);

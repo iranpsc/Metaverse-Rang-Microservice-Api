@@ -18,11 +18,11 @@ class BuyRequestNotification extends Notification implements ShouldQueue
      * @return void
      */
 
-     public $buyRequest;
+     public $data;
 
-    public function __construct($buyRequest)
+    public function __construct($data)
     {
-        $this->buyRequest = $buyRequest;
+        $this->data = $data;
     }
 
     /**
@@ -33,15 +33,16 @@ class BuyRequestNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return [SmsChannel::class];
+        return [SmsChannel::class, 'database'];
     }
 
     public function toSms($notifiable) {
         return [
             'phone' => $notifiable->phone,
-            'token' => $this->buyRequest->feature->properties->id,
-            'token2' => $this->buyRequest->price_psc,
-            'template' => 'buy-land-request'
+            'token' => $this->data['id'],
+            'token2' => $this->data['price_psc'] == 0 ? 0 : number_format($this->data['price_psc'], 0, '.', ','),
+            'token3' => $this->data['price_irr'] == 0 ? 0 : number_format($this->data['price_irr'], 0, '.', ','),
+            'template' => 'buy-land-request',
         ];
     }
 
@@ -54,7 +55,7 @@ class BuyRequestNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+            sprintf('شما درخواست خریدی مبنی بر خرید زمین با شناسه %s ارسال کرده اید.', $this->data['id'])
         ];
     }
 }

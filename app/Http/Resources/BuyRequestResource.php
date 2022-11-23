@@ -18,7 +18,9 @@ class BuyRequestResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'message' => $this->message ?? '',
+            $this->mergeWhen($this->message, [
+                'message' => $this->message
+            ]),
             'id' => $this->id,
             'buyer_id' => $this->buyer_id,
             'seller_id' => $this->seller_id,
