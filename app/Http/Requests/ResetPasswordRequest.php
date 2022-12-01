@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Hash;
 
 class ResetPasswordRequest extends FormRequest
 {
@@ -24,17 +25,32 @@ class ResetPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-                'old_password' => 'required',
-                'password' => 'required|min:8|confirmed',
+            'old_password' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $old_password = request()->user()->password;
+                    if (!Hash::check($value, $old_password)) {
+                        $fail('رمز عبور قبلی وارد شده صحیح نمی باشد!');
+                    }
+                }
+            ],
+            'password' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $pass_pattern = "/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z]).{8,}$/";
+                    if (!preg_match($pass_pattern, $value)) {
+                        $fail('رمز عبور باید حداقل 8 کاراکتر شامل حداقل یک حرف کوچک، یک حرف بزرگ و عدد باشد');
+                    }
+                },
+            ],
         ];
     }
 
     public function messages()
     {
         return [
-            'old_password.required' => 'رمز عبور را وارد کنید',
+            'old_password.required' => 'رمز عبور قبلی را وارد کنید',
             'password.required' => 'رمز عبور جدید را وارد کنید',
-            'password.confirmed' => 'رمز عبور جدید با تکرار آن مطابقت ندارد'
         ];
     }
 }

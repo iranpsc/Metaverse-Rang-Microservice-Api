@@ -7,13 +7,11 @@ use App\Models\Dynasty\Dynasty;
 use App\Models\Dynasty\JoinRequest;
 use App\Models\Dynasty\RecievedPrize;
 use App\Models\Feature\FeatureHourlyProfit;
-use App\Models\Feature\FeatureOtp;
 use App\Models\Level\Level;
 use App\Models\Level\UserActivity;
 use App\Models\Level\UserLevel;
 use App\Models\Level\RecievedLevelPrize;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -25,10 +23,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\SellFeatureRequest;
 use App\Models\Note;
-use App\Models\Reset\ResetEmail;
-use App\Models\Reset\ResetPhone;
 use App\Models\User\Custom;
-use App\Models\User\Passion;
 use App\Models\User\UserEvent;
 use App\Models\User\UserVariable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -64,6 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'code',
         'score',
         'phone_verified_at',
+        'email_verified_at'
     ];
 
     public function accountSecurity()
@@ -363,14 +359,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * @return HasOne
-     */
-    public function otps(): HasMany
-    {
-        return $this->hasMany(Otp::class);
-    }
-
-    /**
      * @return bool
      */
     public function verified(): bool
@@ -399,12 +387,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(FeatureHourlyProfit::class);
     }
 
-    public function featureOtp()
-    {
-        return $this->hasOne(FeatureOtp::class);
-    }
-
-    public function profilePhotos()
+     public function profilePhotos()
     {
         return $this->morphMany(Image::class, 'imageable');
     }
@@ -422,16 +405,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function events()
     {
         return $this->hasMany(UserEvent::class);
-    }
-
-    public function resetPhone()
-    {
-        return $this->hasOne(ResetPhone::class);
-    }
-
-    public function resetEmail()
-    {
-        return $this->hasOne(ResetEmail::class);
     }
 
     public function latestOrder()
@@ -476,4 +449,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(RecievedPrize::class);
     }
     //
+
+    public function latestResetRequest()
+    {
+        return $this->hasOne(Reset::class)->latestOfMany();
+    }
 }

@@ -4,53 +4,33 @@ namespace App\Http\Controllers\ResetInfo;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use App\Models\Reset\ResetEmail;
-use App\Notifications\SendVerifyEmailCode;
+use App\Http\Requests\ResetInfoRequest;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Reset;
+use App\Mail\EmailOtp;
+use Illuminate\Support\Facades\Mail;
 
 class ResetEmailController extends Controller
 {
-    public function sendOtpToOldEmail(Request $request)
+    public function sendVerifyCode(ResetInfoRequest $request)
     {
-        $resetEmail = ResetEmail::where('user_id', $request->user()->id)->first();
+        $user = $request->user();
+        $reset = Reset::create([
+            'user_id' => $user->id,
+            'type' => 'email',
+            'value' => $request->email,
+        ]);
+        $code = random_int(100000, 999999);
+        $reset->otp()->create([
+            'user_id' => $user->id,
+            'code' => Hash::make($code)
+        ]);
+        Mail::to($request->email)->send(new EmailOtp($code));
+        return response()->json(['message' => 'کد تایید ارسال گردید. جهت ادامه کد تایید را وارد کنید.'], 200);
 
-        if($resetEmail)
-        {
-            if($resetEmail->count() > 0)
-            {
-                abort(403, 'شما فقط یکبار مجاز به تغییر ایمیل خود می باشید');
-            }
-        }
-
-        if(Cache::has('reset-email-old-email-verification-'. $request->user()->id))
-        {
-            abort(403, 'کد تایید قبلا ارسال شده است');
-        }
-
-        $this->validate(
-            $request,
-            [
-                'email' => 'required|email|unique:users',
-            ],
-            [
-
-                'email.required' => 'شماره تلفن را وارد کنید',
-                'email.email' => 'آدرس ایمیل صحیح نیست',
-                'email.unique' => 'ایمیل قبلا استفاده شده است'
-            ]
-        );
-
-        $data = [
-            'email' => $request->email,
-            'code' => random_int(100000, 999999)
-        ];
-        Cache::put('reset-email-old-email-verification-'. $request->user()->id, $data, now()->addMinutes(5));
-        $request->user()->notify(new SendVerifyEmailCode(null, $data['code']));
-
-        return response()->json(['success' => 'کد تایید به آدرس ایمیل قبلی ارسال گردید'], 200);
     }
 
-    public function verifyOldEmailOtp(Request $request)
+    public function verify(Request $request)
     {
         $this->validate(
             $request,
@@ -60,49 +40,21 @@ class ResetEmailController extends Controller
                 'code.integer' => 'کد تایید وارد شده صحیح نیست',
             ]
         );
-
-        $cachedData = Cache::get('reset-email-old-email-verification-'. $request->user()->id);
-
-        if (!$cachedData || $cachedData['code'] != $request->code) {
-            abort(401, 'کد تایید وارد صحیح نیست');
+        $user = $request->user();
+        $reset = $user->latestResetRequest;
+        if(is_null($reset) || $reset->verified == 1) {
+            abort(401, 'Invalid Request');
         }
 
-        $data = [
-            'email' => $cachedData['email'],
-            'code' => random_int(100000, 999999)
-        ];
-        Cache::put('new-email-verification-'. $request->user()->id, $data, now()->addMinutes(5));
-
-        Cache::forget('reset-email-old-email-verification-'. $request->user()->id);
-        $request->user()->notify(new SendVerifyEmailCode($cachedData['email'], $data['code']));
-        return response()->json(['success' => 'کد تاییدی به آدرس ایمیل جدید ارسال گردید'], 200);
-    }
-
-    public function verifyNewEmailOtp(Request $request)
-    {
-        $this->validate(
-            $request,
-            ['code' => 'required|integer|numeric'],
-            [
-                'code.required' => 'کد تایید را وارد کنید',
-                'code.integer' => 'کد تایید وارد شده صحیح نیست',
-            ]
-        );
-
-        $cachedData = Cache::get('new-email-verification-'. $request->user()->id);
-
-        if (!$cachedData || $cachedData['code'] != $request->code) {
-            abort(401, 'کد تایید وارد صحیح نیست');
+        if(Hash::check($request->code, $reset->otp->code)) {
+            $user->update([
+                'email' => $reset->value,
+                'email_verified_at' => now(),
+            ]);
+            $reset->update(['verified' => true]);
+            $reset->otp->delete();
+            return response()->json(['success' => 'ایمیل تغییر کرد.'], 200);
         }
-
-        $request->user()->update([
-            'email' => $cachedData['email']
-        ]);
-
-        $request->user()->resetEmail()->updateOrCreate([
-            'count' => 1
-        ]);
-
-        return response()->json(['success' => 'آدرس ایمیل تغییر کرد'], 200);
+        return response()->json(['success' => 'کد تایید صحیح نمی باشد یا منقضی شده است!'], 404);
     }
 }

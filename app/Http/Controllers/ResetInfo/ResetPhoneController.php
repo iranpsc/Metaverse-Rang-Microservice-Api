@@ -3,53 +3,33 @@
 namespace App\Http\Controllers\ResetInfo;
 
 use App\Http\Controllers\Controller;
-use App\Models\Reset\ResetPhone;
+use App\Http\Requests\ResetInfoRequest;
+use App\Models\Reset;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use App\Notifications\GetOtpNotification;
+use Illuminate\Support\Facades\Hash;
 
 class ResetPhoneController extends Controller
 {
-    public function sendOtpToOldPhone(Request $request)
+    public function sendVerifyCode(ResetInfoRequest $request)
     {
-        $resetPhone = ResetPhone::where('user_id', $request->user()->id)->first();
+        $user = $request->user();
+        $reset = Reset::create([
+            'user_id' => $user->id,
+            'type' => 'phone',
+            'value' => $request->phone,
+        ]);
+        $code = random_int(100000, 999999);
+        $reset->otp()->create([
+            'user_id' => $user->id,
+            'code' => Hash::make($code)
+        ]);
+        $user->notify(new GetOtpNotification($code));
+        return response()->json(['message' => 'کد تایید ارسال گردید. جهت ادامه کد تایید را وارد کنید.'], 200);
 
-        if($resetPhone)
-        {
-            if($resetPhone->count() > 0)
-            {
-                abort(403, 'شما فقط یکبار مجاز به تغییر شماره تلفن خود می باشید');
-            }
-        }
-
-        if(Cache::has('reset-phone-old-phone-verification-'. $request->user()->id))
-        {
-            abort(403, 'کد تایید قبلا ارسال شده است');
-        }
-
-        $this->validate(
-            $request,
-            [
-                'phone' => 'required|ir_mobile',
-            ],
-            [
-
-                'phone.required' => 'شماره تلفن را وارد کنید',
-                'phone.ir_mobile' => 'شماره تلفن صحیح نمی باشد'
-            ]
-        );
-
-        $data = [
-            'phone' => $request->phone,
-            'code' => random_int(100000, 999999)
-        ];
-        Cache::put('reset-phone-old-phone-verification-'. $request->user()->id, $data, now()->addMinutes(5));
-        $request->user()->notify(new GetOtpNotification(null, $data['code']));
-
-        return response()->json(['success' => 'کد تایید به شماره تلفن قبلی ارسال گردید'], 200);
     }
 
-    public function verifyOldPhoneOtp(Request $request)
+    public function verify(Request $request)
     {
         $this->validate(
             $request,
@@ -59,50 +39,22 @@ class ResetPhoneController extends Controller
                 'code.integer' => 'کد تایید وارد شده صحیح نیست',
             ]
         );
-
-        $cachedData = Cache::get('reset-phone-old-phone-verification-'. $request->user()->id);
-
-        if (!$cachedData || $cachedData['code'] != $request->code) {
-            abort(401, 'کد تایید وارد صحیح نیست');
+        $user = $request->user();
+        $reset = $user->latestResetRequest;
+        if(is_null($reset) || $reset->verified == 1) {
+            abort(401, 'Invalid Request');
         }
 
-        $data = [
-            'phone' => $cachedData['phone'],
-            'code' => random_int(100000, 999999)
-        ];
-        Cache::put('new-phone-verification-'. $request->user()->id, $data, now()->addMinutes(5));
-
-        Cache::forget('reset-phone-old-phone-verification-'. $request->user()->id);
-        $request->user()->notify(new GetOtpNotification($cachedData['phone'], $data['code']));
-        return response()->json(['success' => 'کد تاییدی به شماره تلفن همراه جدید ارسال گردید'], 200);
-    }
-
-    public function verifyNewPhoneOtp(Request $request)
-    {
-        $this->validate(
-            $request,
-            ['code' => 'required|integer|numeric'],
-            [
-                'code.required' => 'کد تایید را وارد کنید',
-                'code.integer' => 'کد تایید وارد شده صحیح نیست',
-            ]
-        );
-
-        $cachedData = Cache::get('new-phone-verification-'. $request->user()->id);
-
-        if (!$cachedData || $cachedData['code'] != $request->code) {
-            abort(401, 'کد تایید وارد صحیح نیست');
+        if(Hash::check($request->code, $reset->otp->code)) {
+            $user->update([
+                'phone' => $reset->value,
+                'phone_verified_at' => now(),
+            ]);
+            $reset->update(['verified' => true]);
+            $reset->otp->delete();
+            return response()->json(['success' => 'شماره تلفن تغییر کرد'], 200);
         }
-
-        $request->user()->update([
-            'phone' => $cachedData['phone']
-        ]);
-
-        $request->user()->resetPhone()->updateOrCreate([
-            'count' => 1
-        ]);
-
-        return response()->json(['success' => 'شماره تلفن تغییر کرد'], 200);
+        return response()->json(['success' => 'کد تایید صحیح نمی باشد یا منقضی شده است!'], 404);
     }
 
 }

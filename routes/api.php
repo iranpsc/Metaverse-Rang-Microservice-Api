@@ -173,30 +173,23 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity
         Route::post('/settings', 'update');
         Route::post('/general-settings', 'generalSettingsUpdate');
         Route::post('/settings/upload-profile-photo', 'uploadProfilePhoto');
-        Route::post('/phone/send-otp', 'sendPhoneVerificationOtp');
-        Route::post('/phone/verify', 'verifyPhone');
     });
 
     Route::post('/order', [OrderController::class, 'create']);
 
     Route::prefix('reset')->middleware('account.security')->group(function () {
         Route::controller(ResetPhoneController::class)->prefix('phone')->group(function () {
-            Route::post('/old/send-code', 'sendOtpToOldPhone');
-            Route::post('/old/verify-code', 'verifyOldPhoneOtp');
-            Route::post('/new/verify-code', 'verifyNewPhoneOtp');
+            Route::post('/', 'sendVerifyCode');
+            Route::post('/verify', 'verify');
         });
         Route::controller(ResetEmailController::class)->prefix('email')->group(function () {
-            Route::post('/old/send-code', 'sendOtpToOldEmail');
-            Route::post('/old/verify-code', 'verifyOldEmailOtp');
-            Route::post('/new/verify-code', 'verifyNewEmailOtp');
+            Route::post('/', 'sendVerifyCode');
+            Route::post('/verify', 'verify');
+        });
+        Route::controller(ResetPasswordController::class)->group(function () {
+            Route::post('/password', 'changePassword');
         });
     });
-
-    Route::controller(ResetPasswordController::class)->group(function () {
-        Route::post('/reset-password/send-otp-code', 'sendOtpCode');
-        Route::post('/reset-password', 'resetPassword');
-    });
-
 
     Route::get('/online', function () {
     })->name('user-is-online');

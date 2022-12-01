@@ -58,7 +58,6 @@ class RegisterController extends Controller
         $user->settings()->create();
         $user->generalSettings()->create();
         $user->log()->create();
-        $user->featureOtp()->create();
         $user->variables()->create();
 
         event(new Registered($user));
@@ -92,5 +91,10 @@ class RegisterController extends Controller
         }
 
         return 'hm-2000000';
+    }
+
+    private function checkReferral($referral) {
+        $pattern = '';
+        $reference_user = User::firstWhere('code', $referral);
     }
 }

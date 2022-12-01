@@ -8,11 +8,6 @@ use App\Helpers\FeatureIndicators;
 use App\Models\BuyFeatureRequest;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
-use App\Models\Dynasty\Dynasty;
-use App\Models\Feature\FeaturePricingLimit;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
 class FeaturePolicy
 {
     use HandlesAuthorization;
