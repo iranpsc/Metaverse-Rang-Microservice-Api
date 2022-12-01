@@ -43,8 +43,6 @@ class FeaturePolicy
             return Response::deny('ملک مورد نظر به فروش گذاشته نشده است. شما می توانید پیشنهاد خرید برای این ملک ثبت کنید');
         } else if ($user->id === $feature->owner_id) {
             return Response::deny('این ملک متعلق به شما می باشد');
-        } else if (!$feature->priced()) {
-            return Response::deny('ملک مورد نظر قیمت گذاری نشده است', 403);
         }
         return true;
     }
