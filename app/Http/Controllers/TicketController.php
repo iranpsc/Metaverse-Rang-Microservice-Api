@@ -6,18 +6,14 @@ use App\Constants\TicketStatus;
 use App\Http\Requests\CreateTicketRequest;
 use App\Http\Requests\TicketResponseRequest;
 use App\Http\Resources\TicketResource;
-use App\Models\Admin;
 use App\Models\Ticket;
-use App\Models\TicketResponse;
 use App\Models\User;
 use App\Notifications\TicketRecieved;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -61,7 +57,7 @@ class TicketController extends Controller
      */
     public function store(CreateTicketRequest $request): TicketResource
     {
-        if($request->reciever_id && $request->department) {
+        if ($request->reciever_id && $request->department) {
             abort(403, 'عملیات با خطا مواجه شد');
         }
 
@@ -82,7 +78,7 @@ class TicketController extends Controller
             'code' => random_int(100000, 999999),
         ]);
 
-        if(isset($ticket->reciever)) {
+        if (isset($ticket->reciever)) {
             $message = 'تیکتی از طرف ' . $this->user->name . 'دریافت شده است';
             $ticket->reciever->notify(new TicketRecieved($message));
         }
@@ -99,8 +95,7 @@ class TicketController extends Controller
      */
     public function response(TicketResponseRequest $request, Ticket $ticket): TicketResource|JsonResponse
     {
-        if ($ticket->isClosed())
-        {
+        if ($ticket->isClosed()) {
             return response()->json([
                 'error' => 'این تیکت بسته شده است'
             ]);
