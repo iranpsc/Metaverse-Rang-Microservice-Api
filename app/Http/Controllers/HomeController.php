@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FeatureResource;
 use App\Http\Resources\UserResource;
 use App\Models\Feature;
 use App\Models\Option;
@@ -14,6 +15,10 @@ use Morilog\Jalali\Jalalian;
 
 class HomeController extends Controller
 {
+
+    public function features() {
+        return FeatureResource::collection(Feature::with('geometry.coordinates')->lazy());
+    }
 
     /**
      * @return array

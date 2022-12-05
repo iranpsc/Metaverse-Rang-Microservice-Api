@@ -48,6 +48,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::middleware(['api', 'check.ip'])->group(function () {
     Route::controller(HomeController::class)->group(function () {
+        Route::get('/features', 'features')->name('home.features');
         Route::get('/home', 'index');
         Route::get('/get-user-info/{user}', 'showUserDetails');
         Route::get('/store', 'store');
