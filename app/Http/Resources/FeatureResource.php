@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Morilog\Jalali\Jalalian;
 
@@ -17,45 +16,47 @@ class FeatureResource extends JsonResource
     public function toArray($request)
     {
         return [
-            $this->mergeWhen(!empty($this->message), [
-                'message' => $this->message,
-            ]),
-            'id' => $this->id,
-            'map_id' => $this->map_id,
-            'owner_id' => $this->owner_id,
-            $this->mergeWhen($this->latestTraded, [
-                'seller' => [
-                    'id' => $this->latestTraded->seller->id ?? "",
-                    'name' => $this->latestTraded->seller->name ?? "",
-                    'code' => $this->latestTraded->seller->code ?? "",
+            $this->whenNotNull($this->message),
+            $this->mergeUnless(request()->routeIs('home.features'), [
+                'id' => $this->id,
+                'map_id' => $this->map_id,
+                'owner_id' => $this->owner_id,
+                'type' => $this->type,
+                'properties' => [
+                    'id' => $this->properties->id,
+                    'address' => $this->properties->address,
+                    'feature_id' => $this->properties->feature_id,
+                    'density' => $this->properties->density,
+                    'date' => Jalalian::forge($this->properties->date)->format('Y/m/d'),
+                    'stability' => $this->properties->stability,
+                    'label' => $this->properties->label,
+                    'area' => $this->properties->area,
+                    'region' => $this->properties->region,
+                    'karbari' => $this->properties->karbari,
+                    'owner' => $this->properties->owner,
+                    'rgb' => $this->properties->rgb,
+                    'price_psc' => $this->properties->price_psc,
+                    'price_irr' => $this->properties->price_irr,
                 ],
+                'images' => $this->images,
+                $this->mergeWhen($this->latestTraded, [
+                    'seller' => [
+                        'id' => $this->latestTraded->seller->id ?? "",
+                        'name' => $this->latestTraded->seller->name ?? "",
+                        'code' => $this->latestTraded->seller->code ?? "",
+                    ],
+                ]),
+                $this->mergeWhen($this->hourlyProfit, [
+                    'hourly_profit' => [
+                        'asset' => $this->hourlyProfit?->asset,
+                        'amount' => $this->hourlyProfit?->amount,
+                        'deadline_date' => Jalalian::forge($this->hourlyProfit?->dead_line)->format('Y/m/d'),
+                        'deadline_time' => Jalalian::forge($this->hourlyProfit?->dead_line)->format('H:m:s'),
+                    ]
+                ]),
             ]),
-            'type' => $this->type,
-            'properties' => [
-                'id' => $this->properties->id,
-                'address' => $this->properties->address,
-                'feature_id' => $this->properties->feature_id,
-                'density' => $this->properties->density,
-                'date' => Jalalian::forge($this->properties->date)->format('Y/m/d'),
-                'stability' => $this->properties->stability,
-                'label' => $this->properties->label,
-                'area' => $this->properties->area,
-                'region' => $this->properties->region,
-                'karbari' => $this->properties->karbari,
-                'owner' => $this->properties->owner,
-                'rgb' => $this->properties->rgb,
-                'price_psc' => $this->properties->price_psc,
-                'price_irr' => $this->properties->price_irr,
-            ],
-            'geometry' => $this->geometry->load('coordinates'),
-            'images' => $this->images,
-            $this->mergeWhen($this->hourlyProfit, [
-                'hourly_profit' => [
-                    'asset' => $this->hourlyProfit?->asset,
-                    'amount' => $this->hourlyProfit?->amount,
-                    'deadline_date' => Jalalian::forge($this->hourlyProfit?->dead_line)->format('Y/m/d'),
-                    'deadline_time' => Jalalian::forge($this->hourlyProfit?->dead_line)->format('H:m:s'),
-                ]
+            $this->mergeWhen(request()->routeIs('home.features'), [
+                'geometry' => $this->geometry->coordinates,
             ]),
         ];
     }

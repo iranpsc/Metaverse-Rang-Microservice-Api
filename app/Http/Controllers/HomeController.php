@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FeatureResource;
 use App\Http\Resources\UserResource;
 use App\Models\Feature;
 use App\Models\Option;
@@ -9,7 +10,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\PackageResource;
 use App\Http\Resources\TopPlayerResource;
-use App\Models\Feature\FeatureHourlyProfit;
 use Carbon\Carbon;
 use Morilog\Jalali\Jalalian;
 
@@ -19,10 +19,10 @@ class HomeController extends Controller
     /**
      * @return array
      */
-    public function index(Request $request): array
+    public function index(Request $request)
     {
         $user = $request->user('sanctum');
-        return [
+        return response()->json([
             'user' => $user ? new UserResource($user) : [],
             'top_players' => !$user
                 ? User::orderBy('score', 'DESC')->take(10)->get()->map(function($user) {
@@ -68,7 +68,7 @@ class HomeController extends Controller
             }),
             'feature_hourly_profit_info' => $user && $user->features ?
             hourlyProfitInfo($user) : null,
-        ];
+        ]);
     }
 
     public function showUserDetails(User $user): TopPlayerResource

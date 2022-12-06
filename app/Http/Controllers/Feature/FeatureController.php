@@ -66,7 +66,7 @@ class FeatureController extends Controller
             'status' => 'تصویر حذف شد'
         ], 200);
     }
-    
+
     public function updateFeature(User $user, Feature $feature, Request $request)
     {
         $this->validate(

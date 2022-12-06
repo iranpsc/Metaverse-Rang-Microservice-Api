@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Helpers\FeatureIndicators;
 use App\Models\Dynasty\Dynasty;
 use App\Models\Feature\FeatureHourlyProfit;
 use Carbon\Carbon;
@@ -99,10 +100,5 @@ class Feature extends Model
     public function hourlyProfit()
     {
         return $this->hasOne(FeatureHourlyProfit::class);
-    }
-
-    public function priced()
-    {
-        return count($this->sellRequests) > 0;
     }
  }

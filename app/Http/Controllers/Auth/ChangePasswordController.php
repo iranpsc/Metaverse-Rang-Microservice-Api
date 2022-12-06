@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class ChangePasswordController extends Controller
 {
-    public function changePassword(ChangePasswordRequest $request): \Illuminate\Http\JsonResponse
+    public function __invoke(ChangePasswordRequest $request): \Illuminate\Http\JsonResponse
     {
         $request->user()->update([
             'password' => Hash::make($request->password)

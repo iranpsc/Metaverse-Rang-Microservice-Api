@@ -29,7 +29,7 @@ class AccountSecurityRequest extends FormRequest
             'phone' => [
                 'ir_mobile',
                 Rule::requiredIf(is_null(request()->user()->phone)
-                || is_null(request()->user()->phone_verified_at))
+                || is_null(request()->user()->phone_verified_at)),
             ],
             'time' => 'required|integer|min:5|max:60',
         ];

@@ -48,6 +48,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::middleware(['api', 'check.ip'])->group(function () {
     Route::controller(HomeController::class)->group(function () {
+        Route::get('/features', 'features')->name('home.features');
         Route::get('/home', 'index');
         Route::get('/get-user-info/{user}', 'showUserDetails');
         Route::get('/store', 'store');
@@ -81,66 +82,63 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, '__
     ->middleware(['signed'])->name('verification.verify');
 
 
-Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(function () {
-    Route::middleware('user.activity')->group(function () {
-        Route::controller(DashboardController::class)->group(function () {
-            Route::get('/profile', 'index');
-            Route::get('/payments/latest', 'getUserLatestTransaction');
-            Route::prefix('citizen')->withoutMiddleware(['auth:sanctum', 'verified', 'user.activity'])->group(function () {
-                Route::get('/{code}', 'home');
+Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity'])->group(function () {
+    Route::controller(DashboardController::class)->group(function () {
+        Route::get('/profile', 'index');
+        Route::get('/payments/latest', 'getUserLatestTransaction');
+        Route::prefix('citizen')->withoutMiddleware(['auth:sanctum', 'verified', 'user.activity'])->group(function () {
+            Route::get('/{code}', 'home');
+        });
+    });
+
+    Route::controller(AccountSecurityController::class)->group(function () {
+        Route::post('/account/security', 'getVerifyCode');
+        Route::post('account/security/verify', 'turnOffAccountSecurity');
+    });
+
+    Route::controller(FeatureController::class)->middleware('account.security')->scopeBindings()->prefix('my-features')->group(function () {
+        Route::withoutMiddleware('account.security')->group(function () {
+            Route::get('/', 'index');
+            Route::get('/{user}/features/{feature}', 'show')
+                ->missing(function () {
+                    return response()->json(['error' => 'ملک مورد نظر یافت نشد']);
+                });
+        });
+        Route::post('/{user}/addimage/{feature}', 'addFeatureImages')
+            ->missing(function () {
+                return response()->json(['error' => 'ملک متعلق به شما نمی باشد']);
             });
+
+        Route::post('/{user}/features/{feature}', 'updateFeature')
+            ->missing(function () {
+                return response()->json(['error' => 'ملک متعلق به شما نمی باشد']);
+            });
+    });
+    Route::middleware('account.security')->group(function () {
+        Route::controller(BuyFeatureController::class)->prefix('features')->group(function () {
+            Route::get('/{feature}', 'show')->withoutMiddleware(['account.security', 'auth:sanctum', 'verified']);
+            Route::get('/buy/{feature}', 'buy')
+                ->middleware('can:buy,feature')->missing(function () {
+                    return response()->json(['error' => 'ملک مورد نظر یافت نشد']);
+                });
         });
 
-        Route::controller(AccountSecurityController::class)->group(function () {
-            Route::post('/account/security', 'getVerifyCode');
-            Route::post('account/security/verify', 'turnOffAccountSecurity');
+        Route::controller(SellRequestsController::class)->prefix('sell-requests')->group(function () {
+            Route::get('/', 'index')->withoutMiddleware('account.security');
+            Route::post('/store/{feature}', 'store')->can('sell', 'feature');
+            Route::delete('/delete/{sellRequest}', 'destroy')->can('delete', 'sellRequest');
         });
 
-        Route::controller(FeatureController::class)->middleware('account.security')->scopeBindings()->prefix('my-features')->group(function () {
+        Route::controller(BuyRequestsController::class)->prefix('buy-requests')->group(function () {
             Route::withoutMiddleware('account.security')->group(function () {
                 Route::get('/', 'index');
-                Route::get('/{user}/features/{feature}', 'show')
-                    ->missing(function () {
-                        return response()->json(['error' => 'ملک مورد نظر یافت نشد']);
-                    });
+                Route::get('/recieved', 'recievedBuyRequests');
             });
-            Route::post('/{user}/addimage/{feature}', 'addFeatureImages')
-                ->missing(function () {
-                    return response()->json(['error' => 'ملک متعلق به شما نمی باشد']);
-                });
-
-            Route::post('/{user}/features/{feature}', 'updateFeature')
-                ->missing(function () {
-                    return response()->json(['error' => 'ملک متعلق به شما نمی باشد']);
-                });
-        });
-
-        Route::middleware('account.security')->group(function () {
-            Route::controller(BuyFeatureController::class)->prefix('feature')->group(function () {
-                Route::get('/{feature}', 'show')->withoutMiddleware(['account.security', 'auth:sanctum', 'verified', 'user.activity']);
-                Route::post('/buy/{feature}', 'buy')
-                    ->middleware('can:buy,feature')->missing(function () {
-                        return response()->json(['error' => 'ملک مورد نظر یافت نشد']);
-                    });
-            });
-
-            Route::controller(SellRequestsController::class)->prefix('sell-requests')->group(function () {
-                Route::get('/', 'index')->withoutMiddleware('account.security');
-                Route::post('/store/{feature}', 'store')->can('sell', 'feature');
-                Route::delete('/delete/{sellRequest}', 'destroy')->can('delete', 'sellRequest');
-            });
-
-            Route::controller(BuyRequestsController::class)->prefix('buy-requests')->group(function () {
-                Route::withoutMiddleware('account.security')->group(function () {
-                    Route::get('/', 'index');
-                    Route::get('/recieved', 'recievedBuyRequests');
-                });
-                Route::post('/buy/{feature}', 'buy')->can('buy', 'feature');
-                Route::post('/store/{feature}', 'store')->can('sendBuyRequest', 'feature');
-                Route::delete('/delete/{buyFeatureRequest}', 'destroy')->can('delete', 'buyFeatureRequest');
-                Route::post('/accept/{buyFeatureRequest}', 'acceptBuyRequest')->can('accept', 'buyFeatureRequest');
-                Route::post('/reject/{buyFeatureRequest}', 'rejectBuyRequest')->can('reject', 'buyFeatureRequest');
-            });
+            Route::post('/buy/{feature}', 'buy')->can('buy', 'feature');
+            Route::post('/store/{feature}', 'store')->can('sendBuyRequest', 'feature');
+            Route::delete('/delete/{buyFeatureRequest}', 'destroy')->can('delete', 'buyFeatureRequest');
+            Route::post('/accept/{buyFeatureRequest}', 'acceptBuyRequest')->can('accept', 'buyFeatureRequest');
+            Route::post('/reject/{buyFeatureRequest}', 'rejectBuyRequest')->can('reject', 'buyFeatureRequest');
         });
 
 
@@ -195,9 +193,7 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip'])->group(functi
                 Route::post('/', 'sendVerifyCode');
                 Route::post('/verify', 'verify');
             });
-            Route::controller(ChangePasswordController::class)->group(function () {
-                Route::post('/password', 'changePassword');
-            });
+            Route::post('/password', ChangePasswordController::class);
         });
 
         //    DYNASTY SECTION

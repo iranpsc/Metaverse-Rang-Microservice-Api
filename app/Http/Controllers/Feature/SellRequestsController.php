@@ -43,11 +43,11 @@ class SellRequestsController extends Controller
         if (isset($request->minimum_price_percentage)) {
             if(isUnderEighteen($request->user())) {
                 if ($request->minimum_price_percentage < $pricingLimit->under_eighteen_price_limit) {
-                    abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->under_eighteen_price_limit} قیمت خرید ملک نمی باشید");
+                    abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->under_eighteen_price_limit} درصد قیمت خرید ملک نمی باشید");
                 }
             }
             if ($request->minimum_price_percentage < $pricingLimit->public_price_limit) {
-                abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->public_price_limit} قیمت خرید ملک نمی باشید");
+                abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->public_price_limit}درصد قیمت خرید ملک نمی باشید");
             }
             $color = AssetHelper::getAssetColor($feature);
             $totalPrice = $feature->properties->stability * currentColorPrice($color) * ($request->minimum_price_percentage / 100);
@@ -77,7 +77,7 @@ class SellRequestsController extends Controller
 
                 if(isUnderEighteen($request->user())) {
                     if ($request->minimum_price_percentage < $pricingLimit->under_eighteen_price_limit) {
-                        abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->under_eighteen_price_limit} قیمت خرید ملک نمی باشید");
+                        abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->under_eighteen_price_limit}درصد قیمت خرید ملک نمی باشید");
                     }
                 }
 
@@ -91,7 +91,7 @@ class SellRequestsController extends Controller
                 // Check if the price limit is less than the allowed price limit by administor
                 if(isUnderEighteen($request->user())) {
                     if ($request->minimum_price_percentage < $pricingLimit->under_eighteen_price_limit) {
-                        abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->under_eighteen_price_limit} قیمت خرید ملک نمی باشید");
+                        abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->under_eighteen_price_limit}درصد قیمت خرید ملک نمی باشید");
                     }
                 }
                 if ($price_limit < $pricingLimit->public_price_limit) {
