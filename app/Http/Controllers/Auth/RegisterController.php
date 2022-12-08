@@ -18,16 +18,8 @@ class RegisterController extends Controller
      * @return JsonResponse
      * @throws ValidationException
      */
-    public function register(RegisterRequest $request, $referral = null): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $pass_pattern = "/^(?=.*[A-Z])(?=.*[a-z]).{8,}$/";
-
-        if (!preg_match($pass_pattern, $request->password)) {
-            throw ValidationException::withMessages([
-                'error' => 'رمز عبور باید حداقل 8 کاراکتر شامل حداقل یک حرف کوچک، یک حرف بزرگ و یکی از سمبل های !@#$%^&* باشد'
-            ]);
-        }
-
         $code = $this->generateCitizenCode();
 
         $referralLink = $this->generateReferalLink($code);
@@ -41,18 +33,12 @@ class RegisterController extends Controller
             'ip' => ""
         ]);
 
-        if (isset($referral)) {
-            $reference_user = User::firstWhere('code', $referral);
-            if (is_null($reference_user)) {
-                throw ValidationException::withMessages([
-                    'error' => 'لینک رفرال صحیح نیست'
-                ]);
-            } else {
-                Referal::create([
-                    'reference_id' => $reference_user->id,
-                    'referer_id' => $user->id,
-                ]);
-            }
+        if ($request->has('referral')) {
+            $reference_user = User::firstWhere('code', $request->referral);
+            Referal::create([
+                'reference_id' => $reference_user->id,
+                'referer_id' => $user->id,
+            ]);
         }
         $user->assets()->create();
         $user->settings()->create();
@@ -91,10 +77,5 @@ class RegisterController extends Controller
         }
 
         return 'hm-2000000';
-    }
-
-    private function checkReferral($referral) {
-        $pattern = '';
-        $reference_user = User::firstWhere('code', $referral);
     }
 }

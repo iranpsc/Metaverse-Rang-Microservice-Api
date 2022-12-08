@@ -50,7 +50,6 @@ use App\Models\Notification;
 
 Route::middleware(['api', 'check.ip'])->group(function () {
     Route::controller(HomeController::class)->group(function () {
-        Route::get('/features', 'features')->name('home.features');
         Route::get('/home', 'index');
         Route::get('/get-user-info/{user}', 'showUserDetails');
         Route::get('/store', 'store');
@@ -63,7 +62,7 @@ Route::middleware(['api', 'check.ip'])->group(function () {
         Route::get('/{event}/dislike', 'dislike');
     });
 
-    Route::post('/register/{referral?}', [RegisterController::class, 'register']);
+    Route::post('/register', [RegisterController::class, 'register']);
     Route::controller(LoginController::class)->middleware('auth:sanctum')->group(function () {
         Route::post('/login', 'login')->withoutMiddleware('auth:sanctum');
         Route::post('/logout', 'logout');
