@@ -9,7 +9,7 @@ use App\Http\Requests\AddFamilyMemberRequest;
 use App\Http\Resources\Dynasty\SentRequestsResource;
 use App\Models\Dynasty\DynastyMessage;
 use App\Models\Dynasty\JoinRequest;
-use App\Models\Permission;
+use App\Models\DynastyPermission;
 use App\Models\User;
 use App\Notifications\GetOtpNotification;
 use App\Notifications\JoinDynastyNotification;
@@ -38,7 +38,7 @@ class SendJoinRequestController extends Controller
     public function getPermissions(Request $request)
     {
         if ($request->has('relationship') && $request->relationship === 'offspring') {
-            $permissions = Permission::first();
+            $permissions = DynastyPermission::first();
             return response()->json(['permissions' => $permissions], 200);
         } else {
             return response()->json(['error' => 'درخواست نا معتبر است.'], 404);

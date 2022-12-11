@@ -9,7 +9,7 @@ use App\Http\Resources\Dynasty\RecievedJoinRequest;
 use App\Models\Dynasty\DynastyMessage;
 use App\Models\Dynasty\DynastyPrize;
 use App\Models\Dynasty\JoinRequest;
-use App\Models\Permission;
+use App\Models\DynastyPermission;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Notifications\GetOtpNotification;
@@ -61,7 +61,7 @@ class AcceptJoinRequestController extends Controller
             $recievedJoinRequest->update(['status' => JoinRequestStatus::ACCEPTED]);
 
             if (isUnderEighteen($requestedUser) && $recievedJoinRequest->relationship == FamilyMembersType::FATHER) {
-                $permssions = Permission::first();
+                $permssions = DynastyPermission::first();
                 $$requestedUser->permissions()->create([
                     'BFR' => $permssions->BFR,
                     'SF' => $permssions->SF,
