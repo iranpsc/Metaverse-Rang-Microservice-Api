@@ -25,15 +25,7 @@ class ChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'old_password' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    $old_password = request()->user()->password;
-                    if (!Hash::check($value, $old_password)) {
-                        $fail('رمز عبور قبلی وارد شده صحیح نمی باشد!');
-                    }
-                }
-            ],
+            'old_password' => 'required|current_password',
             'password' => [
                 'required',
                 function ($attribute, $value, $fail) {
@@ -50,6 +42,7 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'old_password.required' => 'رمز عبور قبلی را وارد کنید',
+            'old_password.current_password' => 'رمز عبور قبلی صحیح نیست',
             'password.required' => 'رمز عبور جدید را وارد کنید',
         ];
     }
