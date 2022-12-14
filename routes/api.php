@@ -88,6 +88,7 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity
         Route::get('/profile', 'index');
         Route::get('/payments/latest', 'getUserLatestTransaction');
         Route::get('/transactions', 'transactions');
+        Route::get('/privacy', 'getPrivacySettings');
         Route::post('/privacy', 'updatePrivacySettings');
     });
 
