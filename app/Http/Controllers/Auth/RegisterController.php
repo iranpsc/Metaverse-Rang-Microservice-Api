@@ -45,6 +45,7 @@ class RegisterController extends Controller
         $user->generalSettings()->create();
         $user->log()->create();
         $user->variables()->create();
+        createUserPrivacy($user);
 
         event(new Registered($user));
 
