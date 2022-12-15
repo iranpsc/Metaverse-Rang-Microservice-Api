@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AssetHelper;
+use App\Http\Requests\UpdatePrivacyRequest;
 use App\Http\Resources\LatestTransactionResource;
 use App\Http\Resources\PrivacyResource;
 use App\Http\Resources\UserResource;
@@ -60,11 +61,7 @@ class DashboardController extends Controller
         return new PrivacyResource($request->user()->privacy);
     }
 
-    public function updatePrivacySettings(Request $request) {
-        $request->validate([
-            'setting' => 'required',
-            'value' => 'required|numeric|min:0|max:1'
-        ]);
+    public function updatePrivacySettings(UpdatePrivacyRequest $request) {
         Privacy::updateOrCreate(
             [
                 'user_id' => $request->user()->id ,
