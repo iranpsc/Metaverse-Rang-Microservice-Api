@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Hash;
 
 class DynastyController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse|DynastyResource
     {
         $dynasty = Dynasty::with(['family', 'family.familyMembers'])
             ->where('user_id', request()->user()->id)

@@ -459,4 +459,12 @@ class User extends Authenticatable implements MustVerifyEmail
         $url = 'https://rgb.irpsc.com/metaverse/reset-password?token=' . $token;
         $this->notify(new sendPasswordResetNotification($url));
     }
+
+    /**
+     * @return HasMany
+     */
+    public function questionAnswers(): HasMany
+    {
+        return $this->hasMany(UserQuestionAnswer::class);
+    }
 }

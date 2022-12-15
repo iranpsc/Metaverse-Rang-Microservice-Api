@@ -5,7 +5,9 @@ use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\Challenge\QuestionController;
 use App\Http\Controllers\CustomController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Dynasty\AcceptJoinRequestController;
@@ -23,18 +25,18 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KycController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResetInfo\ResetEmailController;
 use App\Http\Controllers\ResetInfo\ResetPhoneController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SystemVariableController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserEventsController;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\PublicProfileController;
-use App\Models\Notification;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +50,7 @@ use App\Models\Notification;
 */
 
 
-Route::middleware(['api', 'check.ip'])->group(function () {
+Route::middleware(['api'])->group(function () {
     Route::controller(HomeController::class)->group(function () {
         Route::get('/home', 'index');
         Route::get('/get-user-info/{user}', 'showUserDetails');
@@ -291,4 +293,17 @@ Route::any('/order/callback/{order}', [OrderController::class, 'callback'])->nam
 
 Route::controller(PublicProfileController::class)->prefix('citizen')->group(function () {
     Route::get('/{code}', 'home');
+});
+
+
+Route::prefix('/challenge')->middleware('auth:sanctum')->group(function () {
+    Route::get('/timings', [SystemVariableController::class, 'index']);
+    Route::get('/question', [QuestionController::class, 'index']);
+    Route::post('/{question}/answer/{questionAnswer}',[QuestionController::class,'answerQuestion']);
+    Route::get('/truncate-users',function (){
+        \App\Models\UserQuestionAnswer::truncate();
+        return response()->json([
+            'message' => 'done'
+        ]);
+    });
 });

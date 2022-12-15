@@ -6,18 +6,18 @@ use App\Events\LogedIn;
 use App\Events\UserStatusChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
-use App\Http\Resources\UserResource;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -53,7 +53,7 @@ class LoginController extends Controller
                     $user->update(['last_seen' => now()]);
                     $user->token = $user->createToken('token-' . $user->id)->plainTextToken;
                     $user->ip = $request->ip();
-
+//                    dd($user->token);
                     LogedIn::dispatch($user);
 
                     broadcast(new UserStatusChanged([
@@ -78,6 +78,15 @@ class LoginController extends Controller
                 ]);
             }
         }
+    }
+
+    /**
+     * @param User $user
+     * @return string
+     */
+    private function throttle(User $user): string
+    {
+        return Str::random(10) . '_' . $user->email;
     }
 
     /**
@@ -107,14 +116,5 @@ class LoginController extends Controller
             'status' => 'offline'
         ]));
         return response('شما با موفقیت خارج شدید', 200);
-    }
-
-    /**
-     * @param User $user
-     * @return string
-     */
-    private function throttle(User $user): string
-    {
-        return Str::random(10) . '_' . $user->email;
     }
 }
