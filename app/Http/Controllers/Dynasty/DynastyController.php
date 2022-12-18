@@ -22,8 +22,8 @@ class DynastyController extends Controller
         $dynasty = Dynasty::with(['family', 'family.familyMembers'])
             ->where('user_id', request()->user()->id)
             ->first();
-        if (!$dynasty) {
-            return response()->json(['error' => 'شما سلسله ندارید!'], 404);
+        if (is_null($dynasty)) {
+            return response()->json(['message' => 'شما سلسله ندارید!'], 404);
         }
         return new DynastyResource($dynasty);
     }
