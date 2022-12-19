@@ -47,22 +47,22 @@ class JoinDynastyNotification extends Notification implements ShouldQueue
     {
         switch ($this->data['type']) {
             case 'requester_confirmation_message':
-                return (new SenderConfirmationMail($this->data['title'], $this->data['message']))
+                return (new SenderConfirmationMail($this->data['title'], $this->data['request']))
                     ->from('rgb@gmail.com', 'متارنگ')
                     ->to($notifiable->email);
                 break;
             case 'reciever_message':
-                return (new RecieverConfirmationMail($this->data['title'], $this->data['message']))
+                return (new RecieverConfirmationMail($this->data['title'], $this->data['request']))
                     ->from('rgb@gmail.com')
                     ->to($notifiable->email);
                 break;
             case 'requester_accept_message':
-                return (new SenderConfirmationMail($this->data['title'], $this->data['message']))
+                return (new SenderConfirmationMail($this->data['title'], $this->data['request']))
                     ->from('rgb@gmail.com', 'متارنگ')
                     ->to($notifiable->email);
                 break;
             case 'reciever_accept_message':
-                return (new RecieverConfirmationMail($this->data['title'], $this->data['message']))
+                return (new RecieverConfirmationMail($this->data['title'], $this->data['request']))
                     ->from('rgb@gmail.com')
                     ->to($notifiable->email);
                 break;

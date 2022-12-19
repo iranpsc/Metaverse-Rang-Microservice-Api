@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Channels\SmsChannel;
+use App\Mail\SellRequestMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -17,11 +18,12 @@ class SellRequestNotification extends Notification implements ShouldQueue
      * @return void
      */
 
-     public $feature_id;
+    public $feature;
 
-    public function __construct($feature_id)
+    public function __construct($feature)
     {
-        $this->feature_id = $feature_id;
+        $this->feature = $feature;
+        $this->afterCommit();
     }
 
     /**
@@ -32,7 +34,7 @@ class SellRequestNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return [SmsChannel::class];
+        return [SmsChannel::class, 'mail'];
     }
 
     /**
@@ -42,10 +44,24 @@ class SellRequestNotification extends Notification implements ShouldQueue
      * @return array
      */
 
-    public function toSms($notifiable) {
+    public function toMail($notifiable)
+    {
+        return (new SellRequestMail($this->feature))
+            ->to($notifiable->email);
+    }
+
+    /**
+     * Send SMS Notification.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+
+    public function toSms($notifiable)
+    {
         return [
             'phone' => $notifiable->phone,
-            'token' => $this->feature_id,
+            'token' => $this->feature->properties->id,
             'template' => 'sell-request',
         ];
     }

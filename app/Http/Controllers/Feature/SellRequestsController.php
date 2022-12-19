@@ -121,7 +121,7 @@ class SellRequestsController extends Controller
             'rgb' => $feature->properties->rgb,
         ]));
 
-        $request->user()->notify(new SellRequestNotification($feature->properties->id));
+        $request->user()->notify(new SellRequestNotification($feature));
 
         $sellRequest->message = 'ملک مورد نظر با موفقیت به فروش گذاشته شد';
         return new SellRequestResource($sellRequest);

@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Channels\SmsChannel;
+use App\Mail\BuyRequestSentMail;
 use App\Models\BuyFeatureRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,7 +20,7 @@ class BuyRequestNotification extends Notification implements ShouldQueue
      * @return void
      */
 
-    public $data, $buyFeatureRequest;
+    public $data;
 
     public function __construct($data)
     {
@@ -35,7 +36,13 @@ class BuyRequestNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return [SmsChannel::class, 'database'];
+        return [SmsChannel::class, 'database', 'mail'];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new BuyRequestSentMail($this->data['buyRequest']))
+            ->to($notifiable->email);
     }
 
     public function toSms($notifiable)

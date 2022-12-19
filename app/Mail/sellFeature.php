@@ -33,7 +33,7 @@ class sellFeature extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'فروش زمین',
+            subject: 'متارنگ | فروش زمین',
         );
     }
 

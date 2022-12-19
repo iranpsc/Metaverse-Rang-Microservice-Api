@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Constants\FamilyMembersType;
+use ChildrenPermissions;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -27,7 +28,13 @@ class SendJoinRequest extends FormRequest
     {
         $data = [
             'to_user' => 'required|string',
-            'relationship' => ['required', Rule::in(FamilyMembersType::toArray())]
+            'relationship' => ['required', Rule::in(FamilyMembersType::toArray())],
+            'permissions' => 'required_if:relationship,offspring|array|',
+            'permissions.*' => [
+                'distinct',
+                Rule::in(ChildrenPermissions::toArray()),
+                'required_if:relationship,offspring'
+            ],
         ];
         if ($this->get('relationship') == FamilyMembersType::FATHER) {
             if ($this->has('no_father')) {
