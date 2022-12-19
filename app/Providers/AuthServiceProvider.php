@@ -61,7 +61,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         VerifyEmail::toMailUsing(function ($notifiable, $url) {
-            return (new Mail($url))
+            return (new Mail($url, $notifiable->email))
                 ->from('rgb@gmail.com')
                 ->to($notifiable->email)
                 ->subject('تایید آدرس ایمیل');

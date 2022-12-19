@@ -100,7 +100,7 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity
     });
 
     Route::controller(FeatureController::class)->middleware('account.security')->scopeBindings()->group(function () {
-        Route::prefix('my-features')->group(function() {
+        Route::prefix('my-features')->group(function () {
             Route::withoutMiddleware('account.security')->group(function () {
                 Route::get('/', 'index');
                 Route::get('/{user}/features/{feature}', 'show')
@@ -301,11 +301,11 @@ Route::controller(PublicProfileController::class)->prefix('citizen')->group(func
 });
 
 
-Route::prefix('/challenge')->middleware('auth:sanctum')->group(function () {
+Route::prefix('/challenge')->middleware(['api', 'auth:sanctum', 'check.ip'])->group(function () {
     Route::get('/timings', [SystemVariableController::class, 'index']);
     Route::get('/question', [QuestionController::class, 'index']);
-    Route::post('/{question}/answer/{questionAnswer}',[QuestionController::class,'answerQuestion']);
-    Route::get('/truncate-users',function (){
+    Route::post('/{question}/answer/{questionAnswer}', [QuestionController::class, 'answerQuestion']);
+    Route::get('/truncate-users', function () {
         \App\Models\UserQuestionAnswer::truncate();
         return response()->json([
             'message' => 'done'

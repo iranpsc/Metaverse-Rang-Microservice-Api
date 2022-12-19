@@ -327,25 +327,25 @@
                         </div>
                     </div>
                     <div class="flex flex-col gap-3 text-left w-1-2">
-                        <span>{{ \Morilog\Jalali\Jalalian::forge($feature->latestTraded->created_at)->format('Y/m/d') }}</span>
-                        <span>{{ \Morilog\Jalali\Jalalian::forge($feature->latestTraded->created_at)->format('H:m:s') }}</span>
+                        <span>{{ \Morilog\Jalali\Jalalian::forge($buyRequest->created_at)->format('Y/m/d') }}</span>
+                        <span>{{ \Morilog\Jalali\Jalalian::forge($buyRequest->created_at)->format('H:m:s') }}</span>
                     </div>
                 </div>
                 <div class="font-bold flex flex-col gap-8 justify-center mt-5 items-center text-xl">
-                    <span class="text-sky-600 text-3xl">{{ $feature->properties->id }}</span>
-                    <span style="color:#707070"> متارنگ | زمینی خریداری شده است </span>
+                    <span class="text-sky-600 text-3xl">{{ $buyRequest->feature->properties->id }}</span>
+                    <span style="color:#707070">پیشنهادی برای خرید زمین شما ثبت شده است</span>
                 </div>
                 <div class="w-full mt-8 border border-gray-400 border-solid">
                     <div class="flex flex-col ">
                         <div class="flex gap-2 border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-400">
                             <div
                                 class="flex justify-between w-1-2 border-gray-400 border-l border-t-0 border-r-0 border-b-0 border-solid px-1 py-2">
-                                <span>تاریخ خرید</span>
-                                <span>{{ \Morilog\Jalali\Jalalian::forge($feature->latestTraded->created_at)->format('Y/m/d') }}</span>
+                                <span>تاریخ پیشنهاد</span>
+                                <span>{{ \Morilog\Jalali\Jalalian::forge($buyRequest->created_at)->format('Y/m/d') }}</span>
                             </div>
                             <div class="flex justify-between w-1-2 pl-1 py-2">
-                                <span>ساعت خرید</span>
-                                <span>{{ \Morilog\Jalali\Jalalian::forge($feature->latestTraded->created_at)->format('H:m:s') }}</span>
+                                <span>ساعت پیشنهاد</span>
+                                <span>{{ \Morilog\Jalali\Jalalian::forge($buyRequest->created_at)->format('H:m:s') }}</span>
                             </div>
                         </div>
                         <div class="border-t border-r-0 border-l-0 border-b-0 border-solid border-gray-400  flex flex-col "
@@ -357,28 +357,28 @@
                             <div
                                 class=" justify-between flex text-gray-500 text-lg border-gray-400 border-t-0 border-r-0 border-l-0 border-b border-solid py-2 px-2">
                                 <span> آدرس</span>
-                                <span style="font-size: 14px;">{{ $feature->properties->address }}</span>
+                                <span style="font-size: 14px;">{{ $buyRequest->feature->properties->address }}</span>
                             </div>
                             <div
                                 class=" justify-between flex text-gray-500 text-lg border-gray-400 border-t-0 border-r-0 border-l-0 border-b border-solid py-2 px-2">
-                                <span> متراژ کل</span>
-                                <span>{{ $feature->properties->stability }}</span>
+                                <span> متراژ زمین</span>
+                                <span>620</span>
                             </div>
                             <div
                                 class=" justify-between flex text-gray-500 text-lg border-gray-400 border-t-0 border-r-0 border-l-0 border-b border-solid py-2 px-2">
                                 <span> شناسه زمین</span>
-                                <span>{{ $feature->properties->id }}</span>
+                                <span>{{ $buyRequest->feature->properties->id }}</span>
                             </div>
                             <div class="w-full flex">
                                 <div
                                     class="w-1-2 justify-between flex text-gray-500 border-gray-400 text-lg border-t-0 border-r-0 border-l border-b border-solid py-2 px-2">
                                     <span> کاربری زمین</span>
-                                    <span>{{ \App\Helpers\FeatureHelper::getFeatureName($feature) }}</span>
+                                    <span>{{ \App\Helpers\FeatureHelper::getFeatureName($buyRequest->feature) }}</span>
                                 </div>
                                 <div
                                     class="w-1-2 justify-between flex text-gray-500 border-gray-400 text-lg border-t-0 border-r-0 border-l-0 border-b border-solid py-2 px-2">
                                     <span> تراکم</span>
-                                    <span>{{ $feature->properties->density }}</span>
+                                    <span>{{ $buyRequest->feature->properties->density }}</span>
                                 </div>
                             </div>
                             <div class="h-40">
@@ -391,32 +391,31 @@
                             <div
                                 class=" justify-between flex text-gray-500 text-lg border-t-0 border-gray-400 border-r-0 border-l-0 border-b border-solid py-2 px-2">
                                 <span>شناسه مالک زمین</span>
-                                <span
-                                    class="text-sky-600 font-bold">{{ \Illuminate\Support\Str::upper($feature->owner->code) }}</span>
+                                <span class="text-sky-600 font-bold">{{ \Illuminate\Support\Str::upper($buyRequest->feature->owner->code) }}</span>
                             </div>
                             <div class="flex justify-between px-2 py-2 items-center ">
                                 <div class="flex items-center">
-                                    <span class="text-lg">مبلغ پرداخت شده </span>
+                                    <span class="text-lg">مبلغ پیشنهاد شده </span>
                                 </div>
-                                @if ($feature->latestTraded->seller->code === 'hm-2000000')
-                                    <div class="flex items-center flex-col gap-3">
-                                        <span>رنگ {{ \App\Helpers\FeatureHelper::getFeatureColor($feature) }}</span>
-                                    </div>
-                                    <div class="flex items-center flex-col gap-3">
-                                        <span>{{ number_format($feature->properties->stability) }}</span>
-                                    </div>
-                                @else
-                                    <div class="flex items-center flex-col gap-3">
-                                        <span>PSC</span>
-                                        <span>ریال</span>
-                                    </div>
-                                    <div class="flex items-center flex-col gap-3">
-                                        <span>{{ number_format($feature->latestTraded->psc_amount) }}</span>
-                                        <span>{{ number_format($feature->latestTraded->irr_amount) }}</span>
-                                    </div>
-                                @endif
+                                <div class="flex items-center flex-col gap-3">
+                                    <span>PSC</span>
+                                    <span>ریال</span>
+                                </div>
+                                <div class="flex items-center flex-col gap-3">
+                                    <span>{{ number_format($buyRequest->price_psc) }}</span>
+                                    <span>{{ number_format($buyRequest->price_irr) }}</span>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="flex justify-center mt-5">
+                    <div class="w-max flex text-center items-center border border-solid justify-center no-underline box-shadow-red "
+                        style="border-color:rgb(240, 15, 15) ;">
+                        <a href="#" class="w-full no-underline font-bold py-1 px-4   text-xl"
+                            style="color:#707070">
+                            لغو پیشنهاد
+                        </a>
                     </div>
                 </div>
 

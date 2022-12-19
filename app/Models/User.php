@@ -457,7 +457,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendPasswordResetNotification($token)
     {
         $url = 'https://rgb.irpsc.com/metaverse/reset-password?token=' . $token;
-        $this->notify(new sendPasswordResetNotification($url));
+        $this->notify(new sendPasswordResetNotification($url, $this));
     }
 
     /**

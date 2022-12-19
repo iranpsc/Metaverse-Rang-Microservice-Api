@@ -33,7 +33,7 @@
     position: absolute !important;
 }
 .box-shadow-green{
-    box-shadow: 0 0 5px 0 rgb(25, 228, 25) !important;
+    box-shadow: 0 0 10px 1px rgb(25, 228, 25) !important;
 }
 .m-0 {
     margin: 0 !important;
@@ -62,6 +62,9 @@
 .h-14 {
     height: 56px !important;
 }
+.h-40 {
+    height: 160px !important;
+}
 .w-full {
     width: 100% !important;
 }
@@ -83,9 +86,6 @@
 .items-center {
     align-items: center !important;
 }
-.justify-end {
-    justify-content: flex-end !important;
-}
 .justify-center {
     justify-content: center !important;
 }
@@ -100,9 +100,6 @@
 }
 .gap-8 {
     gap: 32px !important;
-}
-.gap-y-8 {
-    row-gap: 32px !important;
 }
 .border-2 {
     border-width: 2px !important;
@@ -161,30 +158,16 @@
     padding-top: 4px !important;
     padding-bottom: 4px !important;
 }
-.px-10 {
-    padding-left: 40px !important;
-    padding-right: 40px !important;
+.px-2 {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
 }
-.px-3 {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-}
-.px-7 {
-    padding-left: 28px !important;
-    padding-right: 28px !important;
-}
-.px-9 {
-    padding-left: 36px !important;
-    padding-right: 36px !important;
+.px-4 {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
 }
 .pl-1 {
     padding-left: 4px !important;
-}
-.pt-10 {
-    padding-top: 40px !important;
-}
-.pb-5 {
-    padding-bottom: 20px !important;
 }
 .text-left {
     text-align: left !important;
@@ -195,6 +178,9 @@
 .text-xl {
     font-size: 20px !important;
 }
+.text-3xl {
+    font-size: 30px !important;
+}
 .text-lg {
     font-size: 18px !important;
 }
@@ -204,11 +190,11 @@
 .text-gray-600 {
     color: #4b5563 !important;
 }
+.text-sky-600 {
+    color: #0284c7 !important;
+}
 .text-gray-500 {
     color: #6b7280 !important;
-}
-.text-red-700 {
-    color: #b91c1c !important;
 }
 .no-underline {
     text-decoration-line: none !important;
@@ -225,6 +211,9 @@
 .base-box-shadow{
     box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.61);
 }
+.box-shadow-red{
+    box-shadow: 0 0 7px 0 red;
+}
 /* Your custom utility classes */
 /*
  * Here is where you can define your custom utility classes.
@@ -238,7 +227,7 @@
 </style>
 
 </head>
-<body class="m-0 p-0 w-full word-break-break-word -webkit-font-smoothing-antialiased "style="background-color:#ffffff;">
+<body class="m-0 p-0 w-full word-break-break-word -webkit-font-smoothing-antialiased" style="background-color: white;">
 
     <div class="hidden">
       برای تایید شدن ایمیل حود را باورکنید
@@ -248,7 +237,7 @@
 
     <div style="justify-content: center;
     display: flex;">
-        <div dir="rtl" class="text-gray-500  border border-solid border-gray-400 base-box-shadow"style="width: 320px; position: relative; padding: 12px 12px 60px 12px;">
+        <div dir="rtl" class="text-gray-500  border border-solid border-gray-400 base-box-shadow"style="width: 320px; position: relative; padding: 12px 12px 60px 12px;height: auto ;">
             <div style="position: absolute; bottom: 0; left:5px ;width: 80px;">
                 <a href="https://rgb.irpsc.com " target="_blank">
                     <img src="./images/metargb-500.png" alt="" style="width: 80px;">
@@ -260,62 +249,90 @@
                    <img src="./images/robot-rgb.png" alt="" class="border border-solid border-gray-400 aspect-square w-14 h-14">
                </div>
                <div>
-                 <span class="font-bold text-xl" style="color: #707070;">ربات متارنگ</span>
+                 <span class="font-bold text-xl">ربات متارنگ</span>
                </div>
             </div>
             <div class="flex flex-col gap-3 text-left w-1-2">
-              <span>{{ \Morilog\Jalali\Jalalian::forge(now())->format('Y/m/d') }}</span>
-              <span>{{ \Morilog\Jalali\Jalalian::forge(now())->format('H:m:s') }}</span>
+              <span>{{ \Morilog\Jalali\Jalalian::forge($buyRequest->created_at)->format('Y/m/d') }}</span>
+              <span>{{ \Morilog\Jalali\Jalalian::forge($buyRequest->created_at)->format('H:m:s') }}</span>
             </div>
             </div>
-            <div class="font-bold flex flex-col gap-8 justify-center mt-5 items-center ">
-              <span>{{ $email }}</span>
-              <span >دنیای موازی متارنگ مشتاق دیدار شما است</span>
+            <div class="font-bold flex flex-col gap-8 justify-center mt-5 items-center text-xl">
+              <span class="text-sky-600 text-3xl">{{ $buyRequest->feature->properties->id }}</span>
+              <span style="color:#707070"> پیشنهادی برای خرد یک زمین ارسال کرده اید  </span>
             </div>
-            <div class="w-full mt-8 border border-gray-400 border-solid ">
+            <div class="w-full mt-8 border border-gray-400 border-solid">
                <div class="flex flex-col ">
                  <div class="flex gap-2 border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-400">
                    <div class="flex justify-between w-1-2 border-gray-400 border-l border-t-0 border-r-0 border-b-0 border-solid px-1 py-2">
-                     <span>تاریخ ارسال</span>
-                     <span>{{ \Morilog\Jalali\Jalalian::forge(now())->format('Y/m/d') }}</span>
+                     <span>تاریخ پیشنهاد</span>
+                     <span>{{ \Morilog\Jalali\Jalalian::forge($buyRequest->created_at)->format('Y/m/d') }}</span>
                    </div>
                    <div class="flex justify-between w-1-2 pl-1 py-2">
-                     <span>ساعت ارسال</span>
-                     <span>{{ \Morilog\Jalali\Jalalian::forge(now())->format('H:m:s') }}</span>
+                     <span>ساعت پیشنهاد</span>
+                     <span>{{ \Morilog\Jalali\Jalalian::forge($buyRequest->created_at)->format('H:m:s') }}</span>
                    </div>
                  </div>
-                 <div class="border-t border-r-0 border-l-0 border-b-0 border-gray-400 border-solid  pt-10 flex flex-col gap-y-8" style="margin-top: 1px;">
-                   <span class="items-center justify-center flex text-gray-500 text-lg" style="text-align:center ;padding-left: 8px;padding-right: 8px;">
-                     جهت ثبت نهایی باید اییمیل خود را از طریق دکمه زیر احراز کنید
+                 <div class="border-t border-r-0 border-l-0 border-b-0 border-solid border-gray-400  flex flex-col " style="margin-top: 1px;">
+                   <span class=" items-center justify-center flex text-gray-500 border-gray-400 text-lg border-t-0 border-r-0 border-l-0 border-b border-solid py-1">
+                     مشخصات زمین
                    </span>
-                   <div class="flex justify-center">
-                         <div class="w-max flex text-center items-center justify-center no-underline box-shadow-green border border-solid" style="border-color:rgba(19, 219, 19, 0.829)">
-                             <a href="{{ $url }}" class="w-full no-underline font-bold py-1 px-10  text-xl"style="color: #707070">
-                               احراز ایمیل
-                             </a>
-                         </div>
+                   <div class=" justify-between flex text-gray-500 text-lg border-gray-400 border-t-0 border-r-0 border-l-0 border-b border-solid py-2 px-2">
+                     <span> آدرس</span>
+                     <span style="font-size: 14px;">{{ $buyRequest->feature->properties->address }}</span>
                    </div>
-                   <div class="px-3">
-                     <span class="text-lg ">لینک احراز ایمیل</span>
+                   <div class=" justify-between flex text-gray-500 text-lg border-gray-400 border-t-0 border-r-0 border-l-0 border-b border-solid py-2 px-2">
+                     <span> متراژ کل</span>
+                     <span>{{ $buyRequest->feature->properties->stability }}</span>
                    </div>
-                   <div class="justify-end text-left px-3 pb-5">
-                     <a href="{{ $url }}" class="no-underline">{{ $url }}</a>
+                   <div class=" justify-between flex text-gray-500 text-lg border-gray-400 border-t-0 border-r-0 border-l-0 border-b border-solid py-2 px-2">
+                     <span>  شناسه زمین</span>
+                     <span>{{ $buyRequest->feature->properties->id }}</span>
                    </div>
+                  <div class="w-full flex">
+                   <div class="w-1-2 justify-between flex text-gray-500 border-gray-400 text-lg border-t-0 border-r-0 border-l border-b border-solid py-2 px-2">
+                     <span> کاربری زمین</span>
+                     <span>{{ \App\Helpers\FeatureHelper::getFeatureName($buyRequest->feature) }}</span>
+                   </div>
+                   <div class="w-1-2 justify-between flex text-gray-500 border-gray-400 text-lg border-t-0 border-r-0 border-l-0 border-b border-solid py-2 px-2">
+                     <span> تراکم</span>
+                     <span>{{ $buyRequest->feature->properties->density }}</span>
+                   </div>
+                  </div>
+                 <div class="h-40">
+
+                 </div>
+                 <span class=" items-center justify-center border-gray-400 flex text-gray-500 text-lg border-t border-r-0 border-l-0 border-b border-solid py-2">
+                   مشخصات خریدار
+                 </span>
+                 <div class=" justify-between flex text-gray-500 text-lg border-t-0 border-gray-400 border-r-0 border-l-0 border-b border-solid py-2 px-2">
+                   <span>شناسه مالک زمین</span>
+                   <span class="text-sky-600 font-bold">{{\Illuminate\Support\Str::upper($buyRequest->feature->owner->code)}}</span>
+                 </div>
+                 <div class="flex justify-between px-2 py-2 items-center ">
+                     <div class="flex items-center">
+                       <span class="text-lg">مبلغ پیشنهاد شده </span>
+                     </div>
+                     <div class="flex items-center flex-col gap-3">
+                       <span>PSC</span>
+                       <span>ریال</span>
+                     </div>
+                     <div class="flex items-center flex-col gap-3">
+                       <span>{{ number_format($buyRequest->price_psc) }}</span>
+                       <span>{{ number_format($buyRequest->price_irr) }}</span>
+                     </div>
+                 </div>
                  </div>
                </div>
             </div>
-            <div class="flex flex-col justify-center">
-               <span class="text-red-700  text-xl mt-5 " style="text-align: center;">
-                 پس از گذشت 24 ساعت ایمیل ارسالی منقضی میشود و برای ورود نیاز به ثبت نام مجدد میباشد
-               </span>
-               <div class="flex justify-center mt-8">
-                 <div class="w-max flex text-center items-center justify-center no-underline box-shadow-green border border-solid" style="border-color:rgba(19, 219, 19, 0.829)">
-                     <a href="https://rgb.irpsc.com/metaverse" class="w-full no-underline font-bold py-1 px-9  text-xl" style="color: #707070">
-                        ثبت نام جدید
-                     </a>
-                 </div>
+            <div class="flex justify-center mt-5">
+                <div class="w-max flex text-center items-center border border-solid justify-center no-underline box-shadow-red " style="border-color:rgb(240, 15, 15) ;">
+                    <a href="https://rgb.irpsc.com/metaverse" class="w-full no-underline font-bold py-1 px-4   text-xl" style="color:#707070">
+                          لغو پیشنهاد
+                    </a>
+                </div>
            </div>
-            </div>
+
          </div>
     </div>
 

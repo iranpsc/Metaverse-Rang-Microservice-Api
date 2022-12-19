@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail\Dynasty;
+namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RecieverConfirmationMail extends Mailable
+class BuyRequestSentMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,12 +19,11 @@ class RecieverConfirmationMail extends Mailable
      * @return void
      */
 
-    public $title, $request;
+    public $buyRequest;
 
-    public function __construct($title, $request)
+    public function __construct($buyRequest)
     {
-        $this->request = $request;
-        $this->title = $title;
+        $this->buyRequest = $buyRequest;
     }
 
     /**
@@ -35,7 +34,7 @@ class RecieverConfirmationMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: $this->title,
+            subject: 'ارسال درخواست پیشنهاد خرید',
         );
     }
 
@@ -47,7 +46,7 @@ class RecieverConfirmationMail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'mail.reciever-confirmation-mail',
+            view: 'mail.buy-request-sent',
         );
     }
 
@@ -58,7 +57,6 @@ class RecieverConfirmationMail extends Mailable
      */
     public function attachments()
     {
-        return [
-        ];
+        return [];
     }
 }

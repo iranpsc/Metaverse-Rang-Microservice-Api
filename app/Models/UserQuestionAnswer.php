@@ -16,6 +16,31 @@ class UserQuestionAnswer extends Model
     protected $guarded = [];
 
     /**
+     * @param $question_id
+     * @param $user_id
+     * @return mixed
+     */
+    public static function userAnsweredToThisQuestion($question_id, $user_id)
+    {
+        return self::where('question_id', $question_id)->where('user_id', $user_id)->exists();
+    }
+
+    public static function userLastAnswer($question_id, $user_id)
+    {
+        return self::where('question_id', $question_id, $user_id)->latest()->first();
+    }
+
+    public static function totalAnswersCount($question_id)
+    {
+        return self::where('question_id', $question_id)->count();
+    }
+
+    public static function eachAnswerVotes($answer_id)
+    {
+        return self::where('question_answer_id', $answer_id)->count();
+    }
+
+    /**
      * @return BelongsTo
      */
     public function user(): BelongsTo

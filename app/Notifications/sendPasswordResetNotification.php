@@ -16,10 +16,9 @@ class sendPasswordResetNotification extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public $url;
-    public function __construct(string $url)
+    public function __construct(private string $url, private $user)
     {
-        $this->url = $url;
+        //
     }
 
     /**
@@ -41,7 +40,7 @@ class sendPasswordResetNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new PasswordResetMail($this->url))
+        return (new PasswordResetMail($this->url, $this->user))
             ->to($notifiable->getEmailForPasswordReset());
     }
 

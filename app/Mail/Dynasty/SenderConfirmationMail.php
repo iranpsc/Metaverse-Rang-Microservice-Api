@@ -18,11 +18,11 @@ class SenderConfirmationMail extends Mailable
      *
      * @return void
      */
-    public $title, $msg;
+    public $title, $request;
 
-    public function __construct($title, $msg)
+    public function __construct($title, $request)
     {
-        $this->msg = $msg;
+        $this->request = $request;
         $this->title = $title;
     }
 

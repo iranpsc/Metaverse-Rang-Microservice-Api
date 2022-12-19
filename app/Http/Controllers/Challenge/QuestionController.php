@@ -52,48 +52,83 @@ class QuestionController extends Controller
      */
     public function answerQuestion(Question $question, QuestionAnswer $questionAnswer): JsonResponse
     {
-        $userLastAnswer = UserQuestionAnswer::where('question_id', $question->id)->where('user_id', auth()->user()->id)->latest()->first();
-        if ($userLastAnswer->updated_at->addMinutes(10) > now() || $userLastAnswer->created_at->addMinutes(10) > now()) {
+        $userLastAnswerToThisQuestion = UserQuestionAnswer::userAnsweredToThisQuestion($question->id, auth()->user()->id);
+        if ($userLastAnswerToThisQuestion) {
+            $userLastAnswer = UserQuestionAnswer::userLastAnswer($question->id, auth()->user()->id);
+            if ($userLastAnswer->created_at->addMinutes(10) > now() || $userLastAnswer->updated_at->addMinutes(10) > now()) {
+                return response()->json([
+                    'status' => Response::HTTP_BAD_REQUEST,
+                    'message' => 'شما به تازگی به این سوال پاسخ داده اید',
+                ]);
+            }
+            $userAnswer = UserQuestionAnswer::create([
+                'question_id' => $question->id,
+                'question_answer_id' => $questionAnswer->id,
+                'user_id' => auth()->user()->id
+            ]);
+            $answersCount = [];
+            $percentages = [];
+            $usersCount = UserQuestionAnswer::where('question_id', $question->id)->count();
+            foreach ($question->answers as $answer) {
+                $voteCount = UserQuestionAnswer::where('question_answer_id', $answer->id)->count();
+                $answersCount[] = $voteCount;
+            }
+            foreach ($answersCount as $item) {
+                $percentage = ((int)$item * 100) / $usersCount;
+                $percentages[] = $percentage;
+            }
+            if ($questionAnswer->id != $question->correctAnswer->question_answer_id) {
+                return \response()->json([
+                    'status' => Response::HTTP_OK,
+                    'message' => 'پاسخ شما اشتباه بود',
+                    'question-answers' => $question->answers,
+                    'question-correct-answer' => $question->correctAnswer,
+                    'percentage' => $percentages,
+                ]);
+            }
+            $userPrize = auth()->user()->questionAnswers()->create([
+                'question_id' => $question->id,
+                'question_answer_id' => $questionAnswer->id,
+                'question_prize_id' => $question->questionPrize->first()->id
+            ]);
             return \response()->json([
-                'status' => Response::HTTP_BAD_REQUEST,
-                'message' => 'شما به تازگی به این سوال پاسخ داده اید',
-                'answer-status' => 'recently-answered'
-            ]);
-        }
-      $userAnswer =  $question->userQuestionAnswers()->create([
-            'question_answer_id' => $questionAnswer->id,
-            'user_id' => auth()->user()->id,
-        ]);
-        $usersCount = UserQuestionAnswer::where('question_id', $question->id)->count();
-        $questionAnswers = $question->answers;
-        $answersCount = [];
-        $percentages = [];
-        foreach ($questionAnswers as $answer) {
-            $voteCount = UserQuestionAnswer::where('question_answer_id', $answer->id)->count();
-            $answersCount[] = $voteCount;
-        }
-        foreach ($answersCount as $answer) {
-            $percentage = ((int)$answer * 100) / $usersCount;
-            $percentages[] = $percentage;
-        }
-        if ($question->correctAnswer->question_answer_id == $questionAnswer->id) {
-            $userAnswer->update([
-                'question_prize_id' => $question->questionPrize->id
-            ]);
-            return response()->json([
                 'status' => Response::HTTP_OK,
-                'answer-status' => 'correct',
                 'message' => 'پاسخ شما صحیح بود',
-                'correct-answer' => $question->correctAnswer,
-                'percentage' => $percentages,
+                'question-answers' => $question->answers,
+                'question-correct-answer' => $question->correctAnswer,
+                'percentage' => $percentages
             ]);
         }
-        return response()->json([
-            'status' => Response::HTTP_OK,
-            'answer-status' => 'wrong',
-            'message' => 'پاسخ شما صحیح نبود',
-            'correct-answer' => $question->correctAnswer,
-            'percentage' => $percentages,
+
+        UserQuestionAnswer::create([
+            'user_id' => auth()->user()->id,
+            'question_id' => $question->id,
+            'question_answer_id' => $questionAnswer->id,
+            'question_prize_id' => $question->questionPrize->first() ?? null,
         ]);
+
+        //calculation of answers percentage
+        $usersAnsweredCount = UserQuestionAnswer::totalAnswersCount($question->id);
+        $votesForEachAnswer = [];
+        foreach ($question->answers as $answer) {
+            $votesForEachAnswer[] = ((int)UserQuestionAnswer::eachAnswerVotes($answer->id) * 100) / $usersAnsweredCount;
+        }
+        if ($questionAnswer->id != $question->correctAnswer->id) {
+            return \response()->json([
+                'message' => 'پاسخ شما اشتباه بود',
+                'status' => Response::HTTP_OK,
+                'answers' => $question->answers,
+                'correct_answer' => $question->correctAnswer,
+                'percentages' => $votesForEachAnswer
+            ]);
+        }
+        return \response()->json([
+            'message' => 'پاسخ شما صحیح بود',
+            'status' => Response::HTTP_OK,
+            'answers' => $question->answers,
+            'correct_answer' => $question->correctAnswer,
+        ]);
+
+
     }
 }

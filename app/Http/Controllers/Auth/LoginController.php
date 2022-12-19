@@ -53,7 +53,6 @@ class LoginController extends Controller
                     $user->update(['last_seen' => now()]);
                     $user->token = $user->createToken('token-' . $user->id)->plainTextToken;
                     $user->ip = $request->ip();
-//                    dd($user->token);
                     LogedIn::dispatch($user);
 
                     broadcast(new UserStatusChanged([

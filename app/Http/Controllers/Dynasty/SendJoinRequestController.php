@@ -151,12 +151,14 @@ class SendJoinRequestController extends Controller
             $user->notify(new JoinDynastyNotification([
                 'type' => 'requester_confirmation_message',
                 'title' => 'پیام تایید ارسال درخواست پیوستن به سلسله',
+                'request' => $sentJoinRequest,
                 'message' => $senderConfirmationMessage
             ]));
             $sentJoinRequest->toUser->notify(new JoinDynastyNotification([
                 'type' => 'reciever_message',
                 'title' => 'پیام دریافتی درخواست پیوستن به سلسله',
-                'message' => $recieverMessage,
+                'request' => $sentJoinRequest,
+                'message' => $recieverMessage
             ]));
 
             $sentJoinRequest->update(['message' => $recieverMessage]);

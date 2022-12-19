@@ -29,6 +29,7 @@ class QuestionResource extends JsonResource
             'title' => $this->title,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'image' => $this->image->url,
             'answers' => $this->answers,
         ];
     }

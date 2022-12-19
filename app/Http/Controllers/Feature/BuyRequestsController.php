@@ -17,11 +17,13 @@ use App\Helpers\FeatureHelper;
 use App\Http\Resources\BuyRequestResource;
 use App\Models\Comission;
 use App\Http\Resources\FeatureResource;
+use App\Mail\BuyRequestRecievedMail;
 use App\Models\SellFeatureRequest;
 use App\Models\User;
 use App\Notifications\BuyFeatureNotification;
 use App\Notifications\BuyRequestNotification;
 use App\Notifications\sellFeature;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class BuyRequestsController extends Controller
@@ -78,7 +80,10 @@ class BuyRequestsController extends Controller
             'id' => $feature->properties->id,
             'price_psc' => $buyFeatureRequest->price_psc,
             'price_irr' => $buyFeatureRequest->price_irr,
+            'buyRequest' => $buyFeatureRequest,
         ]));
+
+        Mail::to($seller)->send(new BuyRequestRecievedMail($buyFeatureRequest));
 
         $message = 'درخواست خرید شما با موفقیت ثبت شد';
         $buyFeatureRequest->message = $message;
