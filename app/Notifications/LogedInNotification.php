@@ -43,7 +43,6 @@ class LogedInNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new logedInMail($notifiable))
-                ->from('rgb@metrang.com')
                 ->to($notifiable->email)
                 ->subject('ورود به حساب کاربری');
     }
