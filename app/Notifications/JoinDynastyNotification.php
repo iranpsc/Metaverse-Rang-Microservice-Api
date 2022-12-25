@@ -75,41 +75,11 @@ class JoinDynastyNotification extends Notification implements ShouldQueue
      */
     public function toDatabase($notifiable)
     {
-        switch ($this->data['type']) {
-            case 'requester_confirmation_message':
-                return [
-                    'sender-image' => 'https://dl.qzparadise.ir/public/metarang/logo.png',
-                    'sender-name' => 'متارنگ',
-                    'message' => $this->data['message']
-                ];
-                break;
-            case 'reciever_message':
-                return [
-                    'sender-image' => 'https://dl.qzparadise.ir/public/metarang/logo.png',
-                    'sender-name' => 'متارنگ',
-                    'message' => $this->data['message']
-                ];
-            case 'requester_accept_message':
-                return [
-                    'sender-image' => 'https://dl.qzparadise.ir/public/metarang/logo.png',
-                    'sender-name' => 'متارنگ',
-                    'message' => $this->data['message']
-                ];
-                break;
-            case 'reciever_accept_message':
-                return [
-                    'sender-image' => 'https://dl.qzparadise.ir/public/metarang/logo.png',
-                    'sender-name' => 'متارنگ',
-                    'message' => $this->data['message']
-                ];
-            case 'requester_reject_message':
-                return [
-                    'sender-image' => 'https://dl.qzparadise.ir/public/metarang/logo.png',
-                    'sender-name' => 'متارنگ',
-                    $this->data['message']
-                ];
-            default:
-                return [];
-        }
+        return [
+            'related-to' => 'dynasty-join-requests',
+            'sender-image' => 'https://dl.qzparadise.ir/public/metarang/logo.png',
+            'sender-name' => 'متارنگ',
+            'message' => $this->data['message']
+        ];
     }
 }

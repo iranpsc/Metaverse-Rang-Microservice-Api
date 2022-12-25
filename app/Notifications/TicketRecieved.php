@@ -61,8 +61,9 @@ class TicketRecieved extends Notification
     public function toArray($notifiable)
     {
         return [
+            'related-to' => 'tickets',
             'sender-image' => $this->image,
-            'sender' => $this->sender,
+            'sender-name' => $this->sender,
             'message' => $this->message,
         ];
     }

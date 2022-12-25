@@ -95,6 +95,7 @@ class sellFeature extends Notification implements ShouldQueue
             );
         }
         return [
+            'related-to' => 'transactions',
             'sender-name' => 'متارنگ',
             'sender-image' => 'https://dl.qzparadise.ir/public/metarang/logo.png',
             'message' => $message

@@ -161,7 +161,7 @@ class PersonalInfo extends JsonResource
                             ]),
                             $this->mergeWhen($this->customs?->passions?->politics_economy, [
 
-                                "politics_economy" =>  'https://dl.qzparadise.ir/public/customs/politics_economy',
+                                "politics_economy" =>  'https://dl.qzparadise.ir/public/customs/politics_economy.png',
                             ])
                         ]
                     ]),
