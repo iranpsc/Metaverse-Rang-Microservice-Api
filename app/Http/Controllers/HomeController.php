@@ -66,7 +66,7 @@ class HomeController extends Controller
                     ]
                 ];
             }),
-            'feature_hourly_profit_info' => $user && $user->features ?
+            'feature_hourly_profit_info' => $user && $user->features->count() > 0 ?
             hourlyProfitInfo($user) : null,
         ]);
     }
