@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
+use App\Models\Chat\Chat;
 use App\Models\Dynasty\childrenPermission;
 use App\Models\Dynasty\Dynasty;
 use App\Models\Dynasty\JoinRequest;
 use App\Models\Dynasty\RecievedPrize;
 use App\Models\Feature\FeatureHourlyProfit;
 use App\Models\Level\Level;
+use App\Models\Level\RecievedLevelPrize;
 use App\Models\Level\UserActivity;
 use App\Models\Level\UserLevel;
-use App\Models\Level\RecievedLevelPrize;
+use App\Models\User\Custom;
+use App\Models\User\UserEvent;
+use App\Models\User\UserVariable;
+use App\Notifications\sendPasswordResetNotification;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,11 +27,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\User\Custom;
-use App\Models\User\UserEvent;
-use App\Models\User\UserVariable;
-use App\Notifications\sendPasswordResetNotification;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -417,6 +418,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     // Dynasty
+
     /**
      * @return HasOne
      */
@@ -447,6 +449,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(RecievedPrize::class);
     }
+
     //
 
     public function latestResetRequest()
@@ -476,5 +479,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function bankAccounts()
     {
         return $this->morphMany(BankAccount::class, 'bankable');
+    }
+    /**
+     * @return HasMany
+     */
+    public function chats(): HasMany
+    {
+        return $this->hasMany(Chat::class, 'from_user');
     }
 }

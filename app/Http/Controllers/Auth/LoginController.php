@@ -54,7 +54,6 @@ class LoginController extends Controller
                     $user->token = $user->createToken('token-' . $user->id)->plainTextToken;
                     $user->ip = $request->ip();
                     LogedIn::dispatch($user);
-
                     broadcast(new UserStatusChanged([
                         'code' => $user->code,
                         'status' => 'online'
