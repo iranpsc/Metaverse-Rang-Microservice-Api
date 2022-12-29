@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Kyc;
+use App\Models\BankAccount;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class KycPolicy
+class BankAccountPolicy
 {
     use HandlesAuthorization;
 
@@ -25,12 +25,12 @@ class KycPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Kyc  $kyc
+     * @param  \App\Models\BankAccount  $bankAccount
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Kyc $kyc)
+    public function view(User $user, BankAccount $bankAccount)
     {
-        return $kyc->user->is($user);
+        return $bankAccount->bankable->is($user);
     }
 
     /**
@@ -41,41 +41,41 @@ class KycPolicy
      */
     public function create(User $user)
     {
-        return is_null($user->kyc);
+        return true;
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Kyc  $kyc
+     * @param  \App\Models\BankAccount  $bankAccount
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Kyc $kyc)
+    public function update(User $user, BankAccount $bankAccount)
     {
-        return $kyc->user->is($user) && !$user->verified();
+        return $bankAccount->bankable->is($user) && !$bankAccount->verified();
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Kyc  $kyc
+     * @param  \App\Models\BankAccount  $bankAccount
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Kyc $kyc)
+    public function delete(User $user, BankAccount $bankAccount)
     {
-        return $kyc->user->is($user) && !$user->verified();
+        return $bankAccount->bankable->is($user);
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Kyc  $kyc
+     * @param  \App\Models\BankAccount  $bankAccount
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Kyc $kyc)
+    public function restore(User $user, BankAccount $bankAccount)
     {
         //
     }
@@ -84,10 +84,10 @@ class KycPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Kyc  $kyc
+     * @param  \App\Models\BankAccount  $bankAccount
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Kyc $kyc)
+    public function forceDelete(User $user, BankAccount $bankAccount)
     {
         //
     }

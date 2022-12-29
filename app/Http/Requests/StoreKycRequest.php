@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class KycRequest extends FormRequest
+class StoreKycRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,39 +20,30 @@ class KycRequest extends FormRequest
      * Get the validation rules that apply to the request.
      *
      * @return array<string, mixed>
-     *
-     *
      */
-
-
     public function rules()
     {
         return [
-            'shaba' => 'required|ir_sheba',
-            'bank' => 'required|string',
-            'melli_card' => 'required|file|mimes:png,jpg',
-            'prove_picture' => 'required|file|mimes:png,jpg',
-            'resume' => 'nullable|file|mimes:png,jpg',
             'fname' => 'required|string|min:2',
             'lname' => 'required|string|min:2',
-            'father_name' => 'required|string',
-            'birthdate' => 'required|shamsi_date',
             'melli_code' => 'required|ir_national_code',
+            'birthdate' => 'required|shamsi_date',
+            'father_name' => 'required|string',
             'province' => 'required|string',
             'city' => 'required|string',
-            'number' => 'required|integer',
-            'postal_code' => 'required|ir_postal_code',
             'address' => 'required',
-            'site' => 'nullable|url'
+            'postal_code' => 'required|ir_postal_code',
+            'number' => 'required|integer',
+            'site' => 'nullable|url',
+            'melli_card' => 'required|image|max:1024',
+            'prove_picture' => 'required|image|max:1024',
+            'resume' => 'nullable|image|max:1024',
         ];
     }
 
     public function messages()
     {
         return [
-            'shaba.required' => 'شماره شبا را وارد کنید',
-            'shaba.ir_sheba' => 'شماره شباصحیح نمی باشد',
-            'bank.required' => 'نام بانک را وارد کنید',
             'melli_card.required' => 'تصویر کارت ملی را بارگذاری کنید',
             'melli_card.file' => 'تصویر کارت باید فایل باشد',
             'melli_card.mime' => 'تصویر کارت ملی باید با یکی از فرمتهای jpb یا png باشد',
@@ -80,106 +71,5 @@ class KycRequest extends FormRequest
             'site.url' => 'آدرس سایت وارد شده صحیح نمی باشد',
             'address.required' => 'آدرس را وارد کنید',
         ];
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFirstName(): mixed
-    {
-        return $this->get('fname');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastName(): mixed
-    {
-        return $this->get('lname');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFatherName(): mixed
-    {
-        return $this->get('father_name');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMeliCode(): mixed
-    {
-        return $this->get('melli_code');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProvience(): mixed
-    {
-        return $this->get('province');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCity(): mixed
-    {
-        return $this->get('city');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNumber(): mixed
-    {
-        return $this->get('number');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPostalCode(): mixed
-    {
-        return $this->get('postal_code');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAddress(): mixed
-    {
-        return $this->get('address');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSite(): mixed
-    {
-        return $this->get('site');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getShaba(): mixed
-    {
-        return $this->get('shaba');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBank(): mixed
-    {
-        return $this->get('bank');
-    }
-
-    public function getBirthdate()
-    {
-        return $this->get('birthdate');
     }
 }

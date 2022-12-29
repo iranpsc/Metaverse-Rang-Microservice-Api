@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\Challenge\QuestionController;
 use App\Http\Controllers\CustomController;
@@ -176,13 +177,8 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity
         Route::get('/close/{ticket}', 'close')->can('close', 'ticket');
     });
     Route::apiResource('notes', NoteController::class);
-
-    Route::controller(KycController::class)->prefix('kyc')->group(function () {
-        Route::get('/{kyc}', 'show')->can('view', 'kyc');
-        Route::post('/', 'store')->can('create', 'App\\Models\Kyc');
-        Route::put('/{kyc}', 'update')->can('update', 'kyc');
-        Route::delete('/{kyc}', 'destroy')->can('delete', 'kyc');
-    });
+    Route::apiResource('kyc', KycController::class);
+    Route::apiResource('bank-accounts', BankAccountController::class);
 
     Route::controller(SearchController::class)->group(function () {
         Route::post('search/users', 'users');

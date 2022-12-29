@@ -15,13 +15,7 @@ class KycResource extends JsonResource
     public function toArray($request)
     {
         return [
-            $this->mergeWhen(isset($this->message), [
-            'message' => $this->message ?? '',
-            ]),
             'id' => (string)$this->id,
-            'user_id' => $this->user_id,
-            'shaba' => $this->shaba,
-            'bank' => $this->bank,
             'melli_card' => $this->melli_card,
             'prove_picture' => $this->prove_picture,
             'resume' => $this->resume,
@@ -36,6 +30,10 @@ class KycResource extends JsonResource
             'postal_code' => $this->postal_code,
             'address' => $this->address,
             'site' => $this->site,
+            'status' => $this->status,
+            $this->mergeWhen($this->errors->count() > 0, [
+                'errors' => KycErrorsResource::collection($this->errors),
+            ])
         ];
     }
 }
