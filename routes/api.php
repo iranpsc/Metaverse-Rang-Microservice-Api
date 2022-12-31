@@ -87,8 +87,7 @@ Route::middleware(['api'])->group(function () {
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, '__invoke'])
     ->middleware(['signed'])->name('verification.verify');
 
-//'verified', 'check.ip', 'user.activity'
-Route::middleware(['auth:sanctum', 'api'])->group(function () {
+Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity'])->group(function () {
     Route::controller(DashboardController::class)->prefix('user')->group(function () {
         Route::get('/profile', 'index');
         Route::get('/payments/latest', 'getUserLatestTransaction');
