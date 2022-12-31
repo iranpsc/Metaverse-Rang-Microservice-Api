@@ -14,7 +14,7 @@ class Kernel extends HttpKernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
+        \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -77,8 +77,8 @@ class Kernel extends HttpKernel
      * @var string[]
      */
     protected $middlewarePriority = [
-//       \App\Http\Middleware\CheckIp::class,
-//        \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-//        \App\Http\Middleware\AccountSecurity::class,
+      \App\Http\Middleware\CheckIp::class,
+       \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+       \App\Http\Middleware\AccountSecurity::class,
     ];
 }
