@@ -17,6 +17,7 @@ class ResetInfoRequest extends FormRequest
     {
         $user = request()->user();
         $type = request()->has('phone') ? 'phone' : 'email';
+        return in_array($type, ['email', 'phone']) ? true : false;
         return Reset::resetInfo($user, $type)->count() >= 1 || !in_array($type, ['email', 'phone'])
             ? abort(401, sprintf('تعداد دفعات تغییر %s 1 بار می باشد!', $type == 'phone' ? 'تلفن همراه' : 'ایمیل')) : true;
     }
