@@ -24,7 +24,7 @@ class ResetPhoneController extends Controller
             'user_id' => $user->id,
             'code' => Hash::make($code)
         ]);
-        $user->notify(new GetOtpNotification($code));
+        $user->notify(new GetOtpNotification($code, $request->phone));
         return response()->json(['message' => 'کد تایید ارسال گردید. جهت ادامه کد تایید را وارد کنید.'], 200);
 
     }
