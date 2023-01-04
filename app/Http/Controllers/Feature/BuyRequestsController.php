@@ -59,6 +59,16 @@ class BuyRequestsController extends Controller
             ]);
         }
 
+        $totalRequestedPrice = $price_irr + $price_psc * currentPscPrice();
+        $totalFeaturePrice = $feature->properties->stability * currentColorPrice(AssetHelper::getAssetColor($feature));
+        if(isUnderEighteen($feature->owner)) {
+            if(($totalRequestedPrice / $totalFeaturePrice) / 100 < 110) {
+                abort(401, 'شما مجاز به ارسال پیشنهاد خرید به کمتر از 100% قیمت خرید ملک نمی باشید!');
+            }
+        }elseif(($totalRequestedPrice / $totalFeaturePrice) / 100 < 80) {
+            abort(401, 'شما مجاز به ارسال پیشنهاد خرید به کمتر از 80% قیمت خرید ملک نمی باشید!');
+        }
+
         $error = AssetHelper::checkErrors($buyer, $request, $feature);
 
         if (!empty($error)) {
