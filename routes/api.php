@@ -274,9 +274,10 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity
         });
     });
 
-    Route::controller(FeatureHourlyProfitController::class)->scopeBindings()->prefix('get-hourly-profits')->group(function () {
-        Route::get('/{karbari?}', 'getHourlyProfits');
-        Route::get('/{user}/features/{feature}', 'getHourlyProfit')->missing(function () {
+    Route::controller(FeatureHourlyProfitController::class)->scopeBindings()->prefix('hourly-profits')->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'getProfits');
+        Route::get('/{user}/features/{feature}', 'getProfit')->missing(function () {
             return response()->json([
                 'error' => 'درخواست نا معتبر است'
             ]);
