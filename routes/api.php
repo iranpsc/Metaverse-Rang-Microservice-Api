@@ -293,9 +293,6 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity
         Route::get('/report/close/{userEvent}', 'closeEventReport');
     });
 
-    Route::get('/ping', function () {
-    })->withoutMiddleware(['auth:sanctum', 'verified', 'check.ip']);
-
     Route::get('/notification-read/{notification}', function (Notification $notification) {
         $notification->update(['read_at' => now()]);
     });
@@ -315,6 +312,8 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity
         Route::post('/{question}/answer/{questionAnswer}', [QuestionController::class, 'answerQuestion']);
     });
 });
+
+Route::get('/ping', static fn() => null);
 
 Route::any('/order/callback/{order}', [OrderController::class, 'callback'])->name('order.callback');
 

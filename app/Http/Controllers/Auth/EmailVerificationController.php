@@ -14,12 +14,12 @@ class EmailVerificationController extends Controller
         $user->update(['ip' => $request->ip()]);
 
         if ($user->hasVerifiedEmail()) {
-            return redirect()->to(env('FRONT_URL') . '/email?status=already_verified');
+            return redirect()->to('https://rgb.irpsc.com/metaverse/email?status=already_verified');
         } else if (!$request->hasValidSignature()) {
-            return redirect()->to(env('FRONT_URL') . '/email?status=invalid_link');
+            return redirect()->to('https://rgb.irpsc.com/metaverse/email?status=invalid_link');
         } else {
             $user->markEmailAsVerified();
-            return redirect()->to(env('FRONT_URL') . '/email?status=verified');
+            return redirect()->to('https://rgb.irpsc.com/metaverse/email?status=verified');
         }
     }
 }
