@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Throwable;
+
 
 class Handler extends ExceptionHandler
 {
@@ -47,8 +49,23 @@ class Handler extends ExceptionHandler
             //
         });
 
-        $this->reportable(function (InvalidBuyRequestException $e) {
 
+        $this->renderable(function (KycVerificationException $exception, Request $request) {
+            return $request->expectsJson() ?
+                abort(412, 'جهت ادامه فرایند لطفا احراز هویت خود را تکمیل نمایید') :
+                redirect('/kyc');
+        });
+
+        $this->renderable(function (AccountSecurityException $exception, Request $request) {
+            return $request->expectsJson() ?
+                abort(410, 'جهت ادامه امنیت حساب کاربری خود را خاموش کنید') :
+                redirect('/account-security');
+        });
+
+        $this->renderable(function (EmailVerificationException $exception, Request $request) {
+            return $request->expectsJson() ?
+                abort(411, 'جهت ادامه ایمیل خود را تایید نمایید') :
+                to_route('verification.notice');
         });
     }
 }
