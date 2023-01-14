@@ -27,9 +27,10 @@ class HomeController extends Controller
     {
         if (Auth::check()) {
             $data['user'] = new UserResource(Auth::user());
-            if (Auth::user()->features->count() > 0) {
-                $data['feature_hourly_profit_info'] = hourlyProfitInfo(Auth::user());
-            }
+            $data['feature_hourly_profit_info'] =
+                Auth::user()->features->count() > 0
+                ? hourlyProfitInfo(Auth::user())
+                : [];
         } else {
             $data['top_players'] = $this->userRepository->getTopPlayers();
         }

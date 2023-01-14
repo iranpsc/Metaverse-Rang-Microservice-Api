@@ -29,7 +29,7 @@ class UserResource extends JsonResource
             'level' => $this->level,
             'score_percentage_to_next_level' => getScorePercentageToNextLevel($this->level, $this->score),
             $this->mergeWhen(isset($this->profilePhotos), [
-                'profile_photos' => $this->profilePhotos->last()
+                'profile_photos' => [$this->profilePhotos->last()]
             ]),
             'email_verified_at' => Jalalian::forge($this->email_verified_at)->format('Y/m/d'),
             'assets' => new AssetResource($this->assets),
