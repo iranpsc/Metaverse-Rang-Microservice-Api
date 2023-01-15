@@ -76,7 +76,7 @@ class FamilyMemberPolicy
                 $sisters+=1;
             }
 
-            if($member->relationship === FamilyMembersType::OFSPRING) {
+            if($member->relationship === FamilyMembersType::OFFSPRING) {
                 if($ofsprings >= 4)
                 {
                     abort(401, 'شما تعداد حد مجاز اضافه کردن فرزند خود را به سلسله پر کرده اید');
