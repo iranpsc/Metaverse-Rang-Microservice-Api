@@ -28,6 +28,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KycController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResetInfo\ResetEmailController;
@@ -80,6 +81,8 @@ Route::middleware(['api'])->group(function () {
 
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, '__invoke'])
     ->middleware(['signed'])->name('verification.verify');
+
+Route::apiResource('players', PlayerController::class);
 
 Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity'])->group(function () {
     Route::controller(HomeController::class)->group(function () {

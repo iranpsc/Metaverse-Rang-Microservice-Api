@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Feature;
-use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TopPlayerResource extends JsonResource
@@ -17,7 +16,7 @@ class TopPlayerResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'online' => Carbon::parse($this->last_seen)->diffInMinutes(now()) > 2 ? false : true,
+            'online' => $this->last_seen->diffInMinutes(now()) < 2,
 
             $this->mergeWhen($this->privacy->where('name', 'name')->pluck('display')->first(), [
                 'name' => $this->name,
@@ -55,7 +54,7 @@ class TopPlayerResource extends JsonResource
             ],
             $this->mergeWhen(!empty($this->features), [
                 'features' => FeatureResource::collection(
-                    Feature::where('owner_id', $this->id)->with('properties', 'geometry.coordinates')
+                    Feature::where('owner_id', $this->id)->with('properties')
                     ->lazy()
                 ),
             ]),
