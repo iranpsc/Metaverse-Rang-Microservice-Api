@@ -22,11 +22,11 @@ class JoinRequestPolicy
 
     public function accept(User $user, JoinRequest $joinRequest)
     {
-        return $user->id == $joinRequest->to_user && $joinRequest->status == 1 ? true : false;
+        return $joinRequest->toUser->is($user) && $joinRequest->status === 1 ;
     }
 
     public function reject(User $user, JoinRequest $joinRequest)
     {
-        return $user->id == $joinRequest->to_user && $joinRequest->status == 1 ? true : false;
+        return $joinRequest->toUser->is($user) && $joinRequest->status === 1 ;
     }
 }

@@ -59,10 +59,7 @@ class DynastyController extends Controller
      */
     public function store(Request $request, Feature $feature): DynastyResource|JsonResponse
     {
-        if ($request->user()->cannot('createDynasty', $feature)) {
-            abort(403, 'این ملک شرایط لازم جهت تاسیس سلسله را ندارد');
-        }
-
+        $this->authorize('create', [Dynasty::class, $feature]);
         $dynasty = $request->user()->dynasty()->create([
             'feature_id' => $feature->id,
         ]);
@@ -79,10 +76,11 @@ class DynastyController extends Controller
 
     public function updateDynastyFeature(Dynasty $dynasty, Feature $feature, Request $request)
     {
+        $this->authorize('updateDynastyFeature', [$dynasty, $feature]);
         $code = random_int(100000, 999999);
         $dynasty->otp()->create([
             'user_id' => $request->user()->id,
-            'code' => Hash::make($code)
+            'code'    => Hash::make($code)
         ]);
         $request->user()->notify(new GetOtpNotification($code));
         return response()->json(['success'=>'کد تایید ارسال گردید. جهت ادامه کد تایید را وارد کنید.'], 200);
@@ -90,14 +88,10 @@ class DynastyController extends Controller
 
     public function verifyUpdateDynastyFeature(Dynasty $dynasty, Feature $feature, Request $request)
     {
-        $this->validate(
-            $request,
-            ['code' => 'required|numeric'],
-            [
-                'code.required' => 'کد تایید را وارد کنید',
-                'code.numeric' => 'کد تایید صحیح نیست'
-            ]
-        );
+        $this->authorize('updateDynastyFeature', [$dynasty, $feature]);
+
+        $this->validate($request, ['code' => 'required|integer']);
+
         $otp = $dynasty->otp;
         if(Hash::check($request->code, $otp->code)) {
             $currentFeature = $dynasty->feature;
@@ -119,6 +113,7 @@ class DynastyController extends Controller
 
     public function resendOtp(Dynasty $dynasty, Feature $feature, Request $request)
     {
+        $this->authorize('updateDynastyFeature', [$dynasty, $feature]);
         $code = random_int(100000, 999999);
         $dynasty->otp->updateOrCreate(
             ['user_id' => $request->user()->id],

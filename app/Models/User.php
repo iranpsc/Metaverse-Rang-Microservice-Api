@@ -73,11 +73,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Asset::class);
     }
 
-    public function ownField(Feature $feature)
-    {
-        return $feature->owner_id == $this->id;
-    }
-
     /**
      * @return HasMany
      */
@@ -487,5 +482,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function chats(): HasMany
     {
         return $this->hasMany(Chat::class, 'from_user');
+    }
+
+    public function isUnderEighteen()
+    {
+        return $this->kyc->birthdate->diffInYears(now()) < 18;
     }
 }

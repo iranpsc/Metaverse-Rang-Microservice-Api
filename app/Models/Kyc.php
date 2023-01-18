@@ -32,6 +32,10 @@ class Kyc extends Model
         'user_id'
     ];
 
+    protected $casts = [
+        'birthdate' => 'datetime'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

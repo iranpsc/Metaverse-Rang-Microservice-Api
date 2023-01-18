@@ -104,4 +104,9 @@ class Feature extends Model
     {
         return parent::query();
     }
+
+    public function locked()
+    {
+        return $this->properties->label === 'locked';
+    }
  }

@@ -33,55 +33,52 @@ class SendJoinRequestController extends Controller
     {
         if ($request->has('relationship') && $request->relationship === 'offspring') {
             $permissions = DynastyPermission::first();
-            return response()->json(['permissions' => $permissions], 200);
+            return response()->json(['permissions' => $permissions]);
         }
-        return response()->json(['error' => 'درخواست نا معتبر است.'], 404);
     }
 
     public function store(AddFamilyMemberRequest $request)
     {
         $user = $request->user();
         $user_to_add = User::findOrFail($request->user);
-        if ($user->can('addFamilyMember', [$user_to_add, $request->relationship])) {
-            $joinRequest = JoinRequest::create([
-                'from_user' => $user->id,
-                'to_user' => $user_to_add->id,
-                'status' => JoinRequestStatus::PENDING,
-                'relationship' => $request->relationship,
+        $this->authorize('addFamilyMember', [$user_to_add, $request->relationship]);
+        $joinRequest = JoinRequest::create([
+            'from_user' => $user->id,
+            'to_user' => $user_to_add->id,
+            'status' => JoinRequestStatus::PENDING,
+            'relationship' => $request->relationship,
+        ]);
+        if ($request->relationship === 'offspring' && isUnderEighteen($joinRequest->toUser)) {
+            $permissions = $request->permissions;
+            $joinRequest->toUser->permissions()->create([
+                'verified' => false,
+                'BFR'      => $permissions['BFR'],
+                'SF'       => $permissions['SF'],
+                'W'        => $permissions['W'],
+                'JU'       => $permissions['JU'],
+                'DM'       => $permissions['DM'],
+                'PIUP'     => $permissions['PIUP'],
+                'PITC'     => $permissions['PITC'],
+                'PIC'      => $permissions['PIC'],
+                'ESOO'     => $permissions['ESOO'],
+                'COTB'     => $permissions['COTB']
             ]);
-            if ($request->relationship === 'offspring' && isUnderEighteen($joinRequest->toUser)) {
-                $permissions = $request->permissions;
-                $joinRequest->toUser->permissions()->create([
-                    'verified' => false,
-                    'BFR'      => $permissions['BFR'],
-                    'SF'       => $permissions['SF'],
-                    'W'        => $permissions['W'],
-                    'JU'       => $permissions['JU'],
-                    'DM'       => $permissions['DM'],
-                    'PIUP'     => $permissions['PIUP'],
-                    'PITC'     => $permissions['PITC'],
-                    'PIC'      => $permissions['PIC'],
-                    'ESOO'     => $permissions['ESOO'],
-                    'COTB'     => $permissions['COTB']
-                ]);
-            }
-
-            $code = random_int(100000, 999999);
-            $joinRequest->otp()->create([
-                'user_id' => $user->id,
-                'code' => Hash::make($code)
-            ]);
-            $user->notify(new GetOtpNotification($code));
-            return response()->json([
-                'message' => 'کد تاییدی به شماره تلفن همراه شما ارسال گردید.',
-                'id' => $joinRequest->id,
-                'from_user' => $joinRequest->from_user,
-                'to_user' => $joinRequest->to_user,
-                'status' => $joinRequest->status,
-                'relationship' => $joinRequest->relationship
-            ], 200);
         }
-        return response()->json(['error' => 'عملیات با خطا مواجه شد!'], 400);
+
+        $code = random_int(100000, 999999);
+        $joinRequest->otp()->create([
+            'user_id' => $user->id,
+            'code' => Hash::make($code)
+        ]);
+        $user->notify(new GetOtpNotification($code));
+        return response()->json([
+            'message' => 'کد تاییدی به شماره تلفن همراه شما ارسال گردید.',
+            'id' => $joinRequest->id,
+            'from_user' => $joinRequest->from_user,
+            'to_user' => $joinRequest->to_user,
+            'status' => $joinRequest->status,
+            'relationship' => $joinRequest->relationship
+        ]);
     }
 
     public function verify(User $user, JoinRequest $sentJoinRequest, Request $request)

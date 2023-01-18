@@ -77,10 +77,7 @@ function convertDateToCarbon($date)
 
 function isUnderEighteen(User $user)
 {
-    $birthdate = Carbon::parse($user->kyc->birthdate)->format('Y-m-d');
-    $birthdate = Carbon::createFromDate($birthdate);
-    if ($birthdate->diffInYears(now()) < 18) return true;
-    return false;
+    return $user->kyc->birthdate->diffInYears(now()) < 18;
 }
 
 function getFamilyRelationship($relationship)

@@ -7,14 +7,16 @@ use App\Models\User;
 use App\Helpers\FeatureIndicators;
 use App\Models\BuyFeatureRequest;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Auth\Access\Response;
 class FeaturePolicy
 {
     use HandlesAuthorization;
 
-    public function buy(User $user, Feature $feature)
+    private $notAllowedToBeSoldFeatures = [];
+    private $soldAndNotPriced = [];
+
+    public function __construct()
     {
-        $notAllowedToSoldFeatures = [
+        $this->notAllowedToBeSoldFeatures = [
             FeatureIndicators::Edari,
             FeatureIndicators::Farhangi,
             FeatureIndicators::FazaSabz,
@@ -24,7 +26,7 @@ class FeaturePolicy
             FeatureIndicators::Behdashti,
         ];
 
-        $soldAndNotPriced = [
+        $this->soldAndNotPriced = [
             FeatureIndicators::MaskoniSoldAndNotPriced,
             FeatureIndicators::TejariSoldAndNotPriced,
             FeatureIndicators::AmozeshiSoldAndNotPriced,
@@ -32,81 +34,37 @@ class FeaturePolicy
             FeatureIndicators::TejariNotPriced,
             FeatureIndicators::AmozeshiNotPriced,
         ];
+    }
 
-        if (
-            in_array($feature->properties->karbari, $notAllowedToSoldFeatures)
-        ) {
-            return Response::deny('این ملک قابل خرید و فروش نیست');
-        } else if (
-            in_array($feature->properties->rgb, $soldAndNotPriced)
-        ) {
-            return Response::deny('ملک مورد نظر به فروش گذاشته نشده است. شما می توانید پیشنهاد خرید برای این ملک ثبت کنید');
-        } else if ($user->id === $feature->owner_id) {
-            return Response::deny('این ملک متعلق به شما می باشد');
-        }
-        return true;
+    public function buy(User $user, Feature $feature)
+    {
+        return !in_array($feature->properties->karbari, $this->notAllowedToBeSoldFeatures)
+            && !in_array($feature->properties->rgb, $this->soldAndNotPriced)
+            && $feature->owner->isNot($user);
     }
 
     public function sell(User $user, Feature $feature)
     {
-        if ($feature->properties->label == 'locked') {
-            return Response::deny('ملک قفل شده است.', 403);
+        $hasUnderEighteenPermissions = true;
+        if ($user->isUnderEighteen()) {
+            $hasUnderEighteenPermissions = $user->permissions?->verified && $user->permissions?->SF;
         }
-        if ($feature->hasPendingRequests()) {
-            return Response::deny('این ملک قبلا به فروش گذاشته شده است');
-        }
-
-        if (!$user->ownField($feature)) {
-            return Response::deny('شما مالک این زمین نیستید');
-        }
-
-        if (!empty($feature->dynasty)) {
-            return Response::deny('ملکی که روی آن سلسله تاسیس شده است قابلیت خرید و فروش ندارد', 403);
-        }
-
-        if (!$user->verified()) {
-            return Response::deny('جهت فروش ملک خود باید احراز مرحله دو را انجام دهید', 403);
-        }
-
-        if (isUnderEighteen($user)) {
-            if (!$user->permissions) {
-                return Response::deny('شما دسترسی مورد نیاز را ندارید!', 403);
-            } elseif (!$user->permissions->verified) {
-                return Response::deny('شما دسترسی مورد نیاز را ندارید!', 403);
-            } elseif (!$user->permissions->SF) {
-                Response::deny('امکان فروش شما توسط پدر شما بسته شده است', 403);
-            }
-        }
-        return true;
-    }
-
-    public function owned(User $user, Feature $feature)
-    {
-        return $user->id === $feature->owner_id
-            ? Response::deny('شما مالک این زمین هستید')
-            : Response::allow();
+        return $feature->owner->is($user)
+            && $user->verified()
+            && !$feature->hasPendingRequests()
+            && !$feature->locked()
+            && is_null($feature->dynasty)
+            && $hasUnderEighteenPermissions;
     }
 
     public function sendBuyRequest(User $user, Feature $feature)
     {
-        if (
-            BuyFeatureRequest::where('buyer_id', $user->id)
+        $rgb = User::firstWhere('code', 'hm-2000000');
+        return BuyFeatureRequest::where('buyer_id', $user->id)
             ->where('feature_id', $feature->id)
             ->where('status', 0)
-            ->exists()
-        ) {
-            return Response::deny('شما قبلا درخواست خرید خود را برای این ملک ثبت کرده اید.', 403);
-        }
-        return $feature->owner->code === 'hm-2000000'
-            || $user->ownField($feature)
-            ? Response::deny('شما مجاز به ارسال درخواست خرید به این ملک نمی باشید')
-            : Response::allow();
-    }
-
-    public function createDynasty(User $user, Feature $feature)
-    {
-        if ($feature->properties->karbari != "m") return false;
-        if (!$user->ownField($feature)) return false;
-        return true;
+            ->doesntExist()
+            && $feature->owner->isNot($rgb)
+            && $feature->owner->isNot($user);
     }
 }

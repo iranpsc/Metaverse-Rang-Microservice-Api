@@ -16,16 +16,6 @@ class UserPolicy
     use HandlesAuthorization;
 
     /**
-     * Create a new policy instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
      * Determine whether the user can add new member.
      *
      * @param User $user
@@ -35,6 +25,18 @@ class UserPolicy
      */
     public function addFamilyMember(User $user, User $user_to_add, string $relationship)
     {
+        $dynasty = $user->dynasty;
+
+        if (is_null($dynasty)) return false;
+
+        $family = $dynasty->family;
+
+        if (FamilyMember::where('user_id', $user_to_add->id)->whereNot('family_id', $family->id)->exists()) return false;
+
+        $members = $family->familyMembers;
+
+        if ($members->count() >= 11) return false;
+
         if (!$user_to_add->verified()) return false;
         if ($user->id == $user_to_add->id) return false;
         if (
@@ -44,17 +46,6 @@ class UserPolicy
             ->where('status', JoinRequestStatus::REJECTED)
             ->exists()
         ) return false;
-        $dynasty = $user->dynasty;
-
-        if (!$dynasty) return false;
-
-        $family = $dynasty->family;
-
-        if (FamilyMember::where('user_id', $user_to_add->id)->whereNot('family_id', $family->id)->exists()) return false;
-
-        $members = $family->familyMembers;
-
-        if ($members->count() >= 11) return false;
 
         $members->each(function ($member) use ($relationship, $members) {
 
@@ -82,10 +73,8 @@ class UserPolicy
 
     public function follow(User $user, User $user_to_follow)
     {
-        return $user->id === $user_to_follow->id
-            || $user->following()->firstWhere('following_id', $user_to_follow->id)
-            ? false
-            : true;
+        return $user->id !== $user_to_follow->id
+            && $user->following->where('following_id', $user_to_follow->id)->deosntExist();
     }
 
     public function addCustom(User $user)
@@ -95,17 +84,16 @@ class UserPolicy
 
     public function updateCustom(User $user, Custom $custom)
     {
-        return $user->id == $custom->user_id && $user->customs->updated_at < now()->subMonth();
+        return $custom->user->is($user) && $user->customs->updated_at < now()->subMonth();
     }
 
-    public function updatePermissions(User $user, User $child)
+    public function controlPermissions(User $user, User $child)
     {
-        if($user->id == $child->id) return false;
-        if (!isUnderEighteen($child)) return false;
+        if ($user->id == $child->id) return false;
+        if (!$child->isUnderEighteen()) return false;
         $dynasty = $user->dynasty;
         $family = $dynasty->family;
-        $familyMembers = $family->familyMembers;
-        if (!$familyMembers->where('user_id', $child->id)->first()) return false;
+        if (FamilyMember::where('family_id', $family->id)->where('user_id', $child->id)->doesntExist()) return false;
         return true;
     }
 }
