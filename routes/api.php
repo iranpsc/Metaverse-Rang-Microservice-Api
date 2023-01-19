@@ -162,13 +162,13 @@ Route::middleware(['api'])->group(function () {
             Route::get('/remove/{user}', 'remove');
         });
 
-        Route::apiResource('tickets', TicketController::class);
         Route::controller(TicketController::class)->prefix('tickets')->group(function () {
             Route::get('/recieved', 'recieved');
             Route::get('/recieved/{ticket}', 'view');
             Route::post('/response/{ticket}', 'response');
             Route::get('/close/{ticket}', 'close');
         });
+        Route::apiResource('tickets', TicketController::class);
 
 
         Route::apiResource('notes', NoteController::class);
