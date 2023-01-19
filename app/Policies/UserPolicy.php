@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Constants\FamilyMembersType;
 use App\Constants\JoinRequestStatus;
 use App\Models\Dynasty\FamilyMember;
+use App\Models\Follow;
 use App\Models\User;
 use App\Models\User\Custom;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -74,7 +75,7 @@ class UserPolicy
     public function follow(User $user, User $user_to_follow)
     {
         return $user->id !== $user_to_follow->id
-            && $user->following->where('following_id', $user_to_follow->id)->deosntExist();
+            && Follow::where('follower_id', $user->id)->where('following_id', $user_to_follow->id)->doesntExist();
     }
 
     public function addCustom(User $user)
