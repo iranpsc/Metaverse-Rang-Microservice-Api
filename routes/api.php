@@ -60,8 +60,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//, 'check.ip'
-Route::middleware(['api'])->group(function () {
+Route::middleware(['api','check.ip'])->group(function () {
     Route::controller(CalendarController::class)->prefix('calendar')->group(function () {
         Route::get('/', 'getEvents');
         Route::get('/{event}', 'getSingleEvent');
@@ -323,6 +322,29 @@ Route::middleware(['auth:sanctum', 'api', 'verified', 'check.ip', 'user.activity
         Route::get('/question', [QuestionController::class, 'index']);
         Route::post('/{question}/answer/{questionAnswer}', [QuestionController::class, 'answerQuestion']);
     });
+
+
+    //Statistics
+    Route::prefix('/statistics')->group(function () {
+        Route::get('/user-followers', [FollowersStatisticsController::class, 'index']);
+        Route::post('/update-followers-status', [FollowersStatisticsController::class, 'updateStatus']);
+        Route::post('/current-month-top-followers', [FollowersStatisticsController::class, 'currentMonthTopFollowers']);
+        Route::get('/top-active-users', [UserActivityStatistics::class, 'index']);
+        Route::post('/current-month-top-active-users', [UserActivityStatistics::class, 'currentMonthTopActiveUsers']);
+        Route::post('/update-user-activity-status', [UserActivityStatistics::class, 'updateStatus']);
+        Route::post('/most-buy-asset', [AssetsStatistics::class, 'index']);
+        Route::post('/current-month-most-buy-asset', [AssetsStatistics::class, 'currentMonthAssetBuyAmount']);
+        Route::post('/update-assets-statistics-status', [AssetsStatistics::class, 'updateStatus']);
+        Route::post('/traded-features', [TradedFeaturesStatisticsController::class, 'index']);
+        Route::post('/current-month-top-traded-features', [TradedFeaturesStatisticsController::class, 'currentMonthTopTradedFeatures']);
+        Route::post('/update-traded-features-status', [TradedFeaturesStatisticsController::class, 'updateStatus']);
+        Route::get('/top-dynasty-family-referral', [FamilyMembersStatisticsController::class, 'index']);
+        Route::post('/current-month-top-dynasty-family-referral', [FamilyMembersStatisticsController::class, 'currentMonthTopDynastyFamilyReferral']);
+        Route::post('/update-top-dynasty-status', [FamilyMembersStatisticsController::class, 'updateStatus']);
+        Route::get('/all-users-level-one-activated', [LevelOneActivatedStatisticsController::class, 'index']);
+        Route::post('/current-month-users-level-one-activated', [StatisticsController::class, 'currentMonthUsersLevelOneActivated']);
+
+    });
 });
 
 Route::get('/ping', static fn() => null);
@@ -331,26 +353,4 @@ Route::any('/order/callback/{order}', [OrderController::class, 'callback'])->nam
 
 Route::controller(PublicProfileController::class)->withoutMiddleware('check.ip')->prefix('citizen')->group(function () {
     Route::get('/{code}', 'home');
-});
-
-
-Route::prefix('/statistics')->withoutMiddleware('check.ip')->group(function () {
-    Route::get('/user-followers', [FollowersStatisticsController::class, 'index']);
-    Route::post('/update-followers-status', [FollowersStatisticsController::class, 'updateStatus']);
-    Route::post('/current-month-top-followers', [FollowersStatisticsController::class, 'currentMonthTopFollowers']);
-    Route::get('/top-active-users', [UserActivityStatistics::class, 'index']);
-    Route::post('/current-month-top-active-users', [UserActivityStatistics::class, 'currentMonthTopActiveUsers']);
-    Route::post('/update-user-activity-status', [UserActivityStatistics::class, 'updateStatus']);
-    Route::post('/most-buy-asset', [AssetsStatistics::class, 'index']);
-    Route::post('/current-month-most-buy-asset', [AssetsStatistics::class, 'currentMonthAssetBuyAmount']);
-    Route::post('/update-assets-statistics-status', [AssetsStatistics::class, 'updateStatus']);
-    Route::post('/traded-features', [TradedFeaturesStatisticsController::class, 'index']);
-    Route::post('/current-month-top-traded-features', [TradedFeaturesStatisticsController::class, 'currentMonthTopTradedFeatures']);
-    Route::post('/update-traded-features-status', [TradedFeaturesStatisticsController::class, 'updateStatus']);
-    Route::get('/top-dynasty-family-referral', [FamilyMembersStatisticsController::class, 'index']);
-    Route::post('/current-month-top-dynasty-family-referral', [FamilyMembersStatisticsController::class, 'currentMonthTopDynastyFamilyReferral']);
-    Route::post('/update-top-dynasty-status', [FamilyMembersStatisticsController::class, 'updateStatus']);
-    Route::get('/all-users-level-one-activated', [LevelOneActivatedStatisticsController::class, 'index']);
-    Route::post('/current-month-users-level-one-activated', [StatisticsController::class, 'currentMonthUsersLevelOneActivated']);
-
 });
