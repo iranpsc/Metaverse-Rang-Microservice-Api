@@ -8,18 +8,48 @@ use Illuminate\Http\Request;
 
 class EmailVerificationController extends Controller
 {
-    public function __invoke(Request $request)
+    public function verify(Request $request)
     {
         $user = User::find($request->route('id'));
-        $user->update(['ip' => $request->ip()]);
 
         if ($user->hasVerifiedEmail()) {
             return redirect()->to('https://rgb.irpsc.com/metaverse/email?status=already_verified');
         } else if (!$request->hasValidSignature()) {
             return redirect()->to('https://rgb.irpsc.com/metaverse/email?status=invalid_link');
-        } else {
-            $user->markEmailAsVerified();
-            return redirect()->to('https://rgb.irpsc.com/metaverse/email?status=verified');
         }
+        $user->markEmailAsVerified();
+        $code = $this->generateCitizenCode();
+        $user->update([
+            'ip' => $request->ip(),
+            'code' => $code,
+            'referal_link' => $this->generateReferalLink($code)
+        ]);
+        return redirect()->to('https://rgb.irpsc.com/metaverse/email?status=verified');
+    }
+
+        /**
+     * @param $code
+     * @return string
+     */
+    private function generateReferalLink($code): string
+    {
+        return 'https://rgb.irpsc.com/citizen/' . $code;
+    }
+
+    /**
+     * @return string
+     */
+    private function generateCitizenCode(): string
+    {
+        $lastUser = User::whereNotNull('code')->orderBy('code', 'desc')->first();
+
+        if (isset($lastUser)) {
+            $lastUserCode = $lastUser->code;
+            $codeNum = explode('-', $lastUserCode)[1];
+            $codeNum += 1;
+            return 'hm-' . $codeNum;
+        }
+
+        return 'hm-2000000';
     }
 }

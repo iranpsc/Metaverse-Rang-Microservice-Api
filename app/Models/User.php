@@ -63,6 +63,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at'
     ];
 
+    protected $attributes = [
+        'ip' => '',
+        'code' => '',
+        'referal_link' => ''
+    ];
+
     public function accountSecurity()
     {
         return $this->hasOne(AccountSecurity::class);

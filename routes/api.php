@@ -84,7 +84,7 @@ Route::middleware(['api'])->group(function () {
         return response()->json(['message' => 'لینک تایید حساب کاربری ارسال شد']);
     })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
-    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, '__invoke'])
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
         ->middleware(['signed'])->name('verification.verify');
 
     Route::apiResource('players', PlayerController::class);

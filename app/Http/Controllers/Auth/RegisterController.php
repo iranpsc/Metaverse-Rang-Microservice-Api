@@ -20,17 +20,10 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        $code = $this->generateCitizenCode();
-
-        $referralLink = $this->generateReferalLink($code);
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'code' => $code,
-            'referal_link' => $referralLink,
-            'ip' => ""
         ]);
 
         if ($request->has('referral')) {
@@ -52,31 +45,5 @@ class RegisterController extends Controller
         return response()->json([
             'success' => 'ایمیلی جهت تایید حساب کاربری برایتان ارسال گردید'
         ]);
-    }
-
-    /**
-     * @param $code
-     * @return string
-     */
-    private function generateReferalLink($code): string
-    {
-        return 'https://rgb.irpsc.com/citizen/' . $code;
-    }
-
-    /**
-     * @return string
-     */
-    private function generateCitizenCode(): string
-    {
-        $lastUser = User::latest()->first();
-
-        if (isset($lastUser)) {
-            $lastUserCode = $lastUser->code;
-            $codeNum = explode('-', $lastUserCode)[1];
-            $codeNum += 1;
-            return 'hm-' . $codeNum;
-        }
-
-        return 'hm-2000000';
     }
 }
