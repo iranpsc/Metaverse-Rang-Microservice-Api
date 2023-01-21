@@ -60,7 +60,9 @@ class FeatureProperties extends Model
 	public $incrementing = false;
 
 	protected $casts = [
-		'feature_id' => 'int'
+		'feature_id' => 'int',
+        'karbari' => 'string',
+        'id' => 'string',
 	];
 
 	protected $fillable = [
