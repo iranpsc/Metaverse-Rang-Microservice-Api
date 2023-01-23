@@ -9,12 +9,14 @@ use App\Models\Transaction;
 use App\Models\Variable;
 use App\Notifications\TransactionNotification;
 use App\Services\ReferalService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Http;
 use Morilog\Jalali\Jalalian;
 
 class OrderController extends Controller
 {
-    public function create(BuyAssetRequest $request)
+    public function create(BuyAssetRequest $request): JsonResponse
     {
         $rate = Variable::getRate($request->asset);
 
@@ -27,6 +29,7 @@ class OrderController extends Controller
         ]);
 
         $transaction = $order->transaction()->create([
+            'id' => $this->generateId(),
             'user_id' => $user->id,
             'asset' => $order->asset,
             'amount' => $order->amount,
@@ -34,32 +37,23 @@ class OrderController extends Controller
             'status' => 0
         ]);
 
-        $next_transaction = $order->transaction()->create([
-            'user_id' => $user->id,
-            'asset' => 'irr',
-            'amount' => $order->amount * $rate,
-            'action' => 'deposit',
-            'status' => 0
-        ]);
-
         $response = Http::post(config('rgb.curl.post'), [
-            "merchant_id" => env('ZARINPAL_MERCHANT_ID'),
+            "merchant_id" => 'de84d0d6-d7b1-4a68-9ac6-125156d6a35d',
             "amount" => $order->amount * $rate,
             "callback_url" => route('order.callback', $order->id),
             "description" => "خرید تست",
             "metadata" => ["email" => $user->email],
         ]);
 
-        if($response->successful()) {
+        if ($response->successful()) {
             $result = $response->json();
-            if($result['data']['code'] == 100) {
+            if ($result['data']['code'] == 100) {
                 return response()->json([
                     'link' => 'https://www.zarinpal.com/pg/StartPay/' . $result['data']["authority"],
                 ]);
             } else {
                 $order->update(['status' => -1]);
                 $transaction->update(['status' => -1]);
-                $next_transaction->update(['status' => -1]);
                 return response()->json([
                     'error' => $response->serverError()
                 ]);
@@ -73,23 +67,22 @@ class OrderController extends Controller
         }
     }
 
-    public function callback(Order $order)
+    public function callback(Order $order): RedirectResponse
     {
         $transaction = $order->transaction;
-        $next_transaction = Transaction::findOrFail($transaction->id + 1);
+        $amount = $order->amount * Variable::getRate($order->asset);
 
         $response = Http::post(config('rgb.curl.verify'), [
-            "merchant_id" => env('ZARINPAL_MERCHANT_ID'),
+            "merchant_id" => 'de84d0d6-d7b1-4a68-9ac6-125156d6a35d',
             "authority" => $_GET['Authority'],
-            "amount" => $next_transaction->amount,
+            "amount" => $amount,
         ]);
 
         $result = $response->json();
 
-        if($response->successful()) {
-            if($result['data']['code'] == 100) {
+        if ($response->successful()) {
+            if ($result['data']['code'] == 100) {
                 $transaction->update(['status' => 1]);
-                $next_transaction->update(['status' => 1]);
                 $order->update(['status' => 1]);
                 $user = $order->user;
 
@@ -106,12 +99,12 @@ class OrderController extends Controller
                     $user->assets->increment($order->asset, $order->amount);
                 }
 
-                $payment = Payment::create([
+                Payment::create([
                     'user_id' => $user->id,
                     'ref_id' => $result['data']['ref_id'],
                     'card_pan' => $result['data']['card_pan'],
                     'gateway' => 'زرین پال',
-                    'amount' => $next_transaction->amount,
+                    'amount' => $order->amount * Variable::getRate($order->asset),
                     'product' => $order->asset
                 ]);
 
@@ -122,12 +115,25 @@ class OrderController extends Controller
                 return redirect()->to('https://rgb.irpsc.com/metaverse/payment/verify');
             }
         } else {
-            if($result['errors']['code'] == -51) {
+            if ($result['errors']['code'] == -51) {
                 $transaction->update(['status' => -1]);
-                $next_transaction->update(['status' => -1]);
                 $order->update(['status' => -1]);
                 return redirect()->to('https://rgb.irpsc.com/metaverse/payment/verify');
             }
         }
+    }
+
+    private function generateId(): string
+    {
+        $id = 'TR-' . $this->randomNumber();
+        while (Transaction::where('id', $id)->exists()) {
+            $id = 'TR-' . $this->randomNumber();
+        }
+        return $id;
+    }
+
+    private function randomNumber(): int
+    {
+        return random_int(1000000, 9999999);
     }
 }

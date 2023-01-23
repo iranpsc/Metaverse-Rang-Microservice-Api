@@ -68,21 +68,24 @@ Route::middleware(['api'])->group(function () {
         Route::get('/{event}/dislike', 'dislike');
     });
 
-    Route::post('/register', [RegisterController::class, 'register']);
-    Route::controller(LoginController::class)->middleware('auth:sanctum')->group(function () {
-        Route::post('/login', 'login')->withoutMiddleware(['auth:sanctum', 'check.ip']);
-        Route::post('/logout', 'logout');
-    });
+    Route::middleware('check.ip')->group(function() {
+        Route::middleware('guest')->group(function() {
+            Route::post('/register', [RegisterController::class, 'register']);
+            Route::post('/login', [LoginController::class, 'login']);
+        });
+        Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 
-    Route::controller(ResetPasswordController::class)->middleware('guest')->group(function () {
-        Route::post('/forgot-password', 'sendResetPasswordLink');
-        Route::post('/forgot-password/reset/password', 'resetPassword');
-    });
+        Route::controller(ResetPasswordController::class)->middleware('guest')->group(function () {
+            Route::post('/forgot-password', 'sendResetPasswordLink');
+            Route::post('/forgot-password/reset/password', 'resetPassword');
+        });
 
-    Route::get('/email/verification-notification', function (Request $request) {
-        $request->user()->sendEmailVerificationNotification();
-        return response()->json(['message' => 'لینک تایید حساب کاربری ارسال شد']);
-    })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+        Route::get('/email/verification-notification', function (Request $request) {
+            $request->user()->sendEmailVerificationNotification();
+            return response()->json(['message' => 'لینک تایید حساب کاربری ارسال شد']);
+        })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+
+    });
 
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
         ->middleware(['signed'])->name('verification.verify');
@@ -298,6 +301,5 @@ Route::middleware(['api'])->group(function () {
         Route::post('/update-top-dynasty-status', [FamilyMembersStatisticsController::class, 'updateStatus']);
         Route::get('/all-users-level-one-activated', [LevelOneActivatedStatisticsController::class, 'index']);
         Route::post('/current-month-users-level-one-activated', [StatisticsController::class, 'currentMonthUsersLevelOneActivated']);
-
     });
 });

@@ -44,6 +44,7 @@ class Transaction extends Model
 {
 
 	protected $fillable = [
+        'id',
 		'user_id',
 		'payable_id',
 		'payable_type',
@@ -52,6 +53,8 @@ class Transaction extends Model
 		'action',
 		'status'
 	];
+
+    protected $keyType = 'string';
 
 	public function user()
 	{

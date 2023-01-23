@@ -113,6 +113,6 @@ class LoginController extends Controller
             'id'     => $request->user()->id,
             'online' => false
         ]));
-        return response('شما با موفقیت خارج شدید', 200);
+        return response()->noContent();
     }
 }

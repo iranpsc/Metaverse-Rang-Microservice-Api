@@ -125,7 +125,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function latestTransaction(): HasOne
     {
-        return $this->hasOne(Transaction::class)->latestOfMany();
+        return $this->hasOne(Transaction::class)->latestOfMany('created_at');
     }
 
     // Referals Start

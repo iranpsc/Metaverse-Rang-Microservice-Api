@@ -16,6 +16,7 @@ class LatestTransactionResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->latestTransaction->id,
             $this->mergeWhen($this->latestTransaction->status === 1, [
                 'ref_id' => $this->latestPayment?->ref_id,
                 'date' => Jalalian::forge($this->latestPayment?->created_at)->format('Y/m/d'),
