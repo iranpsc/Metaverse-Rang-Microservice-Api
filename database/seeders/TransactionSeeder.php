@@ -18,9 +18,9 @@ class TransactionSeeder extends Seeder
     {
         $transactions = Transaction::all();
 
-        foreach($transactions as $transaction) {
+        $transactions->map(function($transaction) {
             $transaction->update(['id' => $this->generateId()]);
-        }
+        });
     }
 
     private function generateId(): string
