@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BuyAssetRequest;
 use App\Models\Order;
 use App\Models\Payment;
-use App\Models\Transaction;
 use App\Models\Variable;
 use App\Notifications\TransactionNotification;
 use App\Services\ReferalService;
@@ -29,7 +28,6 @@ class OrderController extends Controller
         ]);
 
         $transaction = $order->transaction()->create([
-            'id' => $this->generateId(),
             'user_id' => $user->id,
             'asset' => $order->asset,
             'amount' => $order->amount,
@@ -121,19 +119,5 @@ class OrderController extends Controller
                 return redirect()->to('https://rgb.irpsc.com/metaverse/payment/verify');
             }
         }
-    }
-
-    private function generateId(): string
-    {
-        $id = 'TR-' . $this->randomNumber();
-        while (Transaction::where('id', $id)->exists()) {
-            $id = 'TR-' . $this->randomNumber();
-        }
-        return $id;
-    }
-
-    private function randomNumber(): int
-    {
-        return random_int(1000000, 9999999);
     }
 }
