@@ -7,9 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ResetInfoRequest;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Reset;
-use App\Mail\EmailOtp;
-use Illuminate\Support\Facades\Mail;
-
+use App\Notifications\GetOtpNotification;
 class ResetEmailController extends Controller
 {
     public function sendVerifyCode(ResetInfoRequest $request)
@@ -25,26 +23,18 @@ class ResetEmailController extends Controller
             'user_id' => $user->id,
             'code' => Hash::make($code)
         ]);
-        Mail::to($request->email)->send(new EmailOtp($code));
-        return response()->json(['message' => 'کد تایید ارسال گردید. جهت ادامه کد تایید را وارد کنید.'], 200);
+        $user->notify(new GetOtpNotification($code, 'mail', email: $request->email));
+        return response()->noContent(200);
 
     }
 
     public function verify(Request $request)
     {
-        $this->validate(
-            $request,
-            ['code' => 'required|integer|numeric'],
-            [
-                'code.required' => 'کد تایید را وارد کنید',
-                'code.integer' => 'کد تایید وارد شده صحیح نیست',
-            ]
-        );
+        $request->validate(['code' => 'required|integer']);
         $user = $request->user();
         $reset = $user->latestResetRequest;
-        if(is_null($reset) || $reset->verified == 1) {
-            abort(401, 'Invalid Request');
-        }
+
+        abort_if(is_null($reset) || $reset->verified == 1, 401, 'Not Valid');
 
         if(Hash::check($request->code, $reset->otp->code)) {
             $user->update([
@@ -53,8 +43,8 @@ class ResetEmailController extends Controller
             ]);
             $reset->update(['verified' => true]);
             $reset->otp->delete();
-            return response()->json(['success' => 'ایمیل تغییر کرد.'], 200);
+            return response()->noContent(200);
         }
-        return response()->json(['success' => 'کد تایید صحیح نمی باشد یا منقضی شده است!'], 404);
+        return response()->noContent(400);
     }
 }

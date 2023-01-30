@@ -2,10 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\GeneralSettingFields;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rules\Enum;
 
-class ChangePasswordRequest extends FormRequest
+class UpdateGeneralSettingsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +26,11 @@ class ChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'old_password' => 'required|current_password',
-            'password' => [
+            'setting' => [
                 'required',
-                Password::defaults()
+                new Enum(GeneralSettingFields::class)
             ],
+            'status' => 'required|boolean'
         ];
     }
 }

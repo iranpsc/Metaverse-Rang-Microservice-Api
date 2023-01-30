@@ -24,26 +24,17 @@ class ResetPhoneController extends Controller
             'user_id' => $user->id,
             'code' => Hash::make($code)
         ]);
-        $user->notify(new GetOtpNotification($code, $request->phone));
-        return response()->json(['message' => 'کد تایید ارسال گردید. جهت ادامه کد تایید را وارد کنید.'], 200);
+        $user->notify(new GetOtpNotification($code, phone:$request->phone));
+        return response()->noContent(200);
 
     }
 
     public function verify(Request $request)
     {
-        $this->validate(
-            $request,
-            ['code' => 'required|integer|numeric'],
-            [
-                'code.required' => 'کد تایید را وارد کنید',
-                'code.integer' => 'کد تایید وارد شده صحیح نیست',
-            ]
-        );
+        $request->validate(['code' => 'required|integer']);
         $user = $request->user();
         $reset = $user->latestResetRequest;
-        if(is_null($reset) || $reset->verified == 1) {
-            abort(401, 'Invalid Request');
-        }
+        abort_if(is_null($reset) || $reset->verified == 1, 401, 'Not Valid');
 
         if(Hash::check($request->code, $reset->otp->code)) {
             $user->update([
@@ -52,9 +43,9 @@ class ResetPhoneController extends Controller
             ]);
             $reset->update(['verified' => true]);
             $reset->otp->delete();
-            return response()->json(['success' => 'شماره تلفن تغییر کرد'], 200);
+            return response()->noContent(200);
         }
-        return response()->json(['success' => 'کد تایید صحیح نمی باشد یا منقضی شده است!'], 404);
+        return response()->noContent(400);
     }
 
 }

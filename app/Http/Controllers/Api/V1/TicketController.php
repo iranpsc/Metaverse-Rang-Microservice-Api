@@ -64,15 +64,15 @@ class TicketController extends Controller
     public function store(CreateTicketRequest $request): TicketResource
     {
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('https://dl.qzparadise.ir/user/tickets/' . $this->user->id)
+            ? $request->file('attachment')->store('user/tickets/' . $this->user->id)
             : '';
 
         $ticket = Ticket::create([
+            'user_id' => $this->user->id,
             'title' => $request->title,
             'content' => $request->content,
             'attachment' => $attachment,
-            'user_id' => $this->user->id,
-            'reciever_id' => isset($request->reciever) ? $request->reciever : null,
+            'reciever_id' => $request->reciever,
             'department' => $request->department,
             'code' => random_int(100000, 999999),
         ]);
@@ -91,7 +91,7 @@ class TicketController extends Controller
     public function update(CreateTicketRequest $request, Ticket $ticket): TicketResource
     {
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('https://dl.qzparadise.ir/user/tickets/' . $this->user->id)
+            ? $request->file('attachment')->store('user/tickets/' . $this->user->id)
             : '';
 
         $ticket->update([
@@ -112,7 +112,7 @@ class TicketController extends Controller
     {
         $this->authorize('respond', $ticket);
         $attachment = $request->hasFile('attachment')
-        ? $request->file('attachment')->store('https://dl.qzparadise.ir/user/tickets/'.$this->user->id)
+        ? $request->file('attachment')->store('user/tickets/'.$this->user->id)
         : '';
 
         TicketResponse::create([

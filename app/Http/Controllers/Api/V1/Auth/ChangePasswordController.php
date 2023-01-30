@@ -8,13 +8,11 @@ use Illuminate\Support\Facades\Hash;
 
 class ChangePasswordController extends Controller
 {
-    public function __invoke(ChangePasswordRequest $request): \Illuminate\Http\JsonResponse
+    public function __invoke(ChangePasswordRequest $request)
     {
-        $request->user()->update([
+        $request->user()->forceFill([
             'password' => Hash::make($request->password)
         ]);
-        return response()->json([
-            'success' => 'رمز عبور تغییر داده شد'
-        ]);
+        return response()->noContent(200);
     }
 }

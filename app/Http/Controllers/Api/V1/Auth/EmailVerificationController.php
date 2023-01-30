@@ -27,7 +27,7 @@ class EmailVerificationController extends Controller
         return redirect()->to('https://rgb.irpsc.com/metaverse/email?status=verified');
     }
 
-        /**
+    /**
      * @param $code
      * @return string
      */
@@ -41,15 +41,14 @@ class EmailVerificationController extends Controller
      */
     private function generateCitizenCode(): string
     {
-        $lastUser = User::whereNotNull('code')->orderBy('code', 'desc')->first();
+        $code = User::whereNotNull('code')->orderBy('code', 'desc')->pluck('code')->first();
+        return $code ? $this->getCode($code) : 'hm-2000000';
+    }
 
-        if (isset($lastUser)) {
-            $lastUserCode = $lastUser->code;
-            $codeNum = explode('-', $lastUserCode)[1];
-            $codeNum += 1;
-            return 'hm-' . $codeNum;
-        }
-
-        return 'hm-2000000';
+    private function getCode($code)
+    {
+        $codeNum = explode('-', $code)[1];
+        $codeNum += 1;
+        return implode('-', ['hm', $codeNum]);
     }
 }

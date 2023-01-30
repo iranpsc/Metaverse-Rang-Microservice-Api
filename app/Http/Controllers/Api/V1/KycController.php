@@ -35,18 +35,10 @@ class KycController extends Controller
 
     public function store(StoreKycRequest $request)
     {
-        if ($request->hasFile('melli_card')) {
-            $melliCardNameToStore = env('FTP_ENDPOINT') .
-                $request->file('melli_card')->store('user/kyc/' . $this->user->id);
-        }
-        if ($request->hasFile('prove_picture')) {
-            $provePictureNameToStore = env('FTP_ENDPOINT') .
-                $request->file('prove_picture')->store('user/kyc/' . $this->user->id);
-        }
-
+        $melliCardNameToStore = $request->file('melli_card')->store('user/kyc/' . $this->user->id);
+        $provePictureNameToStore = $request->file('prove_picture')->store('user/kyc/' . $this->user->id);
         if ($request->hasFile('resume')) {
-            $resumeNameToStore = env('FTP_ENDPOINT') .
-                $request->file('resume')->store('user/kyc/' . $this->user->id);
+            $resumeNameToStore = $request->file('resume')->store('user/kyc/' . $this->user->id);
         }
 
         $kyc = $request->user()->kyc()->create([
@@ -55,8 +47,8 @@ class KycController extends Controller
             'melli_code' => $request->melli_code,
             'birthdate' => convertDateToCarbon($request->birthdate),
             'father_name' => $request->father_name,
-            'melli_card' => $melliCardNameToStore ?? "",
-            'prove_picture' => $provePictureNameToStore ?? "",
+            'melli_card' => $melliCardNameToStore,
+            'prove_picture' => $provePictureNameToStore,
             'resume' => $resumeNameToStore ?? "",
             'province' => $request->province,
             'city' => $request->city,
@@ -77,18 +69,15 @@ class KycController extends Controller
     public function update(UpdateKycRequest $request, Kyc $kyc): KycResource
     {
         if ($request->hasFile('melli_card')) {
-            $kyc->melli_card = env('FTP_ENDPOINT') .
-                $request->file('melli_card')->store('user/kyc/' . $this->user->id);
+            $kyc->melli_card = $request->file('melli_card')->store('user/kyc/' . $this->user->id);
         }
 
         if ($request->hasFile('prove_picture')) {
-            $kyc->prove_picture = env('FTP_ENDPOINT') .
-                $request->file('prove_picture')->store('user/kyc/' . $this->user->id);
+            $kyc->prove_picture = $request->file('prove_picture')->store('user/kyc/' . $this->user->id);
         }
 
         if ($request->hasFile('resume')) {
-            $kyc->resume = env('FTP_ENDPOINT') .
-                $request->file('resume')->store('user/kyc/' . $this->user->id);
+            $kyc->resume = $request->file('resume')->store('user/kyc/' . $this->user->id);
         }
 
         $kyc->update([

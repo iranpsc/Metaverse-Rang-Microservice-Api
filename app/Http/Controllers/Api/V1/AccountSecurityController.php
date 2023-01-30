@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\AccountSecurityRequest;
 use App\Notifications\GetOtpNotification;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\VerifyAccountSecurityRequest;
 
 class AccountSecurityController extends Controller
 {
@@ -17,7 +17,7 @@ class AccountSecurityController extends Controller
         $user = $request->user();
         $accountSecurity = $user->accountSecurity;
         $code = random_int(100000, 999999);
-        if (!$user->accountSecurity) {
+        if ( is_null($accountSecurity)) {
             $accountSecurity = $user->accountSecurity()->create([
                 'length' => $request->time * 60,
             ]);
@@ -37,29 +37,18 @@ class AccountSecurityController extends Controller
             ['user_id' => $user->id],
             ['code' => Hash::make($code)]
         );
-        $user->notify(new GetOtpNotification($code, $user->phone ?: $request->phone));
-        return response()->json(['message' => 'کد تایید ارسال گردید. جهت ادامه کد تایید را وارد کنید!'], 200);
+        $user->notify(new GetOtpNotification($code, phone:$user->phone ?: $request->phone));
+        return response()->noContent(200);
     }
 
-    public function turnOffAccountSecurity(Request $request)
+    public function turnOffAccountSecurity(VerifyAccountSecurityRequest $request)
     {
         $user = $request->user();
-        $this->validate(
-            $request,
-            ['code' => 'required|integer|min:100000|max:999999'],
-            [
-                'code.required' => 'کد تایید را وارد کنید',
-                'code.integer' => 'کد تایید صحیح نیست',
-                'code.min' => 'کد تایید صحیح نیست',
-                'code.max' => 'کد تایید صحیح نیست'
-                ]
-            );
         $accountSecurity = $user->accountSecurity;
-        if(!$accountSecurity || !$accountSecurity->otp) {
-            abort(404, 'درخواست معتبر نمی باشد!');
-        } elseif($accountSecurity->unlocked) {
-            abort(404, 'درخواست معتبر نمی باشد!');
-        }
+
+        abort_if(!$accountSecurity || !$accountSecurity->otp, 400);
+        abort_if($accountSecurity->unlocked, 400);
+
         if(Hash::check($request->code, $accountSecurity->otp->code)) {
             if(is_null($user->phone_verified_at)) {
                 $user->update(['phone_verified_at' => now()]);
@@ -75,12 +64,10 @@ class AccountSecurityController extends Controller
                 'device' => $request->userAgent(),
                 'status' => 1,
             ]);
-            return response()->json([
-                'message' => sprintf('امنیت حساب کاربری شما به مدت %s دقیقه غیر فعال گردید.', $accountSecurity->length / 60)
-            ], 200);
+            return response()->noContent(200);
         } else {
             throw ValidationException::withMessages([
-                'error' => 'کد تایید صحیح نیست!'
+                'code' => 'کد تایید صحیح نیست!'
             ]);
         }
     }

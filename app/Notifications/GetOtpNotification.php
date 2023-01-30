@@ -3,11 +3,10 @@
 namespace App\Notifications;
 
 use App\Channels\SmsChannel;
+use App\Mail\EmailOtp;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-
 class GetOtpNotification extends Notification implements ShouldQueue
 {
     use Queueable;
@@ -18,12 +17,15 @@ class GetOtpNotification extends Notification implements ShouldQueue
      * @return void
      */
 
-    private $code, $phone;
+    private $code, $phone, $type, $email;
 
-    public function __construct($code, $phone = null)
+    public function __construct($code, $type = 'sms', $email = null, $phone = null, )
     {
         $this->code = $code;
         $this->phone = $phone;
+        $this->type = $type;
+        $this->email = $email;
+        $this->afterCommit();
     }
 
     /**
@@ -34,7 +36,7 @@ class GetOtpNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return [SmsChannel::class];
+        return $this->type == 'sms' ? [SmsChannel::class] : ['mail'];
     }
 
     /**
@@ -45,10 +47,9 @@ class GetOtpNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return (new EmailOtp($this->code))
+        ->to($this->email)
+        ->from('rgb-robot@irpsc.com');
     }
 
     /**

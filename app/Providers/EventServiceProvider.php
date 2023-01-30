@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Models\Feature;
 use App\Models\User;
-use App\Observers\UserLogObserver;
+use App\Observers\UserObserver;
 use App\Observers\FeatureObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -33,7 +33,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        User::observe(UserLogObserver::class);
+        User::observe(UserObserver::class);
         Feature::observe(FeatureObserver::class);
     }
 

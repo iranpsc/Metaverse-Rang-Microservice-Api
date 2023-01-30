@@ -33,12 +33,8 @@ class RegisterController extends Controller
                 'referer_id' => $user->id,
             ]);
         }
-        $user->assets()->create();
-        $user->settings()->create();
-        $user->generalSettings()->create();
-        $user->log()->create();
-        $user->variables()->create();
-        createUserPrivacy($user);
+
+        $user->registered();
 
         event(new Registered($user));
 

@@ -11,6 +11,13 @@ class AccountSecurity extends Model
 
     protected $guarded = [];
 
+    public $timestamps = false;
+
+    protected $attributes = [
+        'unlocked' => false,
+        'until' => null,
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\User;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
@@ -29,23 +29,9 @@ class RegisterRequest extends FormRequest
             'email' => 'required|email|unique:users,email',
             'password' => [
                 'required',
-                function ($attribute, $value, $fail) {
-                    $pass_pattern = "/^(?=.*[A-Z])(?=.*[a-z]).{8,}$/";
-                    if (!preg_match($pass_pattern, $value)) {
-                        $fail('رمز عبور باید حداقل 8 کاراکتر شامل حداقل یک حرف کوچک، یک حرف بزرگ و یکی از سمبل های !@#$%^&* باشد');
-                    }
-                },
+                Password::defaults(),
             ],
-            'referral' => [
-                'nullable',
-                function ($attribute, $value, $fail) {
-                    $pattern = '/^(?=.*[hm-]).{8,}$/';
-                    $reference_user = User::firstWhere('code', $value);
-                    if (!preg_match($pattern, $value) || is_null($reference_user)) {
-                        $fail('لینک رفرال صحیح نیست!');
-                    }
-                },
-            ],
+            'referral' => 'nullable|exists:users,code'
         ];
     }
 
@@ -62,6 +48,7 @@ class RegisterRequest extends FormRequest
                 'unique' => 'آدرس ایمیل قبلا استفاده شده است'
             ],
             'password.required' => 'رمز عبور را وارد کنید',
+            'referral.exists' => 'لینک رفرال صحیح نیست.'
         ];
     }
 }

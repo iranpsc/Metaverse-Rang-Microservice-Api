@@ -2,14 +2,81 @@
 
 namespace App\Observers;
 
-use App\Models\Level\Level;
+use App\Events\UserStatusChanged;
 use App\Models\User;
-use App\Models\Variable;
+use App\Notifications\LogedInNotification;
 use Illuminate\Support\Facades\DB;
 use App\Models\Level\UserLevel;
+use App\Models\Level\Level;
+use App\Models\Variable;
 
-class UserLogObserver
+class UserObserver
 {
+    /**
+     * Handle the User "LogedIn" event.
+     *
+     * @param  \App\Models\User  $user
+     * @return void
+     */
+    public function logedIn(User $user)
+    {
+        $user->events()->create([
+            'event' => 'ورود به حساب کاربری',
+            'ip' => request()->ip(),
+            'device' => request()->userAgent(),
+            'status' => 1,
+        ]);
+
+        $user->update(['last_seen' => now()]);
+
+        $user->notify(new LogedInNotification(request()->ip()));
+
+        $user->activities()->create([
+            'start' => now(),
+            'ip' => request()->ip(),
+        ]);
+
+        broadcast(new UserStatusChanged([
+            'id'     => $user->id,
+            'online' => true
+        ]));
+    }
+
+    /**
+     * Handle the User "updated" event.
+     *
+     * @param  \App\Models\User  $user
+     * @return void
+     */
+    public function logedOut(User $user)
+    {
+        $latestActivity = $user->latestActivity;
+        if (isset($latestActivity) && is_null($latestActivity->end)) {
+            $start = $latestActivity->start;
+            $total = $start->diffInMinutes(now());
+            $latestActivity->update([
+                'end' => now(),
+                'total' => $total,
+                'ip' => request()->ip(),
+            ]);
+            $user->hourReached();
+        }
+        $user->update(['last_seen' => now()->subMinutes(2)]);
+        broadcast(new UserStatusChanged([
+            'id'     => $user->id,
+            'online' => false
+        ]));
+    }
+
+    public function registered(User $user) {
+        $user->assets()->create();
+        $user->settings()->create();
+        $user->generalSettings()->create();
+        $user->log()->create();
+        $user->variables()->create();
+        createUserPrivacy($user);
+    }
+
     /**
      * Handle User Activity Hours Event
      *
@@ -122,4 +189,5 @@ class UserLogObserver
             }
         }
     }
+
 }

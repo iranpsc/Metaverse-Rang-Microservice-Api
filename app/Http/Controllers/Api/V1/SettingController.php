@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateGeneralSettingsRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -12,14 +13,14 @@ class SettingController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function update(Request $request): JsonResponse
+    public function update(Request $request)
     {
         $settings = auth()->user()->settings;
 
         if ($request->has('checkout_days_count')) {
             $request->validate([
                 'checkout_days_count' => 'required|numeric|min:3',
-                'automatic_logout' => 'required|min:0',
+                'automatic_logout' => 'required|min:5',
             ]);
 
             $settings->update([
@@ -29,44 +30,32 @@ class SettingController extends Controller
         }
 
         if ($request->has('setting')) {
+            $request->validate([
+                'setting' => 'required|in:status,level,details',
+                'status' => 'required|boolean',
+            ]);
             $settings->update([
                 $request->input('setting') => $request->input('status'),
             ]);
         }
 
-        return response()->json([
-            'success' => 'تنظیمات بروز رسانی شد'
-        ], 200);
+        return response()->noContent(200);
     }
 
-    public function generalSettingsUpdate(Request $request)
+    public function generalSettingsUpdate(UpdateGeneralSettingsRequest $request)
     {
         $request->user()->generalSettings->update([
             $request->input('setting') => $request->input('status'),
         ]);
-        return response()->json([
-            'message' => 'تنظیمات بروزرسانی شد'
-        ], 200);
+        return response()->noContent(200);
     }
 
 
     public function uploadProfilePhoto(Request $request)
     {
-        $this->validate(
-            $request,
-            ['image' => 'required|file|mimes:png,jpg'],
-            [
-                'image.required' => 'تصویری برای بارگذاری انتخاب کنید',
-                'image.mimes' => 'فرمت فایل صحیح نمی باشد'
-            ]
-
-        );
-        $url = env('FTP_ENDPOINT') . $request->file('image')->store('/user/profile/' . $request->user()->id);
-        $request->user()->profilePhotos()->create([
-            'url' => $url
-        ]);
-        return response()->json([
-            'message' => 'تصویر بارگذاری شد'
-        ], 200);
+        $this->validate($request, ['image' => 'required|image|mimes:png,jpg,jpeg|size:1024']);
+        $url = $request->file('image')->store('/user/profile/' . $request->user()->id);
+        $request->user()->profilePhotos()->create(['url' => $url]);
+        return response()->noContent(200);
     }
 }

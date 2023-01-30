@@ -13,6 +13,8 @@ class UserActivity extends Model
 
     protected $fillable = ['user_id', 'start', 'end', 'total', 'ip'];
 
+    protected $dates = ['start', 'end'];
+
     /**
      * @return BelongsTo
      */

@@ -29,16 +29,19 @@ class CreateTicketRequest extends FormRequest
         return [
             'title' => 'required|string|max:250',
             'content' => 'required|string|max:500',
-            'attachment' => 'nullable|file|mimes:png,jpg,bmp,pdf',
+            'attachment' => 'nullable|file|mimes:png,jpg,jpeg,pdf|size:1024',
             'reciever' => [
                 'nullable',
                 'integer',
                 'exists:users,id',
+                Rule::requiredIf(fn() => !request()->has('department')),
                 Rule::prohibitedIf(fn() => request()->has('department'))
             ],
             'department' => [
                 'nullable',
+                'string',
                 new Enum(Departments::class),
+                Rule::requiredIf(fn() => !request()->has('reciever')),
                 Rule::prohibitedIf(fn() => request()->has('reciever'))
             ],
         ];

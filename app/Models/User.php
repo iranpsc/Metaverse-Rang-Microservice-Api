@@ -36,7 +36,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'followed',
         'traded',
         'deposit',
-        'hourReached'
+        'hourReached',
+        'registered',
+        'logedIn',
+        'logedOut'
     ];
 
     protected $casts = [
@@ -494,4 +497,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->kyc->birthdate->diffInYears(now()) < 18;
     }
+
+    public function registered()
+    {
+        $this->fireModelEvent('registered');
+    }
+
+    public function logedIn()
+    {
+        $this->fireModelEvent('logedIn');
+    }
+
+    public function logedOut()
+    {
+        $this->fireModelEvent('logedOut');
+    }
+
 }

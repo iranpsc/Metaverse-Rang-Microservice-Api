@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EmailOtp extends Mailable implements ShouldQueue
+class EmailOtp extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -22,7 +22,6 @@ class EmailOtp extends Mailable implements ShouldQueue
     public function __construct($code)
     {
         $this->code = $code;
-        $this->afterCommit();
     }
 
     /**
