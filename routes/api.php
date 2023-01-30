@@ -8,8 +8,6 @@ use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\V1\BankAccountController;
 use App\Http\Controllers\Api\V1\CalendarController;
-use App\Http\Controllers\Challenge\Api\V1\QuestionController;
-use App\Http\Controllers\Api\V1\ChatController;
 use App\Http\Controllers\Api\V1\CustomController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\Dynasty\AcceptJoinRequestController;
@@ -35,14 +33,6 @@ use App\Http\Controllers\Api\V1\ResetInfo\ResetEmailController;
 use App\Http\Controllers\Api\V1\ResetInfo\ResetPhoneController;
 use App\Http\Controllers\Api\V1\SearchController;
 use App\Http\Controllers\Api\V1\SettingController;
-use App\Http\Controllers\Api\V1\Statistics\AssetsStatistics;
-use App\Http\Controllers\Api\V1\Statistics\FamilyMembersStatisticsController;
-use App\Http\Controllers\Api\V1\Statistics\FollowersStatisticsController;
-use App\Http\Controllers\Api\V1\Statistics\LevelOneActivatedStatisticsController;
-use App\Http\Controllers\Api\V1\Statistics\StatisticsController;
-use App\Http\Controllers\Api\V1\Statistics\TradedFeaturesStatisticsController;
-use App\Http\Controllers\Api\V1\Statistics\UserActivityStatistics;
-use App\Http\Controllers\Api\V1\SystemVariableController;
 use App\Http\Controllers\Api\V1\TicketController;
 use App\Http\Controllers\Api\V1\UserEventsController;
 use App\Models\Notification;
@@ -256,21 +246,6 @@ Route::middleware(['api'])->group(function () {
         Route::get('/notification-read/{notification}', function (Notification $notification) {
             $notification->update(['read_at' => now()]);
         });
-
-        // Chat System
-        Route::prefix('/chat-room')->group(function () {
-            Route::get('/', [ChatController::class, 'index']);
-            Route::post('/new-chat/{user}', [ChatController::class, 'newChat']);
-            Route::get('/{chat}', [ChatController::class, 'chat']);
-            Route::post('/{chat}/send', [ChatController::class, 'send']);
-        });
-
-        // Challenge
-        Route::prefix('/challenge')->group(function () {
-            Route::get('/timings', [SystemVariableController::class, 'index']);
-            Route::get('/question', [QuestionController::class, 'index']);
-            Route::post('/{question}/answer/{questionAnswer}', [QuestionController::class, 'answerQuestion']);
-        });
     });
 
     Route::get('/ping', static fn () => null);
@@ -279,27 +254,5 @@ Route::middleware(['api'])->group(function () {
 
     Route::controller(PublicProfileController::class)->withoutMiddleware('check.ip')->prefix('citizen')->group(function () {
         Route::get('/{code}', 'home');
-    });
-
-
-    //Statistics
-    Route::prefix('/statistics')->group(function () {
-        Route::get('/user-followers', [FollowersStatisticsController::class, 'index']);
-        Route::post('/update-followers-status', [FollowersStatisticsController::class, 'updateStatus']);
-        Route::post('/current-month-top-followers', [FollowersStatisticsController::class, 'currentMonthTopFollowers']);
-        Route::get('/top-active-users', [UserActivityStatistics::class, 'index']);
-        Route::post('/current-month-top-active-users', [UserActivityStatistics::class, 'currentMonthTopActiveUsers']);
-        Route::post('/update-user-activity-status', [UserActivityStatistics::class, 'updateStatus']);
-        Route::post('/most-buy-asset', [AssetsStatistics::class, 'index']);
-        Route::post('/current-month-most-buy-asset', [AssetsStatistics::class, 'currentMonthAssetBuyAmount']);
-        Route::post('/update-assets-statistics-status', [AssetsStatistics::class, 'updateStatus']);
-        Route::post('/traded-features', [TradedFeaturesStatisticsController::class, 'index']);
-        Route::post('/current-month-top-traded-features', [TradedFeaturesStatisticsController::class, 'currentMonthTopTradedFeatures']);
-        Route::post('/update-traded-features-status', [TradedFeaturesStatisticsController::class, 'updateStatus']);
-        Route::get('/top-dynasty-family-referral', [FamilyMembersStatisticsController::class, 'index']);
-        Route::post('/current-month-top-dynasty-family-referral', [FamilyMembersStatisticsController::class, 'currentMonthTopDynastyFamilyReferral']);
-        Route::post('/update-top-dynasty-status', [FamilyMembersStatisticsController::class, 'updateStatus']);
-        Route::get('/all-users-level-one-activated', [LevelOneActivatedStatisticsController::class, 'index']);
-        Route::post('/current-month-users-level-one-activated', [StatisticsController::class, 'currentMonthUsersLevelOneActivated']);
     });
 });
