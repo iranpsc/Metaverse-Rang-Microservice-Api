@@ -82,16 +82,13 @@ Route::middleware(['api'])->group(function () {
 
     Route::apiResource('players', PlayerController::class);
 
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/get-user-info/{user}', [HomeController::class, 'showUserDetails'])->name('top-player-details');
+
     Route::middleware(['auth:sanctum', 'verified', 'check.ip', 'user.activity'])->group(function () {
-        Route::controller(HomeController::class)->group(function () {
-            Route::get('/home', 'index')->withoutMiddleware([
-                'verified', 'user.activity'
-            ])->name('home');
-            Route::get('/get-user-info/{user}', 'showUserDetails')->withoutMiddleware([
-                'verified', 'user.activity',
-            ])->name('top-player-details');
-            Route::get('/store', 'store');
-        });
+
+        Route::get('/store', [HomeController::class, 'store'])->name('store');
+
         Route::controller(DashboardController::class)->prefix('user')->group(function () {
             Route::get('/profile', 'index');
             Route::get('/payments/latest', 'getUserLatestTransaction');
