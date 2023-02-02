@@ -90,7 +90,7 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
 
     Route::controller(EmailVerificationController::class)->prefix('email')->group(function () {
         Route::get('/verify/{id}/{hash}', 'verify')
-            ->withoutMiddleware('auth:sanctum')
+            ->withoutMiddleware(['auth:sanctum', 'verified'])
             ->middleware(['signed'])
             ->name('verification.verify');
         Route::get('/verification-notification', 'resend')
