@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +19,9 @@ Route::get('/', function () {
 });
 
 
+Route::get('uploads/kyc/{user}/{file}', function (string $file) {
+    return Storage::disk('public')->download($file);
+})
+    ->where(['file' => '\w[0-9a-zA-Z-_.]+'])
+    ->name('uploads.download')
+    ->middleware('signed');

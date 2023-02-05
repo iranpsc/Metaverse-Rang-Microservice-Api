@@ -2,11 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\Feature;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-
 class AppServiceProvider extends ServiceProvider
 {
     /**

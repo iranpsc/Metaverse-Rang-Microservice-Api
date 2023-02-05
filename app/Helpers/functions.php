@@ -66,15 +66,6 @@ function iszero($value): bool
     return $value == 0;
 }
 
-function convertDateToCarbon($date)
-{
-    $date = \Morilog\Jalali\CalendarUtils::convertNumbers($date, true);
-    $date = str_replace('/', '-', $date);
-    $date = Carbon::parse($date)->format('Y-m-d');
-    $date = \Morilog\Jalali\CalendarUtils::createCarbonFromFormat('Y-m-d', $date)->format('Y-m-d');
-    return $date;
-}
-
 function isUnderEighteen(User $user)
 {
     return $user->kyc->birthdate->diffInYears(now()) < 18;

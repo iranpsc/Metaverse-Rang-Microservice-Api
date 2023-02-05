@@ -24,7 +24,7 @@ class UserResource extends JsonResource
                 'token' => $this->token,
             ]),
             'score' => $this->score,
-            'phone' => str_pad($this->phone, 3, '*'),
+            'phone' => null,
             'automatic_logout' => $this->settings->automatic_logout,
             'level' => $this->level,
             'score_percentage_to_next_level' => getScorePercentageToNextLevel($this->level, $this->score),
