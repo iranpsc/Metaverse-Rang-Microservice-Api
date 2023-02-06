@@ -39,7 +39,7 @@ class KycController extends Controller
         $melliCardFile = $request->file('melli_card');
         $provePictureFile = $request->file('prove_picture');
 
-        $melliCardNameToStore = $melliCardFile->store('user/ kyc');
+        $melliCardNameToStore = $melliCardFile->store('user/kyc');
 
         $provePictureNameToStore = $provePictureFile->store('user/kyc');
 
