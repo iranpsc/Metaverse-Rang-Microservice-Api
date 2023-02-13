@@ -8,31 +8,37 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+
 class Transaction extends Model
 {
     use HasUuids;
 
-	protected $fillable = [
+    protected $fillable = [
         'id',
-		'user_id',
-		'payable_id',
-		'payable_type',
+        'user_id',
+        'payable_id',
+        'payable_type',
         'asset',
-		'amount',
-		'action',
-		'status'
-	];
+        'amount',
+        'action',
+        'status'
+    ];
 
     protected $keyType = 'string';
     public $incrementing = false;
 
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
+    protected $attributes = [
+        'status' => 0
+    ];
 
-	public function payable(){
-	    return $this->morphTo();
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function payable()
+    {
+        return $this->morphTo();
     }
 
     public function newUniqueId()

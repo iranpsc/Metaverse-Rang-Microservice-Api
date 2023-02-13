@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SellFeatureRequestValidate extends FormRequest
 {
@@ -24,9 +25,37 @@ class SellFeatureRequestValidate extends FormRequest
     public function rules()
     {
         return [
-            'price_psc' => 'nullable|numeric|min:0',
-            'price_irr' => 'nullable|numeric|min:0',
-            'minimum_price_percentage' => 'nullable|integer|min:80',
+            'price_psc' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                Rule::requiredIf(fn () => !request()->has('minimum_price_percentage')),
+                Rule::prohibitedIf(fn () => request()->has('minimum_price_percentage')),
+                function ($attribute, $value, $fail) {
+                    if (request()->price_irr == 0 && $value == 0) {
+                        $fail("{$attribute} must be greater than 0!");
+                    }
+                }
+            ],
+            'price_irr' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                Rule::requiredIf(fn () => !request()->has('minimum_price_percentage')),
+                Rule::prohibitedIf(fn () => request()->has('minimum_price_percentage')),
+                function ($attribute, $value, $fail) {
+                    if (request()->price_psc == 0 && $value == 0) {
+                        $fail("{$attribute} must be greater than 0!");
+                    }
+                }
+            ],
+            'minimum_price_percentage' => [
+                'nullable',
+                'numeric',
+                'min:80',
+                Rule::requiredIf(fn () => !request()->has('price_irr') && !request()->has('price_psc')),
+                Rule::prohibitedIf(fn () => request()->has('price_irr') || request()->has('price_psc')),
+            ],
         ];
     }
 }

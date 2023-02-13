@@ -95,7 +95,7 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
             ->withoutMiddleware(['auth:sanctum', 'verified'])
             ->middleware(['signed'])
             ->name('verification.verify');
-        Route::get('/verification-notification', function(Request $request) {
+        Route::get('/verification-notification', function (Request $request) {
             $request->user()->sendEmailVerificationNotification();
         })
             ->withoutMiddleware('verified')
@@ -110,39 +110,40 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
             Route::post('verify', 'turnOffAccountSecurity');
         });
 
-    Route::controller(FeatureController::class)->middleware('account.security')->scopeBindings()->group(function () {
-        Route::prefix('my-features')->group(function () {
-            Route::withoutMiddleware('account.security')->group(function () {
-                Route::get('/', 'index');
-                Route::get('/{user}/features/{feature}', 'show');
+    Route::controller(FeatureController::class)->middleware('account.security')
+        ->scopeBindings()->group(function () {
+            Route::prefix('my-features')->group(function () {
+                Route::withoutMiddleware('account.security')->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{user}/features/{feature}', 'show');
+                });
+                Route::post('/{user}/add-image/{feature}', 'addFeatureImages');
+                Route::post('/{user}/remove-image/{feature}/image/{image}', 'removeّFeatureImage');
+
+                Route::post('/{user}/features/{feature}', 'updateFeature');
             });
-            Route::post('/{user}/add-image/{feature}', 'addFeatureImages');
-            Route::post('/{user}/remove-image/{feature}/image/{image}', 'removeّFeatureImage');
-
-            Route::post('/{user}/features/{feature}', 'updateFeature');
-        });
-        Route::controller(BuyFeatureController::class)->prefix('features')->group(function () {
-            Route::get('/{feature}', 'show')->withoutMiddleware(['account.security', 'auth:sanctum', 'verified']);
-            Route::post('/buy/{feature}', 'buy')->can('buy', 'feature');
-        });
-
-        Route::controller(SellRequestsController::class)->prefix('sell-requests')->group(function () {
-            Route::get('/', 'index')->withoutMiddleware('account.security');
-            Route::post('/store/{feature}', 'store')->can('sell', 'feature');
-            Route::delete('/delete/{sellRequest}', 'destroy')->can('delete', 'sellRequest');
-        });
-
-        Route::controller(BuyRequestsController::class)->prefix('buy-requests')->group(function () {
-            Route::withoutMiddleware('account.security')->group(function () {
-                Route::get('/', 'index');
-                Route::get('/recieved', 'recievedBuyRequests');
+            Route::controller(BuyFeatureController::class)->prefix('features')->group(function () {
+                Route::get('/{feature}', 'show')->withoutMiddleware(['account.security', 'auth:sanctum', 'verified']);
+                Route::post('/buy/{feature}', 'buy')->can('buy', 'feature');
             });
-            Route::post('/store/{feature}', 'store')->can('sendBuyRequest', 'feature');
-            Route::delete('/delete/{buyFeatureRequest}', 'destroy')->can('delete', 'buyFeatureRequest');
-            Route::post('/accept/{buyFeatureRequest}', 'acceptBuyRequest')->can('accept', 'buyFeatureRequest');
-            Route::post('/reject/{buyFeatureRequest}', 'rejectBuyRequest')->can('reject', 'buyFeatureRequest');
+
+            Route::controller(SellRequestsController::class)->prefix('sell-requests')->group(function () {
+                Route::get('/', 'index')->withoutMiddleware('account.security');
+                Route::post('/store/{feature}', 'store')->can('sell', 'feature');
+                Route::delete('/{sellRequest}', 'destroy')->can('delete', 'sellRequest');
+            });
+
+            Route::controller(BuyRequestsController::class)->prefix('buy-requests')->group(function () {
+                Route::withoutMiddleware('account.security')->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/recieved', 'recievedBuyRequests');
+                });
+                Route::post('/store/{feature}', 'store')->can('sendBuyRequest', 'feature');
+                Route::delete('/delete/{buyFeatureRequest}', 'destroy')->can('delete', 'buyFeatureRequest');
+                Route::post('/accept/{buyFeatureRequest}', 'acceptBuyRequest')->can('accept', 'buyFeatureRequest');
+                Route::post('/reject/{buyFeatureRequest}', 'rejectBuyRequest')->can('reject', 'buyFeatureRequest');
+            });
         });
-    });
 
     Route::controller(SettingController::class)->group(function () {
         Route::post('/settings', 'update');
@@ -217,15 +218,15 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
         });
 
         Route::controller(AcceptJoinRequestController::class)->scopeBindings()
-        ->prefix('requests')
-        ->group(function () {
-            Route::get('/recieved', 'index');
-            Route::get('/recieved/{user}/show/{recievedJoinRequest}', 'show');
-            Route::post('/recieved/{user}/accept/{recievedJoinRequest}', 'accept');
-            Route::post('/recieved/{user}/verify/{recievedJoinRequest}', 'verify');
-            Route::post('/recieved/{user}/verify/{recievedJoinRequest}/resend/otp', 'resendOtp');
-            Route::post('/recieved/{user}/reject/{recievedJoinRequest}', 'reject');
-        });
+            ->prefix('requests')
+            ->group(function () {
+                Route::get('/recieved', 'index');
+                Route::get('/recieved/{user}/show/{recievedJoinRequest}', 'show');
+                Route::post('/recieved/{user}/accept/{recievedJoinRequest}', 'accept');
+                Route::post('/recieved/{user}/verify/{recievedJoinRequest}', 'verify');
+                Route::post('/recieved/{user}/verify/{recievedJoinRequest}/resend/otp', 'resendOtp');
+                Route::post('/recieved/{user}/reject/{recievedJoinRequest}', 'reject');
+            });
 
         Route::controller(DynastyPrizeController::class)->scopeBindings()->group(function () {
             Route::get('/prizes', 'index');
@@ -271,7 +272,7 @@ Route::controller(PublicProfileController::class)
         Route::get('/{code}', 'home');
     });
 
-Route::post('/send-mail', function(Request $request) {
+Route::post('/send-mail', function (Request $request) {
     $request->validate([
         'fname' => 'required',
         'lname' => 'required',

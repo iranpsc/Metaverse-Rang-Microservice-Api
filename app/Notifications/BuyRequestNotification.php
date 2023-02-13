@@ -3,11 +3,10 @@
 namespace App\Notifications;
 
 use App\Channels\SmsChannel;
+use App\Mail\BuyRequestRecievedMail;
 use App\Mail\BuyRequestSentMail;
-use App\Models\BuyFeatureRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class BuyRequestNotification extends Notification implements ShouldQueue
@@ -25,7 +24,6 @@ class BuyRequestNotification extends Notification implements ShouldQueue
     public function __construct($data)
     {
         $this->data = $data;
-        $this->afterCommit();
     }
 
     /**
@@ -41,8 +39,9 @@ class BuyRequestNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
-        return (new BuyRequestSentMail($this->data['buyRequest']))
-            ->to($notifiable->email);
+        return $this->data['type'] == 'buyer'
+            ? (new BuyRequestSentMail($this->data['buyRequest']))->to($notifiable->email)
+            : (new BuyRequestRecievedMail($this->data['buyRequest']))->to($notifiable->email);
     }
 
     public function toSms($notifiable)
@@ -64,25 +63,15 @@ class BuyRequestNotification extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
-        if ($this->data['price_psc'] > 0 && $this->data['price_irr'] > 0) {
+        if ($this->data['type'] == 'buyer') {
             $message = sprintf(
                 'مبلغ %s psc و %s از حساب شما بابت پیشنهاد خرید ملک %s برداشت شد.',
-                $this->data['price_psc'] + ($this->data['price_psc'] * config('rgb.fee')),
-                $this->data['price_irr'] + ($this->data['price_irr'] * config('rgb.fee')),
+                $this->data['price_psc'],
+                $this->data['price_irr'],
                 $this->data['id']
             );
-        } elseif ($this->data['price_psc'] > 0) {
-            $message = sprintf(
-                'مبلغ %s psc از حساب شما بابت پیشنهاد خرید ملک %s برداشت شد.',
-                $this->data['price_psc'] + ($this->data['price_psc'] * config('rgb.fee')),
-                $this->data['id']
-            );
-        } elseif ($this->data['price_irr'] > 0) {
-            $message = sprintf(
-                'مبلغ %s ریال از حساب شما بابت پیشنهاد خرید ملک %s برداشت شد.',
-                $this->data['price_irr'] + ($this->data['price_irr'] * config('rgb.fee')),
-                $this->data['id']
-            );
+        } else {
+            $message = sprintf('یک پیشنهاد خرید برای ملک %s دریافت شد.', $this->data['id']);
         }
         return [
             'related-to' => 'transactions',

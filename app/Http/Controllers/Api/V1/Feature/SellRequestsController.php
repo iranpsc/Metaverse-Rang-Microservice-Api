@@ -3,16 +3,14 @@
 namespace App\Http\Controllers\Api\V1\Feature;
 
 use App\Events\FeatureStatusChanged;
-use App\Helpers\AssetHelper;
 use App\Http\Controllers\Controller;
-use App\Helpers\FeatureHelper;
 use App\Http\Requests\SellFeatureRequestValidate;
 use App\Http\Resources\SellRequestResource;
 use App\Models\Feature;
-use App\Models\Feature\FeaturePricingLimit;
 use App\Models\SellFeatureRequest;
+use App\Models\SystemVariable;
+use App\Models\Variable;
 use App\Notifications\SellRequestNotification;
-use Illuminate\Validation\ValidationException;
 
 class SellRequestsController extends Controller
 {
@@ -23,107 +21,62 @@ class SellRequestsController extends Controller
      */
     public function index()
     {
-        if(count(request()->user()->sellRequests) === 0)
-        {
-            return response()->json([
-                'error' => 'درخواست فروشی ثبت نشده است'
-            ]);
-        }
         return SellRequestResource::collection(request()->user()->sellRequests);
     }
 
     public function store(SellFeatureRequestValidate $request, Feature $feature)
     {
-        $pricingLimit = FeaturePricingLimit::first();
+        $publicPricingLimit = SystemVariable::getByKey('public_pricing_limit');
+        $under18PricingLimit = SystemVariable::getByKey('under_18_pricing_limit');
 
-        if (isset($request->minimum_price_percentage) && ($request->price_psc  || $request->price_irr)) {
-            abort(403, 'قیمت ملک خود را یا با درصد یا با قیمت psc و یا ریال مشخص کنید');
-        }
+        $requestedPrice_psc = $request->price_psc;
+        $requestedPrice_irr = $request->price_irr;
 
-        if (isset($request->minimum_price_percentage)) {
-            if(isUnderEighteen($request->user())) {
-                if ($request->minimum_price_percentage < $pricingLimit->under_eighteen_price_limit) {
-                    abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->under_eighteen_price_limit} درصد قیمت خرید ملک نمی باشید");
-                }
+        if ($request->has('minimum_price_percentage')) {
+            if ($request->user()->isUnderEighteen() && $request->minimum_price_percentage < $under18PricingLimit) {
+                abort(403, sprintf("شما مجاز به فروش زمین خود به کمتر از %s درصد قیمت خرید ملک نمی باشید", $under18PricingLimit));
+            } elseif ($request->minimum_price_percentage < $publicPricingLimit) {
+                abort(403, sprintf("شما مجاز به فروش زمین خود به کمتر از %s درصد قیمت خرید ملک نمی باشید", $publicPricingLimit));
             }
-            if ($request->minimum_price_percentage < $pricingLimit->public_price_limit) {
-                abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->public_price_limit}درصد قیمت خرید ملک نمی باشید");
-            }
-            $color = AssetHelper::getAssetColor($feature);
-            $totalPrice = $feature->properties->stability * currentColorPrice($color) * ($request->minimum_price_percentage / 100);
-            $requestedPrice_psc = ($totalPrice * 0.5) / currentPscPrice();
+
+            $totalPrice = $feature->properties->stability * Variable::getRate($feature->getColor()) * $request->minimum_price_percentage / 100;
+            $requestedPrice_psc = $totalPrice / Variable::getRate('psc') * 0.5;
             $requestedPrice_irr = $totalPrice * 0.5;
-            $price_limit = $request->minimum_price_percentage;
+            $pricing_percentage = $request->minimum_price_percentage;
         } else {
-            if (iszero($request->price_psc) && iszero($request->price_irr)) {
-                throw ValidationException::withMessages([
-                    'error' => 'قیمت ملک را یا به ریال یا به psc مشخص کنید'
-                ]);
-            }
-            $price_limit = 0;
+            $totalRequested_price = $request->price_psc * Variable::getRate('psc') + $request->price_irr;
+            $totalTradedPrice = $feature->properties->stability * Variable::getRate($feature->getColor());
+            $pricing_percentage = intval($totalRequested_price / $totalTradedPrice * 100);
 
-            $requestedPrice_psc = $request->price_psc;
-            $requestedPrice_irr = $request->price_irr;
-
-            $totalRequested_price = ($requestedPrice_psc * currentPscPrice()) + $requestedPrice_irr;
-            $latestTraded = $feature->latestTraded;
-
-            //If user bought this feature from RGB
-            if ($latestTraded->seller->code == 'hm-2000000') {
-                $tradedColor = AssetHelper::getAssetColor($feature);
-                $totalTradedPrice = $feature->properties->stability * currentColorPrice($tradedColor);
-
-                $price_limit = floor(($totalRequested_price / $totalTradedPrice) * 100);
-
-                if(isUnderEighteen($request->user())) {
-                    if ($request->minimum_price_percentage < $pricingLimit->under_eighteen_price_limit) {
-                        abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->under_eighteen_price_limit}درصد قیمت خرید ملک نمی باشید");
-                    }
-                }
-
-                if ($price_limit < $pricingLimit->public_price_limit) {
-                    abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->public_price_limit} قیمت خرید ملک نمی باشید");
-                }
-            } else {
-                //If user bought this feature from a User
-                $totalTradedPrice = (currentPscPrice() * $latestTraded->psc_amount) + $latestTraded->irr_amount;
-                $price_limit = floor(($totalRequested_price / $totalTradedPrice) * 100);
-                // Check if the price limit is less than the allowed price limit by administor
-                if(isUnderEighteen($request->user())) {
-                    if ($request->minimum_price_percentage < $pricingLimit->under_eighteen_price_limit) {
-                        abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->under_eighteen_price_limit}درصد قیمت خرید ملک نمی باشید");
-                    }
-                }
-                if ($price_limit < $pricingLimit->public_price_limit) {
-                    abort(403, "شما مجاز به فروش زمین خود به کمتر از {$pricingLimit->public_price_limit} قیمت خرید ملک نمی باشید");
-                }
+            if ($request->user()->isUnderEighteen() && $pricing_percentage < $under18PricingLimit) {
+                abort(403, sprintf("شما مجاز به فروش زمین خود به کمتر از %s درصد قیمت خرید ملک نمی باشید", $under18PricingLimit));
+            } elseif ($pricing_percentage < $publicPricingLimit) {
+                abort(403, sprintf("شما مجاز به فروش زمین خود به کمتر از %s درصد قیمت خرید ملک نمی باشید", $publicPricingLimit));
             }
         }
 
         $sellRequest = SellFeatureRequest::create([
             'seller_id' => $feature->owner->id,
             'feature_id' => $feature->id,
-            'status' => 0,
             'price_psc' => $requestedPrice_psc,
             'price_irr' => $requestedPrice_irr,
-            'limit'     => $price_limit,
+            'limit'     => $pricing_percentage,
         ]);
 
         $feature->properties->update([
-            'rgb' => FeatureHelper::changeStatus($feature),
+            'rgb' => $feature->changeStatusToSoldAndPriced(),
             'price_psc' => $sellRequest->price_psc,
             'price_irr' => $sellRequest->price_irr,
-            'minimum_price_percentage' => $price_limit
+            'minimum_price_percentage' => $pricing_percentage
         ]);
 
         broadcast(new FeatureStatusChanged([
             'id'  => $feature->id,
-            'rgb' => $feature->properties->rgb,
+            'rgb' => $feature->changeStatusToSoldAndPriced(),
         ]));
 
         $request->user()->notify(new SellRequestNotification($feature));
 
-        $sellRequest->message = 'ملک مورد نظر با موفقیت به فروش گذاشته شد';
         return new SellRequestResource($sellRequest);
     }
 
@@ -136,17 +89,14 @@ class SellRequestsController extends Controller
     public function destroy(SellFeatureRequest $sellRequest)
     {
         $feature = $sellRequest->feature;
-
         $feature->properties->update([
-            'rgb' => FeatureHelper::cancelSellRequest($feature)
+            'rgb' => $feature->changeStatusToSoldAndNotPriced()
         ]);
-
         $sellRequest->delete();
         broadcast(new FeatureStatusChanged([
             'id'  => $feature->id,
-            'rgb' => FeatureHelper::cancelSellRequest($feature)
+            'rgb' => $feature->changeStatusToSoldAndNotPriced()
         ]));
-
-        return response()->json(['success' => 'قیمت گذاری لغو شد']);
+        return response()->noContent();
     }
 }

@@ -26,7 +26,6 @@ class BuyFeatureNotification extends Notification implements ShouldQueue
     {
         $this->data = $data;
         $this->trade = $trade;
-        $this->afterCommit();
     }
 
     /**
@@ -76,30 +75,16 @@ class BuyFeatureNotification extends Notification implements ShouldQueue
             $message = sprintf(
                 '%s لیتر رنگ %s از حساب شما بابت خرید زمین %s برداشت شد.',
                 $this->trade->feature->properties->stability,
-                FeatureHelper::getFeatureColor($this->trade->feature),
+                $this->trade->feature->getFeatureColor(),
                 $this->trade->feature->properties->id,
             );
         } else {
-            if ($this->trade->psc_amount > 0 && $this->trade->irr_amount > 0) {
-                $message = sprintf(
-                    'مبلغ %s psc و %s از حساب شما بابت خرید ملک %s برداشت شد.',
-                    totalPrice($this->trade->feature, 'buyer', fee($this->trade->feature))['psc'],
-                    totalPrice($this->trade->feature, 'buyer', fee($this->trade->feature))['irr'],
-                    $this->trade->feature->properties->id
-                );
-            } elseif ($this->trade->psc_amount > 0) {
-                $message = sprintf(
-                    'مبلغ %s psc از حساب شما بابت خرید ملک %s برداشت شد.',
-                    totalPrice($this->trade->feature, 'seller', fee($this->trade->feature))['psc'],
-                    $this->trade->feature->properties->id
-                );
-            } elseif ($this->trade->irr_amount > 0) {
-                $message = sprintf(
-                    'مبلغ %s ریال از حساب شما بابت خرید ملک %s برداشت شد.',
-                    totalPrice($this->trade->feature, 'seller', fee($this->trade->feature))['irr'],
-                    $this->trade->feature->properties->id
-                );
-            }
+            $message = sprintf(
+                'از حساب شما %s psc و %s ریال بابت خرید ملک %s برداشت شد.',
+                $this->trade->psc_amount,
+                $this->trade->irr_amount,
+                $this->trade->feature->properties->id
+            );
         }
         return [
             'related-to' => 'transactions',

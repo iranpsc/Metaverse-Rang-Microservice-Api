@@ -25,8 +25,26 @@ class BuyFeatureRequestValidate extends FormRequest
     {
         return [
             'note' => 'nullable|string|max:500',
-            'price_psc' => 'required|numeric|min:0',
-            'price_irr' => 'required|numeric|min:0',
+            'price_psc' => [
+                'required',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) {
+                    if (request()->price_irr == 0 && $value == 0) {
+                        $fail("{$attribute} must be greater than 0!");
+                    }
+                }
+            ],
+            'price_irr' => [
+                'required',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) {
+                    if (request()->price_psc == 0 && $value == 0) {
+                        $fail("{$attribute} must be greater than 0!");
+                    }
+                }
+            ],
         ];
     }
 }

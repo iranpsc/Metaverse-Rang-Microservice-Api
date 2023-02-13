@@ -49,24 +49,6 @@ class BuyFeatureController extends Controller
                 }
             }
 
-            $limitedFeatures = [
-                FeatureIndicators::MaskoniTradingLimited,
-                FeatureIndicators::TejariTradingLimited,
-                FeatureIndicators::AmoozeshiTradingLimited,
-            ];
-
-            if (in_array($featureProperties->rgb, $limitedFeatures)) {
-                $featureLimit = FeatureLimit::where('start_date', '<=', now())
-                    ->where('end_date', '>=', now())
-                    ->where('start_id', '<=', $featureProperties->id)
-                    ->where('end_id', '>=', $featureProperties->id)
-                    ->first();
-                LimitedFeaturePurchase::create([
-                    'user_id' => $buyer->id,
-                    'feature_limit_id' => $featureLimit->id
-                ]);
-            }
-
             $buyer->assets->decrement(AssetHelper::getAssetColor($feature), $price);
             $seller->assets->increment(AssetHelper::getAssetColor($feature), $price);
 

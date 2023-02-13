@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Transaction;
+use App\Models\FeatureProperties;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,24 +16,12 @@ class TransactionSeeder extends Seeder
      */
     public function run()
     {
-        $transactions = Transaction::all();
+        $features = FeatureProperties::query();
 
-        $transactions->map(function($transaction) {
-            $transaction->update(['id' => $this->generateId()]);
+        $features->lazyById()->map(function($feature) {
+            $feature->update([
+                'stability' => $feature->area * $feature->density,
+            ]);
         });
-    }
-
-    private function generateId(): string
-    {
-        $id = 'TR-'.$this->randomNumber();
-        while(Transaction::where('id', $id)->exists()) {
-            $id = 'TR-' . $this->randomNumber();
-        }
-        return $id;
-    }
-
-    private function randomNumber()
-    {
-        return random_int(1000000, 9999999);
     }
 }

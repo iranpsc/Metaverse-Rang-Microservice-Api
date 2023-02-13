@@ -9,24 +9,14 @@ namespace App\Models;
 use App\Models\Dynasty\Dynasty;
 use App\Models\Feature\FeatureHourlyProfit;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\FeatureIndicators;
 
 class Feature extends Model
 {
-    protected $table = 'features';
-    protected $primaryKey = 'id';
-
-    protected $casts = [
-        'map_id' => 'int',
-        'owner_id' => 'int',
-        'index' => 'int'
-
-    ];
-
     protected $fillable = [
         'map_id',
         'type',
         'owner_id',
-        'index'
     ];
 
     protected $hidden = [
@@ -45,15 +35,17 @@ class Feature extends Model
         return $this->hasOne(FeatureProperties::class, 'feature_id', 'id');
     }
 
-	public function geometry()
-	{
-		return $this->hasOne(Geometry::class,  'feature_id' , 'id' );
-	}
-	public function images(){
-	    return $this->morphMany(Image::class,'imageable');
+    public function geometry()
+    {
+        return $this->hasOne(Geometry::class,  'feature_id', 'id');
     }
-    public function owner(){
-	    return $this->belongsTo(User::class, 'owner_id');
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function buyRequests()
@@ -68,9 +60,9 @@ class Feature extends Model
 
     function hasPendingRequests()
     {
-        return ! empty($this->sellRequests
-        ->where('seller_id', $this->owner->id)
-        ->where('status', 0)->first());
+        return !empty($this->sellRequests
+            ->where('seller_id', $this->owner->id)
+            ->where('status', 0)->first());
     }
 
     public function dynasty()
@@ -83,13 +75,15 @@ class Feature extends Model
         return $this->hasOne(Trade::class)->latestOfMany();
     }
 
-    public function latestSellRequest() {
+    public function latestSellRequest()
+    {
         return $this->hasOne(SellFeatureRequest::class)->latestOfMany();
     }
 
-    public function underPriced() {
+    public function underPriced()
+    {
         $sellRequest = $this->latestSellRequest;
-        if($sellRequest) {
+        if ($sellRequest) {
             return $sellRequest->limit < 100;
         }
         return false;
@@ -100,13 +94,44 @@ class Feature extends Model
         return $this->hasOne(FeatureHourlyProfit::class);
     }
 
-    public static function query()
-    {
-        return parent::query();
-    }
-
     public function locked()
     {
         return $this->properties->label === 'locked';
     }
- }
+
+    public function getColor()
+    {
+        return match ($this->properties->karbari) {
+            FeatureIndicators::Amozeshi => 'blue',
+            FeatureIndicators::Tejari   => 'red',
+            FeatureIndicators::Maskoni  => 'yellow'
+        };
+    }
+
+    public function changeStatusToSoldAndPriced()
+    {
+        return match ($this->properties->karbari) {
+            FeatureIndicators::Maskoni  => FeatureIndicators::MaskoniSoldAndPriced,
+            FeatureIndicators::Tejari   => FeatureIndicators::TejariSoldAndPriced,
+            FeatureIndicators::Amozeshi => FeatureIndicators::AmozeshiSoldAndPriced,
+        };
+    }
+
+    public function changeStatusToSoldAndNotPriced()
+    {
+        return match ($this->properties->karbari) {
+            FeatureIndicators::Maskoni  => FeatureIndicators::MaskoniSoldAndNotPriced,
+            FeatureIndicators::Tejari   => FeatureIndicators::TejariSoldAndNotPriced,
+            FeatureIndicators::Amozeshi => FeatureIndicators::AmozeshiSoldAndNotPriced
+        };
+    }
+
+    public function getFeatureColor()
+    {
+        return match ($this->properties->karbari) {
+            FeatureIndicators::Amozeshi =>  'آبی',
+            FeatureIndicators::Tejari =>  'قرمز',
+            FeatureIndicators::Maskoni =>  'زرد',
+        };
+    }
+}

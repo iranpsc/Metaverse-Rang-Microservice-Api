@@ -15,14 +15,12 @@ class SellRequestResource extends JsonResource
     public function toArray($request)
     {
         return [
-            $this->mergeWhen(! empty($this->message), [
-                'message' => $this->message,
-            ]),
             'id' => $this->id,
+            'feature_id' => $this->feature_id,
+            'seller_id' => $this->seller_id,
             'price_psc' => $this->price_psc,
             'price_irr' => $this->price_irr,
             'status' => $this->status,
-            'feature' => new FeatureResource($this->feature),
         ];
     }
 }

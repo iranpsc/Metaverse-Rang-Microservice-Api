@@ -16,9 +16,6 @@ class BuyRequestResource extends JsonResource
     public function toArray($request)
     {
         return [
-            $this->mergeWhen($this->message, [
-                'message' => $this->message
-            ]),
             'id' => $this->id,
             'buyer_id' => $this->buyer_id,
             'seller_id' => $this->seller_id,
@@ -28,7 +25,6 @@ class BuyRequestResource extends JsonResource
             'price_psc' => $this->price_psc,
             'price_irr' => $this->price_irr,
             'created_at' => Jalalian::forge($this->created_at)->format('Y/m/d'),
-            'feature' => new FeatureResource($this->feature),
         ];
     }
 }

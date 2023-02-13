@@ -55,22 +55,13 @@ class FeaturePolicy
 
     public function buy(User $user, Feature $feature)
     {
-        $notLimited = true;
         $properties = $feature->properties;
-
-        if (in_array($properties->rgb, $this->limitedFeatures)) {
-            $notLimited = $user->verified();
-            $notLimited = !$user->isUnderEighteen();
-            $limitedFeaturesBuyCount = LimitedFeaturePurchase::where('user_id', $user->id)->count();
-            $notLimited = $limitedFeaturesBuyCount < 1;
-        }
 
         return !in_array($properties->rgb, $this->sellLimitedFeatures)
             && !in_array($properties->karbari, $this->notAllowedToBeSoldFeatures)
             && !in_array($properties->rgb, $this->soldAndNotPriced)
             && $feature->owner->isNot($user)
-            && !$feature->locked()
-            && $notLimited;
+            && !$feature->locked();
     }
 
     public function sell(User $user, Feature $feature)
