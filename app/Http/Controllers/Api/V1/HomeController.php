@@ -16,11 +16,11 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+    private $user;
 
     public function __construct(
         private FeatureRepository $featureRepository,
         private UserRepository $userRepository,
-        private $user,
     ) {
 
         $this->user = Auth::user('sanctum');
