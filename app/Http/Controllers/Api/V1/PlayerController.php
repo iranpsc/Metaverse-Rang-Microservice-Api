@@ -31,8 +31,8 @@ class PlayerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show(User $player)
     {
-        return new TopPlayerResource($user);
+        return new TopPlayerResource($player);
     }
 }

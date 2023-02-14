@@ -110,40 +110,39 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
             Route::post('verify', 'turnOffAccountSecurity');
         });
 
-    Route::controller(FeatureController::class)->middleware('account.security')
-        ->scopeBindings()->group(function () {
-            Route::prefix('my-features')->group(function () {
-                Route::withoutMiddleware('account.security')->group(function () {
-                    Route::get('/', 'index');
-                    Route::get('/{user}/features/{feature}', 'show');
-                });
-                Route::post('/{user}/add-image/{feature}', 'addFeatureImages');
-                Route::post('/{user}/remove-image/{feature}/image/{image}', 'removeّFeatureImage');
+    Route::middleware('account.security')->scopeBindings()->group(function () {
+        Route::controller(FeatureController::class)->prefix('my-features')->group(function () {
+            Route::withoutMiddleware('account.security')->group(function () {
+                Route::get('/', 'index');
+                Route::get('/{user}/features/{feature}', 'show');
+            });
+            Route::post('/{user}/add-image/{feature}', 'addFeatureImages');
+            Route::post('/{user}/remove-image/{feature}/image/{image}', 'removeّFeatureImage');
 
-                Route::post('/{user}/features/{feature}', 'updateFeature');
-            });
-            Route::controller(BuyFeatureController::class)->prefix('features')->group(function () {
-                Route::get('/{feature}', 'show')->withoutMiddleware(['account.security', 'auth:sanctum', 'verified']);
-                Route::post('/buy/{feature}', 'buy')->can('buy', 'feature');
-            });
-
-            Route::controller(SellRequestsController::class)->prefix('sell-requests')->group(function () {
-                Route::get('/', 'index')->withoutMiddleware('account.security');
-                Route::post('/store/{feature}', 'store')->can('sell', 'feature');
-                Route::delete('/{sellRequest}', 'destroy')->can('delete', 'sellRequest');
-            });
-
-            Route::controller(BuyRequestsController::class)->prefix('buy-requests')->group(function () {
-                Route::withoutMiddleware('account.security')->group(function () {
-                    Route::get('/', 'index');
-                    Route::get('/recieved', 'recievedBuyRequests');
-                });
-                Route::post('/store/{feature}', 'store')->can('sendBuyRequest', 'feature');
-                Route::delete('/delete/{buyFeatureRequest}', 'destroy')->can('delete', 'buyFeatureRequest');
-                Route::post('/accept/{buyFeatureRequest}', 'acceptBuyRequest')->can('accept', 'buyFeatureRequest');
-                Route::post('/reject/{buyFeatureRequest}', 'rejectBuyRequest')->can('reject', 'buyFeatureRequest');
-            });
+            Route::post('/{user}/features/{feature}', 'updateFeature');
         });
+        Route::controller(BuyFeatureController::class)->prefix('features')->group(function () {
+            Route::get('/{feature}', 'show')->withoutMiddleware(['account.security', 'auth:sanctum', 'verified']);
+            Route::post('/buy/{feature}', 'buy')->can('buy', 'feature');
+        });
+
+        Route::controller(SellRequestsController::class)->prefix('sell-requests')->group(function () {
+            Route::get('/', 'index')->withoutMiddleware('account.security');
+            Route::post('/store/{feature}', 'store')->can('sell', 'feature');
+            Route::delete('/{sellRequest}', 'destroy')->can('delete', 'sellRequest');
+        });
+
+        Route::controller(BuyRequestsController::class)->prefix('buy-requests')->group(function () {
+            Route::withoutMiddleware('account.security')->group(function () {
+                Route::get('/', 'index');
+                Route::get('/recieved', 'recievedBuyRequests');
+            });
+            Route::post('/store/{feature}', 'store')->can('sendBuyRequest', 'feature');
+            Route::delete('/delete/{buyFeatureRequest}', 'destroy')->can('delete', 'buyFeatureRequest');
+            Route::post('/accept/{buyFeatureRequest}', 'acceptBuyRequest')->can('accept', 'buyFeatureRequest');
+            Route::post('/reject/{buyFeatureRequest}', 'rejectBuyRequest')->can('reject', 'buyFeatureRequest');
+        });
+    });
 
     Route::controller(SettingController::class)->group(function () {
         Route::post('/settings', 'update');
