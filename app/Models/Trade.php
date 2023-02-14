@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Commision;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Morilog\Jalali\Jalalian;
 
 class Trade extends Model
 {
@@ -42,5 +44,12 @@ class Trade extends Model
     public function transactions()
     {
         return $this->morphMany(Transaction::class, 'payable');
+    }
+
+    protected function createdAt():Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => Jalalian::forge($value)->format('Y/m/d')
+        );
     }
 }

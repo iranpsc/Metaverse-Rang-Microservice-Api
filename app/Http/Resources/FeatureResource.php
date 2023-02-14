@@ -33,9 +33,7 @@ class FeatureResource extends JsonResource
                     'rgb' => $this->properties->rgb,
                     'price_psc' => $this->properties->price_psc,
                     'price_irr' => $this->properties->price_irr,
-                    $this->mergeWhen(!is_null($this->latestTraded), [
-                        'date' => Jalalian::forge($this->latestTraded->created_at)->format('Y/m/d'),
-                    ])
+                    'date' => $this->latestTraded->created_at ?? null,
                 ],
                 'images' => $this->images,
                 $this->mergeWhen($this->latestTraded, [
