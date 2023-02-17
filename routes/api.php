@@ -60,7 +60,7 @@ Route::middleware('guest')->group(function () {
 
 Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::middleware('guest')->group(function() {
+Route::middleware('guest')->group(function () {
     Route::post('/forgot-password', [SendResetPasswordLinkEmailController::class, 'sendResetLinkEmail']);
     Route::post('/forgot-password/reset/password', [ResetPasswordController::class, 'reset']);
 });
@@ -79,8 +79,8 @@ Route::get('/get-user-info/{user}', [HomeController::class, 'showUserDetails'])-
 
 Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function () {
 
-    Route::controller(HomeController::class)->group(function() {
-        Route::get('/store', 'store')->name('store');
+    Route::controller(HomeController::class)->group(function () {
+        Route::get('/store', 'store')->name('store')->name('store');
         Route::post('/store', 'filterByTypeAndCount');
     });
 
@@ -114,36 +114,31 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
             Route::post('verify', 'turnOffAccountSecurity');
         });
 
-    Route::middleware('account.security')->scopeBindings()->group(function () {
+    Route::scopeBindings()->group(function () {
         Route::controller(FeatureController::class)->prefix('my-features')->group(function () {
-            Route::withoutMiddleware('account.security')->group(function () {
-                Route::get('/', 'index');
-                Route::get('/{user}/features/{feature}', 'show');
-            });
+            Route::get('/', 'index');
+            Route::get('/{user}/features/{feature}', 'show');
             Route::post('/{user}/add-image/{feature}', 'addFeatureImages');
             Route::post('/{user}/remove-image/{feature}/image/{image}', 'removeّFeatureImage');
 
             Route::post('/{user}/features/{feature}', 'updateFeature');
         });
+
         Route::controller(BuyFeatureController::class)->prefix('features')->group(function () {
-            Route::withoutMiddleware(['account.security', 'auth:sanctum', 'verified'])->group(function() {
-                Route::post('/', 'index')->name('features');
-                Route::get('/{feature}', 'show')->name('features.show');
-            });
+            Route::post('/', 'index')->name('features');
+            Route::get('/{feature}', 'show')->name('features.show');
             Route::post('/buy/{feature}', 'buy')->can('buy', 'feature');
         });
 
         Route::controller(SellRequestsController::class)->prefix('sell-requests')->group(function () {
-            Route::get('/', 'index')->withoutMiddleware('account.security');
+            Route::get('/', 'index');
             Route::post('/store/{feature}', 'store')->can('sell', 'feature');
             Route::delete('/{sellRequest}', 'destroy')->can('delete', 'sellRequest');
         });
 
         Route::controller(BuyRequestsController::class)->prefix('buy-requests')->group(function () {
-            Route::withoutMiddleware('account.security')->group(function () {
-                Route::get('/', 'index');
-                Route::get('/recieved', 'recievedBuyRequests');
-            });
+            Route::get('/', 'index');
+            Route::get('/recieved', 'recievedBuyRequests');
             Route::post('/store/{feature}', 'store')->can('sendBuyRequest', 'feature');
             Route::delete('/delete/{buyFeatureRequest}', 'destroy')->can('delete', 'buyFeatureRequest');
             Route::post('/accept/{buyFeatureRequest}', 'acceptBuyRequest')->can('accept', 'buyFeatureRequest');

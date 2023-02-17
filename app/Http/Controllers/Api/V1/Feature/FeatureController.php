@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Storage;
 
 class FeatureController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['account.security', 'verified'])->except(['index', 'show']);
+    }
     /**
      * @return AnonymousResourceCollection
      */

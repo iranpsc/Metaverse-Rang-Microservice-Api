@@ -14,6 +14,11 @@ use App\Notifications\SellRequestNotification;
 
 class SellRequestsController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['account.security', 'verified'])->except(['index']);
+    }
     /**
      * Display a listing of the resource.
      *

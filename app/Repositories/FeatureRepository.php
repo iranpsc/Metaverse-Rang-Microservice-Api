@@ -60,6 +60,11 @@ class FeatureRepository extends Repository
 
     public function getFeaturesByCoordinates(Request $request)
     {
+        $request->validate([
+            'points' => 'required|array|min:4',
+            'points.*' => 'required|regex:/^([0-9]+(\.[0-9]+)?,[0-9]+(\.[0-9]+)?)$/'
+        ]);
+
         for ($i = 0; $i < count($request->points); $i++) {
             $points[$i] = explode(',', $request->points[$i]);
         }

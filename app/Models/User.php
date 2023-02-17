@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\InsufficientBalanceException;
 use App\Models\Chat\Chat;
 use App\Models\Dynasty\childrenPermission;
 use App\Models\Dynasty\Dynasty;
@@ -27,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Helpers\FeatureIndicators;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -462,7 +464,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendPasswordResetNotification($token)
     {
-        $url = 'https://rgb.irpsc.com/metaverse/reset-password?token='.$token.'&email='.$this->getEmailForPasswordReset();
+        $url = 'https://rgb.irpsc.com/metaverse/reset-password?token=' . $token . '&email=' . $this->getEmailForPasswordReset();
         $this->notify(new sendPasswordResetNotification($url, $this));
     }
 
@@ -509,5 +511,26 @@ class User extends Authenticatable implements MustVerifyEmail
     public function logedOut()
     {
         $this->fireModelEvent('logedOut');
+    }
+
+    public function checkColorBalance(Feature $feature)
+    {
+        return match ($feature->properties->karbari) {
+            FeatureIndicators::Tejari   => $this->assets->red < $feature->properties->stability,
+            FeatureIndicators::Maskoni  => $this->assets->yellow < $feature->properties->stability,
+            FeatureIndicators::Amozeshi => $this->assets->blue < $feature->properties->stability
+        };
+    }
+
+    public function checkBalance(Feature $feature)
+    {
+        $psc_price = $feature->properties->price_psc;
+        $irr_price = $feature->properties->price_psc;
+
+        if ($this->assets->psc < $psc_price + $psc_price * config('rgb.fee')) {
+            throw new InsufficientBalanceException('موجودی psc شما کافی نمی باشد.');
+        } elseif ($this->assets->irr < $irr_price + $irr_price * config('rgb.fee')) {
+            throw new InsufficientBalanceException('موجودی ریال شما کافی نمی باشد.');
+        }
     }
 }

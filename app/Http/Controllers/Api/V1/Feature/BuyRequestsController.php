@@ -6,12 +6,10 @@ use App\Events\FeatureStatusChanged;
 use App\Http\Controllers\Controller;
 use App\Models\BuyFeatureRequest;
 use App\Http\Requests\BuyFeatureRequestValidate;
-use App\Helpers\AssetHelper;
 use App\Models\Feature;
 use App\Models\Trade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use App\Helpers\FeatureHelper;
 use App\Http\Resources\BuyRequestResource;
 use App\Models\SellFeatureRequest;
 use App\Models\Variable;
@@ -25,6 +23,11 @@ use App\Models\Comission;
 
 class BuyRequestsController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['account.security', 'verified'])->except(['index', 'recievedBuyRequests']);
+    }
     /**
      * Display a listing of the resource.
      *

@@ -77,5 +77,11 @@ class Handler extends ExceptionHandler
                 abort(411, 'Email is not verified!') :
                 to_route('verification.notice');
         });
+
+        $this->renderable(function (InsufficientBalanceException $exception, Request $request) {
+            return $request->expectsJson() ?
+                abort($exception->getCode(), $exception->getMessage()) :
+                to_route('store');
+        });
     }
 }
