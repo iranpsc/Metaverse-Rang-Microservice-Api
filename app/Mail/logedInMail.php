@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -17,11 +18,12 @@ class logedInMail extends Mailable
      * @return void
      */
 
-    public $user;
+    public $user, $ip;
 
-    public function __construct($user)
+    public function __construct(User $user, $ip)
     {
         $this->user = $user;
+        $this->ip = $ip;
     }
 
     /**

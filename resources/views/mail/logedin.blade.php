@@ -361,7 +361,7 @@
                                     <!--[if mso]></td></tr></table><![endif]-->
                                     <div style="color:#fd7e14;font-family:iranyekan;line-height:1.2;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
                                         <div style="line-height: 1.2; font-size: 12px; color: #fd7e14; font-family: iranyekan; mso-line-height-alt: 14px;">
-                                            <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;"><strong><span style="font-size: 30px;">IP<span> وارد شده به حساب </span></span><br><span style="font-size: 30px;">{{ request()->ip() }}</span></strong></p>
+                                            <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;"><strong><span style="font-size: 30px;">IP<span> وارد شده به حساب </span></span><br><span style="font-size: 30px;">{{ $ip }}</span></strong></p>
                                         </div>
                                     </div>
                                     <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 30px; padding-left: 30px; padding-top: 10px; padding-bottom: 25px; font-family: iranyekan"><![endif]-->
