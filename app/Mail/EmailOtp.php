@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -18,10 +19,11 @@ class EmailOtp extends Mailable
      *
      * @return void
      */
-    public $code;
-    public function __construct($code)
+    public $code, $user;
+    public function __construct(User $user, $code)
     {
         $this->code = $code;
+        $this->user = $user;
     }
 
     /**

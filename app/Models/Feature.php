@@ -134,4 +134,20 @@ class Feature extends Model
             FeatureIndicators::Maskoni =>  'زرد',
         };
     }
+
+    public function getApplicationTitle()
+    {
+        return match ($this->properties->karbari) {
+            FeatureIndicators::Amozeshi =>  'آموزشی',
+            FeatureIndicators::Tejari =>  'تجاری',
+            FeatureIndicators::Maskoni =>  'مسکونی',
+        };
+    }
+
+    public function getCoordinates()
+    {
+        return implode('|', $this->geometry->coordinates->map(function($coordinate) {
+            return $coordinate->implodeXY();
+        })->toArray());
+    }
 }

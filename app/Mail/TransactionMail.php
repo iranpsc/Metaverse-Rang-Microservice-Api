@@ -17,11 +17,12 @@ class TransactionMail extends Mailable implements ShouldQueue
      * @return void
      */
 
-    public $order;
+    public $order, $user;
 
-    public function __construct($order)
+    public function __construct($order, $user)
     {
         $this->order = $order;
+        $this->user = $user;
     }
 
     /**

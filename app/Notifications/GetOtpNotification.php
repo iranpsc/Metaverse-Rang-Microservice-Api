@@ -47,7 +47,7 @@ class GetOtpNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new EmailOtp($this->code))
+        return (new EmailOtp($notifiable, $this->code))
         ->to($this->email)
         ->from('rgb-robot@irpsc.com');
     }

@@ -30,4 +30,8 @@ class Coordinate extends Model
 	{
 		return $this->belongsTo(Geometry::class, 'geometry_id', 'id');
 	}
+
+    public function implodeXY() {
+        return implode(',', [$this->x, $this->y]);
+    }
 }

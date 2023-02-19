@@ -44,7 +44,7 @@ class TransactionNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new TransactionMail($this->order))
+        return (new TransactionMail($this->order, $notifiable))
                     ->to($notifiable->email)
                     ->subject('خریددارایی');
     }

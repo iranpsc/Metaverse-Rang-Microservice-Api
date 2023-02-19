@@ -20,4 +20,15 @@ class Order extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function getTitle()
+    {
+        return match($this->asset) {
+            'yellow' => 'رنگ زرد',
+            'blue' => 'رنگ آبی',
+            'red' => 'رنگ قرمز',
+            'psc' => 'psc',
+            'irr' => 'ریال',
+        };
+    }
 }
