@@ -181,7 +181,7 @@ class UserObserver
                 $assets->increment('blue', $prize->blue);
                 $assets->increment('red', $prize->red);
                 $assets->increment('yellow', $prize->yellow);
-                $assets->increment('effect', $prize->effect);
+                $assets->update(['effect' => $prize->effect]);
                 $assets->increment('satisfaction', $prize->satisfaction);
                 $user->recievedPrizes()->create([
                     'prize_id' => $prize->id
