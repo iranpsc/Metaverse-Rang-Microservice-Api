@@ -31,8 +31,8 @@ class SellRequestsController extends Controller
 
     public function store(SellFeatureRequestValidate $request, Feature $feature)
     {
-        $publicPricingLimit = SystemVariable::getByKey('public_pricing_limit');
-        $under18PricingLimit = SystemVariable::getByKey('under_18_pricing_limit');
+        $publicPricingLimit = SystemVariable::getByKey('public_pricing_limit') ?? 110;
+        $under18PricingLimit = SystemVariable::getByKey('under_18_pricing_limit') ?? 80;
 
         $requestedPrice_psc = $request->price_psc;
         $requestedPrice_irr = $request->price_irr;
