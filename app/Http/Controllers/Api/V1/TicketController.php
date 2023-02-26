@@ -61,7 +61,7 @@ class TicketController extends Controller
      * @param User $user
      * @return TicketResource
      */
-    public function store(CreateTicketRequest $request): TicketResource
+    public function store(CreateTicketRequest $request)
     {
         $attachment = $request->hasFile('attachment')
             ? $request->file('attachment')->store('user/tickets/' . $this->user->id)
@@ -80,7 +80,7 @@ class TicketController extends Controller
         if (isset($ticket->reciever)) {
             $ticket->reciever->notify(new TicketRecieved($ticket));
         }
-        return new TicketResource($ticket);
+        return response()->noContent();
     }
 
     /**
@@ -88,7 +88,7 @@ class TicketController extends Controller
      * @param User $user
      * @return TicketResource
      */
-    public function update(CreateTicketRequest $request, Ticket $ticket): TicketResource
+    public function update(CreateTicketRequest $request, Ticket $ticket)
     {
         $attachment = $request->hasFile('attachment')
             ? $request->file('attachment')->store('user/tickets/' . $this->user->id)
@@ -100,7 +100,7 @@ class TicketController extends Controller
             'attachment' => $attachment,
             'status' => TicketStatus::NEW,
         ]);
-        return new TicketResource($ticket);
+        return response()->noContent();
     }
 
     /**
@@ -108,7 +108,7 @@ class TicketController extends Controller
      * @param Ticket $ticket
      * @return TicketResource|JsonResponse
      */
-    public function response(TicketResponseRequest $request, Ticket $ticket): TicketResource|JsonResponse
+    public function response(TicketResponseRequest $request, Ticket $ticket)
     {
         $this->authorize('respond', $ticket);
         $attachment = $request->hasFile('attachment')
@@ -128,7 +128,7 @@ class TicketController extends Controller
 
         $ticket->sender->notify(new TicketRecieved($ticket));
 
-        return new TicketResource($ticket);
+        return response()->noContent();
     }
 
     /**
