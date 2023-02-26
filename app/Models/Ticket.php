@@ -85,6 +85,7 @@ class Ticket extends Model
                     'inspection' => 'بازرسی',
                     'protection' => 'حراست',
                     'ztb' => 'مدیریت کل ز ت ب',
+                    null => null,
                 };
             }
         );
