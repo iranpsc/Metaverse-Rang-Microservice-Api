@@ -29,7 +29,7 @@ class CreateTicketRequest extends FormRequest
         return [
             'title' => 'required|string|max:250',
             'content' => 'required|string|max:500',
-            'attachment' => 'nullable|file|mimes:png,jpg,jpeg,pdf|size:1024',
+            'attachment' => 'nullable|file|mimes:png,jpg,jpeg,pdf|max:1024',
             'reciever' => [
                 'nullable',
                 'integer',
