@@ -14,16 +14,7 @@ class Transaction extends Model
 {
     use HasUuids;
 
-    protected $fillable = [
-        'id',
-        'user_id',
-        'payable_id',
-        'payable_type',
-        'asset',
-        'amount',
-        'action',
-        'status'
-    ];
+    protected $guarded = [];
 
     protected $keyType = 'string';
     public $incrementing = false;

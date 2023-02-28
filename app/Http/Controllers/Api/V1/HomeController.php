@@ -49,14 +49,14 @@ class HomeController extends Controller
         return new TopPlayerResource($user);
     }
 
-    public function store(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function store()
     {
-        return PackageResource::collection(Option::lazy());
+        return PackageResource::collection(Option::all());
     }
 
     public function filterByTypeAndCount(Request $request) {
         $request->validate([
-            'codes' => 'required|array|min:3',
+            'codes' => 'required|array|min:2',
             'codes.*' => 'required|string|min:2'
         ]);
         $packages = Option::whereIn('code', $request->codes)->get();
