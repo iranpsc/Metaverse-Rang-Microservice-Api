@@ -251,8 +251,8 @@ class BuyRequestsController extends Controller
 
     private function releaseAsset(BuyFeatureRequest $buyFeatureRequest)
     {
-        $psc_amount = $buyFeatureRequest->lockedAsset->psc_amount;
-        $irr_amount = $buyFeatureRequest->lockedAsset->irr_amount;
+        $psc_amount = $buyFeatureRequest->lockedAsset->psc;
+        $irr_amount = $buyFeatureRequest->lockedAsset->irr;
 
         $buyer = $buyFeatureRequest->buyer;
         $seller = $buyFeatureRequest->seller;
