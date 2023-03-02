@@ -251,22 +251,22 @@ class BuyRequestsController extends Controller
 
     private function releaseAsset(BuyFeatureRequest $buyFeatureRequest)
     {
-        $psc_amount = $buyFeatureRequest->lockedAsset->psc;
-        $irr_amount = $buyFeatureRequest->lockedAsset->irr;
+        $psc_amount = $buyFeatureRequest->price_psc;
+        $irr_amount = $buyFeatureRequest->price_irr;
 
         $buyer = $buyFeatureRequest->buyer;
         $seller = $buyFeatureRequest->seller;
 
-        $psc_total_fee = $psc_amount * config('rgb.fee') * 2;
-        $irr_total_fee = $irr_amount * config('rgb.fee') * 2;
+        $pscFee = $psc_amount * config('rgb.fee');
+        $irrFee = $irr_amount * config('rgb.fee');
 
-        $seller->assets->increment('psc', $psc_amount - $psc_total_fee);
-        $seller->assets->increment('irr', $irr_amount - $irr_total_fee);
+        $seller->assets->increment('psc', $psc_amount - $pscFee);
+        $seller->assets->increment('irr', $irr_amount - $irrFee);
 
         $rgb = User::firstWhere('code', 'hm-2000000');
 
-        $rgb->assets->increment('psc', $psc_total_fee);
-        $rgb->assets->increment('irr', $irr_total_fee);
+        $rgb->assets->increment('psc', $pscFee*2);
+        $rgb->assets->increment('irr', $irrFee*2);
 
         $trade = Trade::create([
             'feature_id' => $buyFeatureRequest->feature->id,
@@ -279,8 +279,8 @@ class BuyRequestsController extends Controller
 
         Comission::create([
             'trade_id' => $trade->id,
-            'psc' => $psc_total_fee,
-            'irr' => $irr_total_fee,
+            'psc' => $pscFee*2,
+            'irr' => $irrFee*2,
         ]);
 
         $buyFeatureRequest->transactions->where('user_id', $buyer->id)->each->update(['status' => 1]);
@@ -288,7 +288,7 @@ class BuyRequestsController extends Controller
         $trade->transactions()->create([
             'user_id' => $seller->id,
             'asset'  => 'psc',
-            'amount' => $psc_amount - $psc_total_fee,
+            'amount' => $psc_amount - $pscFee,
             'action' => 'deposit',
             'status' => 1
         ]);
@@ -296,7 +296,7 @@ class BuyRequestsController extends Controller
         $trade->transactions()->create([
             'user_id' => $seller->id,
             'asset' => 'irr',
-            'amount' => $irr_amount - $irr_total_fee,
+            'amount' => $irr_amount - $irrFee,
             'action' => 'deposit',
             'status' => 1
         ]);

@@ -85,6 +85,7 @@ class FeaturePolicy
             ->where('status', 0)
             ->doesntExist()
             && $feature->owner->isNot($rgb)
-            && $feature->owner->isNot($user);
+            && $feature->owner->isNot($user)
+            && is_null($feature->dynasty);
     }
 }

@@ -10,7 +10,6 @@ use App\Models\SystemVariable;
 use App\Models\Challenge\Question;
 use App\Models\Challenge\UserQuestionAnswer;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
 class ChallengeController extends Controller
