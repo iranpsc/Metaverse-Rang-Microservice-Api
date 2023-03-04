@@ -35,9 +35,9 @@ class StoreKycRequest extends FormRequest
             'postal_code' => 'required|ir_postal_code',
             'number' => 'required|integer',
             'site' => 'nullable|url',
-            'melli_card' => 'nullable|image|max:1024',
-            'prove_picture' => 'nullable|image|max:1024',
-            'resume' => 'nullable|image|max:1024',
+            'melli_card' => 'nullable|image|max:5000',
+            'prove_picture' => 'nullable|image|max:5000',
+            'resume' => 'nullable|image|max:5000',
         ];
     }
 

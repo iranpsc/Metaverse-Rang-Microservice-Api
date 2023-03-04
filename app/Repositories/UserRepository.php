@@ -16,7 +16,6 @@ class UserRepository extends Repository
                 return [
                     'id' => $user->id,
                     'code' => $user->code,
-                    'score' => $user->score,
                     'profile_photos' => [$user->profilePhotos->last()],
                     'level' => $user->level,
                     'online' => $user->last_seen->diffInMinutes(now()) < 2,

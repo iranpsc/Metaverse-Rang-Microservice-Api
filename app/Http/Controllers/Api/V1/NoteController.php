@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NoteRequest;
+use App\Http\Resources\NoteResource;
 use Illuminate\Http\JsonResponse;
 use App\Models\Note;
 use Illuminate\Http\Response;
@@ -24,11 +25,9 @@ class NoteController extends Controller
         $this->user = Auth::guard('sanctum')->user();
     }
 
-    public function index()
+    public function index(): mixed
     {
-        return response()->json([
-            'notes' => $this->user->notes,
-        ]);
+        return NoteResource::collection($this->user->notes);
     }
 
 
@@ -38,14 +37,20 @@ class NoteController extends Controller
      * @param NoteRequest $request
      * @return JsonResponse
      */
-    public function store(NoteRequest $request)
+    public function store(NoteRequest $request): NoteResource
     {
+        if($request->hasFile('attachment')) {
+            $attachment = $request->file('attachment')->store('notes');
+        } else {
+            $attachment = '';
+        }
         $note = Note::create([
             'user_id' => $this->user->id,
             'title' => $request->title,
             'content' => $request->content,
+            'attachment' => $attachment,
         ]);
-        return response()->json(['note' => $note]);
+        return new NoteResource($note);
     }
 
     /**
@@ -54,9 +59,9 @@ class NoteController extends Controller
      * @param Note $note
      * @return JsonResponse
      */
-    public function show(Note $note): JsonResponse
+    public function show(Note $note): NoteResource
     {
-        return response()->json(['data' => $note]);
+        return new NoteResource($note);
     }
 
     /**
@@ -66,14 +71,21 @@ class NoteController extends Controller
      * @param Note $note
      * @return JsonResponse
      */
-    public function update(NoteRequest $request, Note $note): JsonResponse
+    public function update(NoteRequest $request, Note $note): NoteResource
     {
+        if($request->hasFile('attachment')) {
+            $attachment = $request->file('attachment')->store('notes');
+        } else {
+            $attachment = '';
+        }
+
         $note->update([
             'title' => $request->title,
             'content' => $request->content,
+            'attachment' => $attachment,
         ]);
 
-        return response()->json(['note' => $note]);
+        return new NoteResource($note);
     }
 
     /**

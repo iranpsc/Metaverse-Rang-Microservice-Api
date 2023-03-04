@@ -25,7 +25,7 @@ class TicketResponseRequest extends FormRequest
     {
         return [
             'response' => 'required|string|max:500',
-            'attachment' => 'nullable|file|mimes:png,jpg,pdf'
+            'attachment' => 'nullable|file|mimes:png,jpg,pdf|max:5000'
         ];
     }
 

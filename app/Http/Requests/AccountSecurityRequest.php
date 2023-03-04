@@ -28,6 +28,7 @@ class AccountSecurityRequest extends FormRequest
         return [
             'phone' => [
                 'ir_mobile',
+                'unique:users,phone',
                 Rule::requiredIf(is_null(request()->user()->phone)
                 || is_null(request()->user()->phone_verified_at)),
             ],

@@ -28,7 +28,7 @@ class ChangePasswordRequest extends FormRequest
             'old_password' => 'required|current_password',
             'password' => [
                 'required',
-                Password::defaults()
+                Password::min(8)->mixedCase()->numbers()->symbols()
             ],
         ];
     }

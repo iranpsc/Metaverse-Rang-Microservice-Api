@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class FeatureResource extends JsonResource
 {
@@ -28,9 +29,12 @@ class FeatureResource extends JsonResource
                     'region' => $this->properties->region,
                     'owner' => $this->properties->owner,
                     'rgb' => $this->properties->rgb,
-                    'price_psc' => $this->properties->price_psc,
-                    'price_irr' => $this->properties->price_irr,
-                    'date' => $this->latestTraded?->created_at,
+                    $this->mergeWhen(Auth::guard('sanctum'), [
+                        'price_psc' => $this->properties->price_psc,
+                        'price_irr' => $this->properties->price_irr,
+                        'date' => $this->latestTraded?->created_at,
+                        'minimum_price_percentage' => $this->minimum_price_percentage,
+                    ])
                 ],
                 'images' => $this->images,
                 $this->mergeWhen($this->latestTraded, [

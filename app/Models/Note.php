@@ -9,7 +9,7 @@ class Note extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id','title','content'];
+    protected $fillable = ['user_id','title','content', 'attachment'];
 
     protected $hidden = [
         'created_at',
