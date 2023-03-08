@@ -28,6 +28,7 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'automatic_logout' => $this->settings->automatic_logout,
             'level' => $this->level,
+            'birthdate' => $this->verified() ? jdate($this->kyc->birthdate)->format('Y/m/d') : null,
             'score_percentage_to_next_level' => getScorePercentageToNextLevel($this->level, $this->score),
             $this->mergeWhen(isset($this->profilePhotos), [
                 'profile_photos' => [$this->profilePhotos->last()]
@@ -49,6 +50,7 @@ class UserResource extends JsonResource
             $this->mergeWhen(!empty($this->kyc), [
                 'kyc' => new KycResource($this->kyc),
             ]),
+
         ];
     }
 }
