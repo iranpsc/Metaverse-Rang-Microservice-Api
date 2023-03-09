@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Feature;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FeatureImageRequest;
+use App\Http\Resources\FeatureImageResource;
 use App\Http\Resources\UserFeatureResource;
 use Illuminate\Http\JsonResponse;
 use App\Models\Feature;
@@ -51,7 +52,7 @@ class FeatureController extends Controller
             $url = $image->store('public/feature-images/' . $feature->id);
             $feature->images()->create(['url' => $url]);
         }
-        return response()->noContent();
+        return FeatureImageResource::collection($feature->images);
     }
 
     /**
