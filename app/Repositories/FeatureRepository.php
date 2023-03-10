@@ -81,7 +81,7 @@ class FeatureRepository extends Repository
 
         $features = Feature::whereIn('id', $existingGeometries)
         ->selectRaw('id, owner_id as owner')
-        ->with('geometry.coordinates:id,geometry_id,x,y')
+        ->with('properties:id,feature_id,rgb', 'geometry.coordinates:id,geometry_id,x,y')
         ->lazy();
 
         return $features;
