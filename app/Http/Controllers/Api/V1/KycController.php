@@ -20,7 +20,8 @@ class KycController extends Controller
 
     public function index()
     {
-        return KycResource::make($this->user->kyc);
+        $kyc = $this->user->kyc;
+        return $kyc ? new KycResource($kyc) : null;
     }
 
     /**
