@@ -54,7 +54,8 @@ class HomeController extends Controller
         return PackageResource::collection(Option::all());
     }
 
-    public function filterByTypeAndCount(Request $request) {
+    public function filterByTypeAndCount(Request $request)
+    {
         $request->validate([
             'codes' => 'required|array|min:2',
             'codes.*' => 'required|string|min:2'
@@ -68,12 +69,15 @@ class HomeController extends Controller
         $request->validate(['url' => 'required|string']);
         $tutorial = Video::select(['title', 'description', 'fileName', 'image', 'creator_code'])
             ->where('fileName', 'like', $request->url . '%')->first();
-        return response()->json([
-            'title' => $tutorial->title,
-            'description' => $tutorial->description,
-            'creator' => $tutorial->creator_code,
-            'video' => $tutorial->fileName,
-            'image' => $tutorial->image,
-        ]);
+
+        return $tutorial
+            ? response()->json([
+                'title' => $tutorial->title,
+                'description' => $tutorial->description,
+                'creator' => $tutorial->creator_code,
+                'video' => $tutorial->fileName,
+                'image' => $tutorial->image,
+            ])
+            : null;
     }
 }
