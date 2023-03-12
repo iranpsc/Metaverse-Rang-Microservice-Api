@@ -171,7 +171,7 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
     Route::controller(TicketController::class)->prefix('tickets')->group(function () {
         Route::get('/recieved', 'recieved');
         Route::get('/recieved/{ticket}', 'view');
-        Route::post('/response/{ticket}', 'response');
+        Route::post('/response/{ticket}', 'response')->name('tickets.response');
         Route::get('/close/{ticket}', 'close');
     });
 

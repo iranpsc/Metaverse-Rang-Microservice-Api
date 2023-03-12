@@ -17,11 +17,8 @@ use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
-    private $user;
-
     public function __construct()
     {
-        $this->user = Auth::guard('sanctum')->user();
         $this->authorizeResource(Ticket::class);
     }
 
@@ -31,7 +28,7 @@ class TicketController extends Controller
     public function index(): AnonymousResourceCollection
     {
         return TicketResource::collection(
-            Ticket::whereBelongsTo($this->user)
+            Ticket::whereBelongsTo(request()->user())
                 ->orderByDesc('updated_at')
                 ->simplePaginate(10)
         );
@@ -43,7 +40,7 @@ class TicketController extends Controller
     public function recieved(): AnonymousResourceCollection
     {
         return TicketResource::collection(
-            Ticket::whereRecieverId($this->user->id)->orderByDesc('updated_at')->simplePaginate(10)
+            Ticket::whereRecieverId(request()->user()->id)->orderByDesc('updated_at')->simplePaginate(10)
         );
     }
 
@@ -70,11 +67,11 @@ class TicketController extends Controller
     public function store(CreateTicketRequest $request)
     {
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('user/tickets/' . $this->user->id)
+            ? $request->file('attachment')->store('user/tickets/')
             : '';
 
         $ticket = Ticket::create([
-            'user_id' => $this->user->id,
+            'user_id' => $request->user()->id,
             'title' => $request->title,
             'content' => $request->content,
             'attachment' => $attachment,
@@ -97,7 +94,7 @@ class TicketController extends Controller
     public function update(CreateTicketRequest $request, Ticket $ticket)
     {
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('user/tickets/' . $this->user->id)
+            ? $request->file('attachment')->store('user/tickets/')
             : '';
 
         $ticket->update([
@@ -118,19 +115,18 @@ class TicketController extends Controller
     {
         $this->authorize('respond', $ticket);
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('user/tickets/' . $this->user->id)
+            ? $request->file('attachment')->store('user/tickets/')
             : '';
 
         TicketResponse::create([
             'ticket_id' => $ticket->id,
             'response' => $request->response,
             'attachment' => $attachment,
+            'responser_name' => $request->user()->name,
+            'responser_id' => $request->user()->id,
         ]);
 
-        $ticket->update([
-            'status' => TicketStatus::ANSWERED,
-            'responser_name' => $request->user()->name,
-        ]);
+        $ticket->update(['status' => TicketStatus::ANSWERED]);
 
         $ticket->sender->notify(new TicketRecieved($ticket));
 

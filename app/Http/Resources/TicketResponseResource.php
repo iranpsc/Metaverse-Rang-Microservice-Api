@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Morilog\Jalali\Jalalian;
 
 class TicketResponseResource extends JsonResource
 {
@@ -16,14 +15,16 @@ class TicketResponseResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'ticket_id' => (string)$this->ticket->id,
             'response' => $this->response,
             $this->mergeWhen($this->attachment, [
                 'attachment' => $this->attachment,
             ]),
-            'responser_name' => $this->ticket->responser_name,
-            'date' => Jalalian::forge($this->created_at)->format('Y/m/d'),
-            'time' => Jalalian::forge($this->created_at)->format('H:m:s'),
+            'responser_id' => $this->responser_id,
+            'responser_name' => $this->responser_name,
+            'date' => jdate($this->created_at)->format('Y/m/d'),
+            'time' => jdate($this->created_at)->format('H:m:s'),
         ];
     }
 }

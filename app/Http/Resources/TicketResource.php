@@ -26,14 +26,19 @@ class TicketResource extends JsonResource
                 'reciever' => $this->department
             ]),
             'code' => $this->code,
-            $this->mergeWhen($this->responses && request()->routeIs('tickets.show'), [
-                'content' => $this->content,
-                'attachment' => $this->attachment,
-                'responses' => TicketResponseResource::collection($this->responses),
-            ]),
+            $this->mergeWhen(
+                $this->responses
+                    && request()->routeIs('tickets.show')
+                    || request()->routeIs('tickets.response'),
+                [
+                    'content' => $this->content,
+                    'attachment' => $this->attachment,
+                    'responses' => TicketResponseResource::collection($this->responses),
+                ]
+            ),
             'status' => $this->status,
-            'date' => \Morilog\Jalali\Jalalian::forge($this->updated_at)->format('Y/m/d'),
-            'time' => \Morilog\Jalali\Jalalian::forge($this->updated_at)->format('H:m:s'),
+            'date' => jdate($this->updated_at)->format('Y/m/d'),
+            'time' => jdate($this->updated_at)->format('H:m:s'),
         ];
     }
 }

@@ -21,7 +21,6 @@ class Ticket extends Model
         'department',
         'importance',
         'code',
-        'responser_name'
     ];
 
     protected $attributes = [

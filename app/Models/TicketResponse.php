@@ -13,7 +13,8 @@ class TicketResponse extends Model
         'response',
         'attachment',
         'ticket_id',
-        'responser_name'
+        'responser_name',
+        'responser_id',
     ];
 
     public function ticket() {
