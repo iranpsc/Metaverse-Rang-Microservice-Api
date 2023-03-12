@@ -176,17 +176,8 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
     });
 
     Route::apiResource('tickets', TicketController::class);
-
     Route::apiResource('notes', NoteController::class);
-
-    // Route::apiResource('kyc', KycController::class);
-
-    Route::controller(KycController::class)->prefix('kyc')->group(function() {
-        Route::get('/', 'index');
-        Route::post('/', 'store');
-        Route::patch('/{kyc}', 'update');
-    });
-
+    Route::apiResource('kyc', KycController::class);
     Route::apiResource('bank-accounts', BankAccountController::class);
 
     Route::controller(SearchController::class)->prefix('search')->group(function () {
