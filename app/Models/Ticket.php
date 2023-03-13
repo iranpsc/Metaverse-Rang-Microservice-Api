@@ -66,13 +66,6 @@ class Ticket extends Model
         $this->update(['status' => TicketStatus::UNRESOLVED]);
     }
 
-    protected function attachment(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => config('rgb.ftp-endpoint') . $value
-        );
-    }
-
     protected function department(): Attribute
     {
         return Attribute::make(
