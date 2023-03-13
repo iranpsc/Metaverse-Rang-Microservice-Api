@@ -7,30 +7,18 @@ use App\Http\Requests\StoreKycRequest;
 use App\Http\Requests\UpdateKycRequest;
 use App\Http\Resources\KycResource;
 use App\Models\Kyc;
-use Illuminate\Support\Facades\Auth;
+
 class KycController extends Controller
 {
-    private $user;
-
     public function __construct()
     {
-        $this->user = Auth::guard('sanctum')->user();
         $this->authorizeResource(Kyc::class);
     }
 
     public function index()
     {
-        $kyc = $this->user->kyc;
+        $kyc = request()->user()->kyc;
         return $kyc ? new KycResource($kyc) : null;
-    }
-
-    /**
-     * @param Kyc $kyc
-     * @return KycResource
-     */
-    public function show(Kyc $kyc): KycResource
-    {
-        return new KycResource($kyc);
     }
 
     public function store(StoreKycRequest $request)
@@ -38,13 +26,13 @@ class KycController extends Controller
         $melliCardFile = $request->file('melli_card');
         $provePictureFile = $request->file('prove_picture');
 
-        $melliCardNameToStore = $melliCardFile->store('user/kyc');
+        $melliCardNameToStore = url('uploads/'.$melliCardFile->store('kyc'));
 
-        $provePictureNameToStore = $provePictureFile->store('user/kyc');
+        $provePictureNameToStore = url('uploads/'.$provePictureFile->store('kyc'));
 
         if ($request->hasFile('resume')) {
             $resumeFile = $request->file('resume');
-            $resumeNameToStore = $resumeFile->store('user/kyc');
+            $resumeNameToStore = url('uploads/'.$resumeFile->store('kyc'));
         }
 
         $kyc = $request->user()->kyc()->create([
@@ -75,15 +63,15 @@ class KycController extends Controller
     public function update(UpdateKycRequest $request, Kyc $kyc): KycResource
     {
         if ($request->hasFile('melli_card')) {
-            $kyc->melli_card = $request->file('melli_card')->store('user/kyc');
+            $kyc->melli_card = url('uploads/'.$request->file('melli_card')->store('kyc'));
         }
 
         if ($request->hasFile('prove_picture')) {
-            $kyc->prove_picture = $request->file('prove_picture')->store('user/kyc');
+            $kyc->prove_picture = url('uploads/'.$request->file('prove_picture')->store('kyc'));
         }
 
         if ($request->hasFile('resume')) {
-            $kyc->resume = $request->file('resume')->store('user/kyc');
+            $kyc->resume = url('uploads/'.$request->file('resume')->store('kyc'));
         }
 
         $kyc->update([
@@ -105,11 +93,5 @@ class KycController extends Controller
         ]);
         $kyc->errors()->delete();
         return new KycResource($kyc);
-    }
-
-    public function destroy(Kyc $kyc)
-    {
-        $kyc->delete();
-        return response()->noContent();
     }
 }

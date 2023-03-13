@@ -88,4 +88,14 @@ class FeaturePolicy
             && $feature->owner->isNot($user)
             && is_null($feature->dynasty);
     }
+
+    public function addImage(User $user, Feature $feature)
+    {
+        return $feature->owner->is($user);
+    }
+
+    public function removeImage(User $user, Feature $feature)
+    {
+        return $feature->owner->is($user);
+    }
 }

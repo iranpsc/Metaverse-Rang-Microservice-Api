@@ -13,7 +13,6 @@ use App\Models\User;
 use App\Notifications\TicketRecieved;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
@@ -67,7 +66,7 @@ class TicketController extends Controller
     public function store(CreateTicketRequest $request)
     {
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('user/tickets/')
+            ? url('uploads/'.$request->file('attachment')->store('tickets'))
             : '';
 
         $ticket = Ticket::create([
@@ -94,7 +93,7 @@ class TicketController extends Controller
     public function update(CreateTicketRequest $request, Ticket $ticket)
     {
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('user/tickets/')
+            ? url('uploads/'.$request->file('attachment')->store('tickets'))
             : '';
 
         $ticket->update([
@@ -115,7 +114,7 @@ class TicketController extends Controller
     {
         $this->authorize('respond', $ticket);
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('user/tickets/')
+            ? url('uploads/'.$request->file('attachment')->store('tickets'))
             : '';
 
         TicketResponse::create([

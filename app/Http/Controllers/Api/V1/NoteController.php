@@ -16,12 +16,10 @@ class NoteController extends Controller
      *
      * @return Response
      */
-
     public function index(): mixed
     {
         return NoteResource::collection(request()->user()->notes);
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -32,7 +30,7 @@ class NoteController extends Controller
     public function store(NoteRequest $request): NoteResource
     {
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('notes', 'public')
+            ? url('uploads/'.$request->file('attachment')->store('notes'))
             : '';
         $note = Note::create([
             'user_id' => $request->user()->id,
@@ -64,7 +62,7 @@ class NoteController extends Controller
     public function update(NoteRequest $request, Note $note): NoteResource
     {
         $attachment = $request->hasFile('attachment')
-            ? $request->file('attachment')->store('notes', 'public')
+            ? url('uploads/'.$request->file('attachment')->store('notes'))
             : '';
         $note->update([
             'title' => $request->title,

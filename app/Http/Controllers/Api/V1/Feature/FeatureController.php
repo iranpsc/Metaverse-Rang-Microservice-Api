@@ -48,8 +48,9 @@ class FeatureController extends Controller
      */
     public function addFeatureImages(User $user, Feature $feature, FeatureImageRequest $request)
     {
+        $this->authorize('addImage', $feature);
         foreach ($request->file('images') as $image) {
-            $url = $image->store('public/feature-images/' . $feature->id);
+            $url = url('uploads/'.$image->store('features'));
             $feature->images()->create(['url' => $url]);
         }
         return FeatureImageResource::collection($feature->images);
@@ -62,6 +63,7 @@ class FeatureController extends Controller
      */
     public function removeّFeatureImage(User $user, Feature $feature, Image $image)
     {
+        $this->authorize('removeImage', $feature);
         $image->delete();
         return response()->noContent();
     }
