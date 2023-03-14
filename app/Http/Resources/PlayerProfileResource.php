@@ -24,6 +24,8 @@ class PlayerProfileResource extends JsonResource
             'level' => $this->getPrivacyStatus('level') ? $this->level : null,
             'score_percentage_to_next_level' => $this->getPrivacyStatus('level') ? $this->level->getScorePercentageToNextLevel($this->resource) ?? 0 : null,
             'wallet' => new AssetResource($this->assets),
+            'images' => $this->profilePhotos,
+            'online' => $this->last_seen->diffInMinutes() < 2,
             $this->mergeWhen($this->features->count() > 0, [
                 'features' => [
                     $this->mergeWhen($this->getPrivacyStatus('maskoni_features'), [
