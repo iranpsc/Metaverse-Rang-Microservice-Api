@@ -30,6 +30,13 @@ class UserFeatureResource extends JsonResource
 
             $this->mergeWhen(request()->routeIs('my-features.show') || request()->routeIs('players.feature'), [
                 'images' => $this->images,
+                $this->mergeWhen($this->latestTraded, [
+                    'seller' => [
+                        'id' => $this->latestTraded->seller->id ?? "",
+                        'name' => $this->latestTraded->seller->name ?? "",
+                        'code' => $this->latestTraded->seller->code ?? "",
+                    ],
+                ]),
             ]),
 
             $this->mergeWhen(request()->routeIs('my-features.index') || request()->routeIs('players.features'), [
