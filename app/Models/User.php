@@ -29,6 +29,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Helpers\FeatureIndicators;
+use Illuminate\Broadcasting\PrivateChannel;
 
 class User extends Authenticatable implements MustVerifyEmail
 {

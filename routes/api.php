@@ -207,7 +207,7 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
 
         Route::controller(SendJoinRequestController::class)->group(function () {
             Route::get('/requests/sent', 'index');
-            Route::get('/requests/sent/{joinRequest}', 'show');
+            Route::get('/requests/sent/{joinRequest}', 'show')->name('dynasty.requests.sent.show');
             Route::post('/add/member/get/permissions', 'getPermissions');
             Route::post('/add/member', 'store');
             Route::delete('/requests/sent/{joinRequest}', 'destroy');

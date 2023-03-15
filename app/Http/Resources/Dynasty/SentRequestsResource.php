@@ -23,6 +23,9 @@ class SentRequestsResource extends JsonResource
             ],
             'status' => $this->status,
             'relationship' => $this->getRelationShipTitle(),
+            $this->mergeWhen(request()->routeIs('dynasty.requests.sent.show'), [
+                'message' => $this->message,
+            ]),
         ];
     }
 }
