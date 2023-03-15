@@ -538,4 +538,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return GeneralSetting::getChannels($this, $notificationType);
     }
+
+    /**
+     * The channels the user receives notification broadcasts on.
+     */
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'user.notifications.'.$this->id;
+    }
 }

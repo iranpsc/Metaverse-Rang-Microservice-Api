@@ -5,10 +5,11 @@ namespace App\Notifications;
 use App\Models\Ticket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TicketRecieved extends Notification
+class TicketRecieved extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -62,5 +63,15 @@ class TicketRecieved extends Notification
             'sender-name' => $this->ticket->sender->name,
             'message' => 'تیکتی از طرف ' . $this->ticket->sender->name . 'دریافت شده است',
         ];
+    }
+
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'related-to' => 'tickets',
+            'sender-image' => $this->ticket->sender->profilePhotos->last()->url ?? 'https://dl.qzparadise.ir/public/metarang/logo.png',
+            'sender-name' => $this->ticket->sender->name,
+            'message' => 'تیکتی از طرف ' . $this->ticket->sender->name . 'دریافت شده است',
+        ]);
     }
 }

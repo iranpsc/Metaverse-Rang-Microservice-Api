@@ -40,7 +40,6 @@ class FeatureResource extends JsonResource
                 $this->mergeWhen($this->latestTraded, [
                     'seller' => [
                         'id' => $this->latestTraded->seller->id ?? "",
-                        'name' => $this->latestTraded->seller->name ?? "",
                         'code' => $this->latestTraded->seller->code ?? "",
                     ],
                 ]),
