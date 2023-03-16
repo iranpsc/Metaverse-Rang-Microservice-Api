@@ -108,6 +108,6 @@ class DynastyController extends Controller
 
         $request->user()->notify(new DynastyFeatureChangedNotification($feature->properties->id));
 
-        return new DynastyResource($dynasty);
+        return new DynastyResource($dynasty->refresh());
     }
 }

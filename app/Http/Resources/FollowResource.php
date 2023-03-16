@@ -20,6 +20,7 @@ class FollowResource extends JsonResource
             'name' => $this->name,
             'code' => $this->code,
             'profile_photos' => $this->profilePhotos->last()?->url,
+            'online' => $this->last_seen->diffInMinutes(now()) < 2,
         ];
     }
 }
