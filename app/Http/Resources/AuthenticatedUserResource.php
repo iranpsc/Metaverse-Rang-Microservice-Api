@@ -19,7 +19,7 @@ class AuthenticatedUserResource extends JsonResource
             'token' => $this->token,
             'automatic_logout' => $this->automaticLogout,
             'code' => $this->code,
-            'level' => $this->level?->slug,
+            'level' => $this->level,
             'image' => $this->profilePhotos->last()?->url,
             'notifications' => $this->unreadNotifications->count(),
             'socre_percentage_to_next_level' => $this->level ? $this->level->getScorePercentageToNextLevel($this->resource) : 0,
