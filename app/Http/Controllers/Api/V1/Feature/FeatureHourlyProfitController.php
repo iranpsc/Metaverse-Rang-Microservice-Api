@@ -52,7 +52,7 @@ class FeatureHourlyProfitController extends Controller
         $time = $user->variables->withdraw_profit * 86400;
 
         $user->notify(new FeatureHourlyProfitDeposit([
-            'asset' => $feature->getFeatureColor(),
+            'asset' => $feature->getColor(),
             'amount' => $featureHourlyProfit->amount,
             'id' => $feature->properties->id,
         ]));
