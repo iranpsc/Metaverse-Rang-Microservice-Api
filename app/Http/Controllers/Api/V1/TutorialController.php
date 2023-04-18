@@ -30,6 +30,11 @@ class TutorialController extends Controller
         }
     }
 
+    public function show(Video $video)
+    {
+        return new VideoTutorialResource($video);
+    }
+
     /**
      * Like the video.
      *

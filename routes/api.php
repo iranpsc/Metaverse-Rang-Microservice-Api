@@ -71,7 +71,7 @@ Route::controller(CalendarController::class)->prefix('calendar')->group(function
     Route::get('/{event}/dislike', 'dislike');
 });
 
-Route::controller(PlayerController::class)->prefix('players')->group(function() {
+Route::controller(PlayerController::class)->prefix('players')->group(function () {
     Route::get('/', 'index');
     Route::get('/{player}/profile', 'profile');
     Route::get('/{player}/assets', 'assets')->name('players.features');
@@ -256,8 +256,9 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
     });
 });
 
-Route::controller(TutorialController::class)->prefix('tutorials')->group(function() {
+Route::controller(TutorialController::class)->prefix('tutorials')->group(function () {
     Route::get('/', 'index');
+    Route::get('/{video}', 'show');
     Route::post('/like/{video}', 'like');
     Route::post('/dislike/{video}', 'dislike');
     Route::post('/search', 'search');
