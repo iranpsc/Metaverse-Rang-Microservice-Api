@@ -21,7 +21,7 @@ class TutorialController extends Controller
         {
             request()->validate(['url' => 'required|string|max:255']);
 
-            $video = Video::where('fileName', 'like', request()->query('url') . '%')
+            $video = Video::where('fileName', 'like', request()->input('url') . '%')
             ->with(['interactions', 'categoriable', 'views'])
             ->first();
             return $video ? new VideoTutorialResource($video) : [];
