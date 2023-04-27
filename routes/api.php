@@ -262,8 +262,9 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
         Route::post('/like/{video}', 'like');
         Route::post('/dislike/{video}', 'dislike');
         Route::post('/search', 'search')->withoutMiddleware(['auth:sanctum', 'verified']);
-        Route::post('/video-tutorials', 'index');
     });
+
+    Route::post('/video-tutorials', [TutorialController::class, 'index']);
 
     Route::controller(VideoCommentsController::class)->prefix('tutorials')->group(function () {
         Route::get('/{video}/comments', 'index')->withoutMiddleware(['auth:sanctum', 'verified']);
