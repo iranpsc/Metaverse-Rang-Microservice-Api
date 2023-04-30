@@ -31,6 +31,7 @@ class VideoTutorialResource extends JsonResource
             'category_slug' => $this->categoriable->category->slug,
             'sub_category_name' => $this->categoriable->name,
             'sub_category_slug' => $this->categoriable->slug,
+            'created_at' => jdate($this->created_at)->format('Y/m/d')
         ];
     }
 }
