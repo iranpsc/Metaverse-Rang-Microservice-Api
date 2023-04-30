@@ -90,6 +90,7 @@ class VideoCommentsController extends Controller
      */
     public function like(Request $request, Video $video, Comment $comment)
     {
+        $this->authorize('like', $comment);
         $comment->interactions()->updateOrCreate(
             [
                 'user_id' => $request->user()->id
@@ -111,6 +112,7 @@ class VideoCommentsController extends Controller
      */
     public function dislike(Request $request, Video $video, Comment $comment)
     {
+        $this->authorize('dislike', $comment);
         $comment->interactions()->updateOrCreate(
             [
                 'user_id' => $request->user()->id
