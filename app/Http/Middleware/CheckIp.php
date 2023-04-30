@@ -27,12 +27,8 @@ class CheckIp
                 \App\Services\FilterIpService::class
             ])
             ->thenReturn();
-<<<<<<< HEAD
         return $ipAllowed || App::isLocal()
             ? $next($request)
             : abort(403, 'UnAuthorized');
-=======
-        return $ipAllowed ? $next($request) : abort(401, 'UnAuthorized');
->>>>>>> main
     }
 }
