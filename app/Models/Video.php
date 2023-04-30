@@ -13,6 +13,14 @@ class Video extends Model
 
     protected $guarded = [];
 
+    public function incrementViews()
+    {
+        $this->views()->updateOrCreate(
+            ['ip_address' => request()->ip()],
+            ['ip_address' => request()->ip()]
+        );
+    }
+
     protected function fileName(): Attribute
     {
         return Attribute::make(

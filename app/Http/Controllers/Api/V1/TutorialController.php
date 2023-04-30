@@ -17,13 +17,15 @@ class TutorialController extends Controller
      */
     public function index()
     {
-        if(request()->routeIs('tutorials-temp-url'))
-        {
+        if (request()->routeIs('tutorials-temp-url')) {
             request()->validate(['url' => 'required|string|max:255']);
 
             $video = Video::where('fileName', 'like', request()->input('url') . '%')
-            ->with(['interactions', 'categoriable', 'views'])
-            ->first();
+                ->with(['interactions', 'categoriable', 'views'])
+                ->first();
+
+            if ($video) $video->incrementViews();
+
             return $video ? new VideoTutorialResource($video) : [];
         }
 
@@ -31,13 +33,7 @@ class TutorialController extends Controller
             $video = Video::where('fileName', 'like', request()->query('modal') . '%')
                 ->with(['interactions', 'categoriable', 'views'])
                 ->first();
-            if ($video)
-            {
-                $video->views()->updateOrCreate(
-                    ['ip_address' => request()->ip()],
-                    ['ip_address' => request()->ip()]
-                );
-            }
+            if ($video) $video->incrementViews();
             return $video ? new VideoTutorialResource($video) : [];
         } else {
             $tutorials = Video::with(['interactions', 'categoriable', 'views'])
