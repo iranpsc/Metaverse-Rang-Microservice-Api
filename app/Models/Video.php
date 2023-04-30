@@ -13,6 +13,14 @@ class Video extends Model
 
     protected $guarded = [];
 
+    public function incrementViews()
+    {
+        $this->views()->updateOrCreate(
+            ['ip_address' => request()->ip()],
+            ['ip_address' => request()->ip()]
+        );
+    }
+
     protected function fileName(): Attribute
     {
         return Attribute::make(
@@ -27,13 +35,28 @@ class Video extends Model
         );
     }
 
-    public function likes(): MorphMany
+    public function interactions(): MorphMany
     {
-        return $this->morphMany(Like::class, 'likeable');
+        return $this->morphMany(Interaction::class, 'likeable');
     }
 
-    public function dislikes(): MorphMany
+    public function views(): MorphMany
     {
-        return $this->morphMany(Dislike::class, 'dislikeable');
+        return $this->morphMany(View::class, 'viewable');
+    }
+
+    public function categoriable()
+    {
+        return $this->morphTo();
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function reports(): MorphMany
+    {
+        return $this->morphMany(CommentReport::class, 'commentable');
     }
 }

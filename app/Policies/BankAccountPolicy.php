@@ -41,7 +41,7 @@ class BankAccountPolicy
      */
     public function create(User $user)
     {
-        return true;
+        return $user->verified();
     }
 
     /**

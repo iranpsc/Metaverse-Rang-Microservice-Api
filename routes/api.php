@@ -39,6 +39,7 @@ use App\Http\Controllers\Api\V1\SettingController;
 use App\Http\Controllers\Api\V1\TicketController;
 use App\Http\Controllers\Api\V1\TutorialController;
 use App\Http\Controllers\Api\V1\UserEventsController;
+use App\Http\Controllers\Api\V1\VideoCommentsController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -71,7 +72,7 @@ Route::controller(CalendarController::class)->prefix('calendar')->group(function
     Route::get('/{event}/dislike', 'dislike');
 });
 
-Route::controller(PlayerController::class)->prefix('players')->group(function() {
+Route::controller(PlayerController::class)->prefix('players')->group(function () {
     Route::get('/', 'index');
     Route::get('/{player}/profile', 'profile');
     Route::get('/{player}/assets', 'assets')->name('players.features');
@@ -256,11 +257,7 @@ Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function
     });
 });
 
-Route::controller(TutorialController::class)->prefix('video-tutorials')->group(function() {
-    Route::post('/', 'index');
-    Route::post('/like/{video}', 'like');
-    Route::post('/dislike/{video}', 'dislike');
-});
+Route::post('/video-tutorials', [TutorialController::class, 'index'])->name('tutorials-temp-url');
 
 Route::get('ping', static fn () => null);
 

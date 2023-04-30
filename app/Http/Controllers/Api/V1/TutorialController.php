@@ -15,12 +15,41 @@ class TutorialController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $request->validate(['url' => 'required|string']);
-        $tutorial = Video::where('fileName', 'like', $request->url . '%')->first();
-        if ($tutorial) $tutorial->increment('visits');
-        return $tutorial ? new VideoTutorialResource($tutorial) : [];
+        if (request()->routeIs('tutorials-temp-url')) {
+            request()->validate(['url' => 'required|string|max:255']);
+
+            $video = Video::where('fileName', 'like', request()->input('url') . '%')
+                ->with(['interactions', 'categoriable', 'views'])
+                ->first();
+
+            if ($video) $video->incrementViews();
+
+            return $video ? new VideoTutorialResource($video) : [];
+        }
+
+        if (request()->query('modal')) {
+            $video = Video::where('fileName', 'like', request()->query('modal') . '%')
+                ->with(['interactions', 'categoriable', 'views'])
+                ->first();
+            if ($video) $video->incrementViews();
+            return $video ? new VideoTutorialResource($video) : [];
+        } else {
+            $tutorials = Video::with(['interactions', 'categoriable', 'views'])
+                ->orderByDesc('created_at')
+                ->simplePaginate(18);
+            return VideoTutorialResource::collection($tutorials);
+        }
+    }
+
+    public function show(Video $video)
+    {
+        $video->views()->updateOrCreate(
+            ['ip_address' => request()->ip()],
+            ['ip_address' => request()->ip()]
+        );
+        return new VideoTutorialResource($video);
     }
 
     /**
@@ -31,7 +60,15 @@ class TutorialController extends Controller
      */
     public function like(Request $request, Video $video)
     {
-        $video->likes()->create(['ip' => $request->ip()]);
+        $video->interactions()->updateOrCreate(
+            [
+                'user_id' => $request->user()->id
+            ],
+            [
+                'liked' => true,
+                'ip_address' => $request->ip()
+            ]
+        );
         return new JsonResponse([], 200);
     }
 
@@ -44,7 +81,22 @@ class TutorialController extends Controller
      */
     public function dislike(Request $request, Video $video)
     {
-        $video->dislikes()->create(['ip' => $request->ip()]);
+        $video->interactions()->updateOrCreate(
+            [
+                'user_id' => $request->user()->id
+            ],
+            [
+                'liked' => false,
+                'ip_address' => $request->ip()
+            ]
+        );
         return new JsonResponse([], 200);
+    }
+
+    public function search(Request $request)
+    {
+        $tutorials = Video::where('title', 'like', '%' . $request->searchTerm . '%')
+            ->with(['interactions', 'categoriable', 'views'])->simplePaginate(18);
+        return VideoTutorialResource::collection($tutorials);
     }
 }

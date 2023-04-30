@@ -9,11 +9,8 @@ class Calendar extends Model
 {
     use HasFactory;
 
-    public function likes() {
-        return $this->morphMany(Like::class, 'likeable');
-    }
-    public function dislikes() {
-        return $this->morphMany(Dislike::class, 'dislikeable');
+    public function interactions() {
+        return $this->morphMany(Interaction::class, 'likeable');
     }
 
     public function image() {
