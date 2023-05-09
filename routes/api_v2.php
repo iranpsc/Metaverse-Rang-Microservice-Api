@@ -6,13 +6,27 @@ use App\Http\Controllers\Api\V1\TutorialController;
 use App\Http\Controllers\Api\V2\VideoPanelController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::controller(TutorialController::class)->prefix('tutorials')->as('tutorials.')->group(function () {
-        Route::get('/', 'index')->withoutMiddleware(['auth:sanctum', 'verified'])->name('index');
-        Route::get('/{video}', 'show')->withoutMiddleware(['auth:sanctum', 'verified'])->name('show');
+        Route::withoutMiddleware(['auth:sanctum', 'verified'])->group(function () {
+            Route::get('/', 'index')->name('index');
+
+            Route::name('categories.')->group(function () {
+                Route::get('/categories', 'categories')->name('index');
+                Route::get('/categories/{category}', 'category')->name('show');
+            });
+
+            Route::prefix('categories')->name('subcategories.')->group(function () {
+                Route::get('/{category}/subcategories', 'subcategories')->name('index');
+                Route::get('/{category}/subcategories/{subCategory}', 'subcategory')->name('show');
+                Route::get('/{category}/subcategories/{subCategory}/videos', 'subCategoryVideos')->name('videos');
+            });
+
+            Route::get('/{video}', 'show')->name('show');
+            Route::post('/search', 'search');
+        });
         Route::post('/like/{video}', 'like');
         Route::post('/dislike/{video}', 'dislike');
-        Route::post('/search', 'search')->withoutMiddleware(['auth:sanctum', 'verified']);
     });
 
     Route::controller(VideoCommentsController::class)->prefix('tutorials')->group(function () {
@@ -38,4 +52,5 @@ Route::controller(LevelController::class)->prefix('levels')->group(function () {
 });
 
 
-Route::controller(VideoPanelController::class)->group(function() {});
+Route::controller(VideoPanelController::class)->group(function () {
+});

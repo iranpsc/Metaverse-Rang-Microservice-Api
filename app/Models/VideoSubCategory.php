@@ -13,4 +13,9 @@ class VideoSubCategory extends Model
     {
         return $this->belongsTo(VideoCategory::class, 'video_category_id', 'id');
     }
+
+    public function videos()
+    {
+        return $this->hasMany(Video::class);
+    }
 }

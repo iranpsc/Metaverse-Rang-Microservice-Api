@@ -43,6 +43,7 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Illuminate\Session\Middleware\StartSession::class,
+            \App\Http\Middleware\Activity::class,
         ],
     ];
 
@@ -66,7 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check.ip' => \App\Http\Middleware\CheckIp::class,
         'account.security' => \App\Http\Middleware\AccountSecurity::class,
-        'user.activity' => \App\Http\Middleware\Activity::class,
     ];
 
     /**

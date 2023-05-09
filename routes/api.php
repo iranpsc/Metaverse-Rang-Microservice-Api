@@ -80,7 +80,7 @@ Route::controller(PlayerController::class)->prefix('players')->group(function ()
     Route::get('/{player}/following', 'following');
 });
 
-Route::middleware(['auth:sanctum', 'verified', 'user.activity'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::controller(HomeController::class)->group(function () {
         Route::post('/store', 'store');

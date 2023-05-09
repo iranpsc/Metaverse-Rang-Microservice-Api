@@ -30,11 +30,6 @@ class Video extends Model
         return $this->morphMany(View::class, 'viewable');
     }
 
-    public function categoriable()
-    {
-        return $this->morphTo();
-    }
-
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
@@ -43,5 +38,10 @@ class Video extends Model
     public function reports(): MorphMany
     {
         return $this->morphMany(CommentReport::class, 'commentable');
+    }
+
+    public function subCategory()
+    {
+        return $this->belongsTo(VideoSubCategory::class, 'video_sub_category_id', 'id');
     }
 }

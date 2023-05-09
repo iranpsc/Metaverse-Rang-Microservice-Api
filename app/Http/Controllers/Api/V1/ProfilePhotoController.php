@@ -28,7 +28,7 @@ class ProfilePhotoController extends Controller
     public function store(Request $request)
     {
         $request->validate(['image' => 'required|image|mimes:png,jpg,jpeg|max:1024']);
-        $url = url('uploads/'.$request->file('image')->store('profile'));
+        $url = url('uploads/'.$request->file('image')->store('profile', 'public'));
         $image = $request->user()->profilePhotos()->create(['url' => $url]);
         return new ProfilePhotoResource($image);
     }
