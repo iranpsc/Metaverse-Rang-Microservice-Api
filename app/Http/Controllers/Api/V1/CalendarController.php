@@ -9,34 +9,60 @@ use App\Http\Resources\EventResource;
 
 class CalendarController extends Controller
 {
-    private $events ;
 
-    public function __construct() {
-        $this->events = Calendar::with('image', 'likes', 'dislikes')->lazy();
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except([
+            'getEvents',
+            'getSingleEvent',
+            'getVersionsEvents',
+            'getVersionEvent',
+        ]);
     }
+
     public function getEvents()
     {
-        return EventResource::collection($this->events);
+        $events = Calendar::where('is_version', 0)
+            ->whereDate('ends_at', '>', now())
+            ->with(['interactions', 'views'])->get();
+        return EventResource::collection($events);
     }
 
     public function getSingleEvent(Calendar $event)
     {
-        $event->increment('views');
+        $event->incrementViews();
         return new EventResource($event);
     }
 
-    public function like(Request $request, Calendar $event)
+    public function getVersionsEvents()
     {
-        if (! $event->likes->where('ip', $request->ip())->first()) {
-            $event->likes()->create(['ip' => $request->ip()]);
-        }
+        $events = Calendar::where('is_version', 1)
+            ->whereDate('ends_at', '>', now())
+            ->with(['interactions', 'views'])->get();
+        return EventResource::collection($events);
+    }
+
+    public function getVersionEvent(Calendar $versionEvent)
+    {
+        $versionEvent->incrementViews();
+        return new EventResource($versionEvent);
+    }
+
+    public function likeEvent(Request $request, Calendar $event)
+    {
+        $event->interactions()->updateOrCreate(
+            ['user_id' => $request->user()->id],
+            ['liked' => 1]
+        );
         return new EventResource($event->refresh());
     }
-    public function dislike(Request $request, Calendar $event)
+
+    public function dislikeEvent(Request $request, Calendar $event)
     {
-        if (! $event->dislikes->where('ip', $request->ip())->first()) {
-            $event->dislikes()->create(['ip' => $request->ip()]);
-        }
+        $event->interactions()->updateOrCreate(
+            ['user_id' => $request->user()->id],
+            ['liked' => 0]
+        );
         return new EventResource($event->refresh());
     }
 }

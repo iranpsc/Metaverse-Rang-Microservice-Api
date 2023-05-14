@@ -64,18 +64,26 @@ Route::middleware('guest')->group(function () {
     Route::post('/forgot-password/reset/password', [ResetPasswordController::class, 'reset']);
 });
 
-Route::controller(CalendarController::class)->prefix('calendar')->group(function () {
-    Route::get('/', 'getEvents');
-    Route::get('/{event}', 'getSingleEvent');
-    Route::get('/{event}/like', 'like');
-    Route::get('/{event}/dislike', 'dislike');
+Route::controller(CalendarController::class)->prefix('calendar')->as('calendar.')->group(function () {
+    Route::prefix('events')->as('events.')->group(function() {
+        Route::get('/', 'getEvents')->name('index');
+        Route::get('/{event}', 'getSingleEvent')->name('show');
+    });
+
+    Route::prefix('versions')->as('versions.')->group(function() {
+        Route::get('/', 'getVersionsEvents')->name('index');
+        Route::get('/{versionEvent}', 'getVersionEvent')->name('show');
+    });
+
+    Route::post('/events/{event}/like', 'likeEvent')->name('like');
+    Route::post('/events/{event}/dislike', 'dislikeEvent')->name('dislike');
 });
 
-Route::controller(PlayerController::class)->prefix('players')->group(function () {
+Route::controller(PlayerController::class)->prefix('players')->as('players.')->group(function () {
     Route::get('/', 'index');
     Route::get('/{player}/profile', 'profile');
-    Route::get('/{player}/assets', 'assets')->name('players.features');
-    Route::get('/{player}/assets/{feature}', 'asset')->name('players.feature');
+    Route::get('/{player}/assets', 'assets')->name('features');
+    Route::get('/{player}/assets/{feature}', 'asset')->name('feature');
     Route::get('/{player}/followers', 'followers');
     Route::get('/{player}/following', 'following');
 });

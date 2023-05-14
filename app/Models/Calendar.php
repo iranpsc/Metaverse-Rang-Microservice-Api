@@ -9,11 +9,35 @@ class Calendar extends Model
 {
     use HasFactory;
 
-    public function interactions() {
+    protected $guarded = [];
+
+    protected $casts = [
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+    ];
+
+    public function likes()
+    {
+        return $this->morphMany(Interaction::class, 'likeable')->where('liked', 1);
+    }
+
+    public function dislikes()
+    {
+        return $this->morphMany(Interaction::class, 'likeable')->where('liked', 0);
+    }
+
+    public function interactions()
+    {
         return $this->morphMany(Interaction::class, 'likeable');
     }
 
-    public function image() {
-        return $this->morphOne(Image::class, 'imageable');
+    public function views()
+    {
+        return $this->morphMany(View::class, 'viewable');
+    }
+
+    public function incrementViews()
+    {
+        $this->views()->create(['ip_address' => request()->ip()]);
     }
 }

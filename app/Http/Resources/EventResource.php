@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Morilog\Jalali\Jalalian;
 
 class EventResource extends JsonResource
 {
@@ -18,17 +17,22 @@ class EventResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'content' => $this->content,
-            'image' => $this->image->url,
-            'start_date' => Jalalian::forge($this->start_date)->format('Y/m/d'),
-            'end_date' => Jalalian::forge($this->end_date)->format('Y/m/d'),
-            'start_time' => Jalalian::forge($this->start_time)->format('H:m'),
-            'end_time' => Jalalian::forge($this->end_time)->format('H:m'),
-            'views' => $this->views,
-            'likes' => $this->likes?->count(),
-            'dislikes' => $this->dislikes?->count(),
-            'already_liked' => true,
-            'already_disliked' => false,
+            $this->mergeWhen(request()->routeIs('calendar.events.show') || request()->routeIs('calendar.versions.show'), [
+                'description' => $this->content,
+                'btn_name' => $this->btn_name,
+                'btn_link' => $this->btn_link,
+                'color' => $this->color,
+            ]),
+            'image' => $this->image,
+            'starts_at' => jdate($this->starts_at)->format('Y/m/d H:i'),
+            'ends_at' => jdate($this->ends_at)->format('Y/m/d H:i'),
+            'views' => $this->views->count(),
+            'likes' => $this->likes->count(),
+            'dislikes' => $this->dislikes->count(),
+
+            $this->mergeWhen($this->is_version, [
+                'version_title' => $this->version_title,
+            ])
         ];
     }
 }
