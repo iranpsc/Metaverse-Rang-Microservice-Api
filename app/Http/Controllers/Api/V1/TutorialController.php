@@ -25,7 +25,7 @@ class TutorialController extends Controller
             request()->validate(['url' => 'required|string|max:255']);
 
             $video = Video::where('fileName', 'like', '%' . request()->input('url') . '%')
-                ->with(['interactions', 'subCategory.category', 'views'])
+                ->with(['interactions', 'subCategory.category', 'views', 'creator'])
                 ->first();
 
             if ($video) $video->incrementViews();
@@ -35,12 +35,12 @@ class TutorialController extends Controller
 
         if (request()->query('modal')) {
             $video = Video::where('fileName', 'like', '%' . request()->query('modal') . '%')
-                ->with(['interactions', 'subCategory.category', 'views'])
+                ->with(['interactions', 'subCategory.category', 'views', 'creator'])
                 ->first();
             if ($video) $video->incrementViews();
             return $video ? new VideoTutorialResource($video) : [];
         } else {
-            $tutorials = Video::with(['interactions', 'subCategory.category', 'views'])
+            $tutorials = Video::with(['interactions', 'subCategory.category', 'views', 'creator'])
                 ->orderByDesc('created_at')
                 ->simplePaginate(18);
             return VideoTutorialResource::collection($tutorials);
