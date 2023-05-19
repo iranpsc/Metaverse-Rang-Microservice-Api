@@ -42,22 +42,28 @@ function getScorePercentageToNextLevel(?Level $level, int $score): int
 
 function hourlyProfitInfo(User $user): int
 {
-    $profit = FeatureHourlyProfit::whereUserId($user->id)
-        ->where('dead_line', '>', now())
-        ->orderBy('dead_line', 'desc')
-        ->first();
+    $profit = FeatureHourlyProfit::whereUserId($user->id)->oldest('dead_line')->first();
     $userDeadLine = $user->variables->withdraw_profit;
-    return $profit ? ($userDeadLine - $profit->dead_line->diffInDays(now())) / $userDeadLine * 100 : 0;
+
+    if (is_null($profit)) {
+        return 0;
+    }
+
+    $daysDiff = $profit->dead_line->diffInDays(now());
+    $remainingPercentage = ($userDeadLine - $daysDiff) / $userDeadLine * 100;
+
+    return ($daysDiff > $userDeadLine) ? 100 : $remainingPercentage;
 }
 
-function getLevelsImages($userLevel)
+
+function getLevelsImages($userLevel): array
 {
     $images = [];
     if ($userLevel) {
         $levels = Level::orderBy('score')->lazy();
         foreach ($levels as $level) {
             if ($userLevel->score >= $level->score) {
-                array_push($images, $level->image?->url);
+                array_push($images, optional($level->image)->url);
             }
         }
     }
