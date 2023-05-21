@@ -25,7 +25,7 @@ class SearchFeatureResultResource extends JsonResource
             'price_psc' => $this->price_psc,
             'price_irr' => $this->price_irr,
             'owner_code' => Str::upper($this->feature->owner->code),
-            'coordinates' => new CoordinatesResource($this->feature->geometry->coordinates),
+            'coordinates' => CoordinatesResource::collection($this->feature->geometry->coordinates),
         ];
     }
 }
