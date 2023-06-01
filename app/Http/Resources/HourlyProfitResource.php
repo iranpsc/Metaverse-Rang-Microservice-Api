@@ -18,10 +18,11 @@ class HourlyProfitResource extends JsonResource
         return [
             'id'         => $this->id,
             'user_id'    => $this->user_id,
+            'feature_db_id' => $this->feature->id,
             'feature_id' => $this->feature->properties->id,
             'amount'     => number_format($this->amount, 3),
             'karbari'    => $this->feature->properties->karbari,
-            'dead_line'  => Jalalian::forge($this->dead_line)->format('Y/m/d H:m:s')
+            'dead_line'  => jdate($this->dead_line)->format('Y/m/d')
         ];
     }
 }
