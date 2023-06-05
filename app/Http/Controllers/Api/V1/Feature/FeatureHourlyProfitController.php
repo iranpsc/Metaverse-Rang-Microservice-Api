@@ -67,12 +67,14 @@ class FeatureHourlyProfitController extends Controller
         $user->assets->increment($featureHourlyProfit->asset, $featureHourlyProfit->amount);
         $time = $user->variables->withdraw_profit * 86400;
 
-        // Notify the user about the hourly profit deposit
-        $user->notify(new FeatureHourlyProfitDeposit([
-            'asset'   => $feature->getColor(),
-            'amount'  => $featureHourlyProfit->amount,
-            'id'      => $feature->properties->id,
-        ]));
+        if ($featureHourlyProfit->amount > 0) {
+            // Notify the user about the hourly profit deposit
+            $user->notify(new FeatureHourlyProfitDeposit([
+                'asset'   => $feature->getColor(),
+                'amount'  => $featureHourlyProfit->amount,
+                'id'      => $feature->properties->id,
+            ]));
+        }
 
         // Update the profit's amount and deadline
         $featureHourlyProfit->update([
