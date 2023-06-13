@@ -18,7 +18,7 @@ class LevelResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'image' => $this->image?->url,
+            'image' => config('app.admin_panel_url') . '/' . $this->image?->url,
             'background_image' => $this->background_image,
             'png_file' => $this->generalInfo?->png_file,
             'fbx_file' => $this->generalInfo?->fbx_file,

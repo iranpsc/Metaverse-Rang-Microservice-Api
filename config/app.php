@@ -55,6 +55,7 @@ return [
     */
 
     'url' => env('APP_URL', 'https://rgb.irpsc.com'),
+    'admin_panel_url' => env('ADMIN_PANEL_URL', 'https://admin.rgb.irpsc.com'),
 
     'asset_url' => env('ASSET_URL'),
 
