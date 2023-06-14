@@ -17,7 +17,12 @@ class PersonalInfo extends JsonResource
     {
         return [
             $this->mergeWhen($this->profilePhotos, [
-                'profilePhotos' => $this->profilePhotos,
+                'profilePhotos' => $this->profilePhotos->map(function($photo) {
+                    return [
+                        'id' => $photo->id,
+                        'url' => $photo->url,
+                    ];
+                }),
             ]),
             'kyc' => [
                 $this->mergeWhen($this->verified(), [
