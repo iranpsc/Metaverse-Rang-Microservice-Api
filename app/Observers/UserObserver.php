@@ -145,7 +145,7 @@ class UserObserver
      */
     public function deposit(User $user): void
     {
-        $amount = $user->latestTransaction->amount;
+        $amount = $user->latestPayment->amount;
         $user->log->increment('deposit_amount', $amount * 0.0001);
         $this->calculateScore($user);
     }

@@ -35,13 +35,13 @@ class KycController extends Controller
         $melliCardFile = $request->file('melli_card');
         $provePictureFile = $request->file('prove_picture');
 
-        $melliCardNameToStore = url('uploads/'.$melliCardFile->store('kyc'));
+        $melliCardNameToStore = url('uploads/'.$melliCardFile->store('kyc', 'public'));
 
-        $provePictureNameToStore = url('uploads/'.$provePictureFile->store('kyc'));
+        $provePictureNameToStore = url('uploads/'.$provePictureFile->store('kyc', 'public'));
 
         if ($request->hasFile('resume')) {
             $resumeFile = $request->file('resume');
-            $resumeNameToStore = url('uploads/'.$resumeFile->store('kyc'));
+            $resumeNameToStore = url('uploads/'.$resumeFile->store('kyc', 'public'));
         }
 
         $kyc = $request->user()->kyc()->create([
@@ -72,15 +72,15 @@ class KycController extends Controller
     public function update(UpdateKycRequest $request, Kyc $kyc): KycResource
     {
         if ($request->hasFile('melli_card')) {
-            $kyc->melli_card = url('uploads/'.$request->file('melli_card')->store('kyc'));
+            $kyc->melli_card = url('uploads/'.$request->file('melli_card')->store('kyc', 'public'));
         }
 
         if ($request->hasFile('prove_picture')) {
-            $kyc->prove_picture = url('uploads/'.$request->file('prove_picture')->store('kyc'));
+            $kyc->prove_picture = url('uploads/'.$request->file('prove_picture')->store('kyc', 'public'));
         }
 
         if ($request->hasFile('resume')) {
-            $kyc->resume = url('uploads/'.$request->file('resume')->store('kyc'));
+            $kyc->resume = url('uploads/'.$request->file('resume')->store('kyc', 'public'));
         }
 
         $kyc->update([
