@@ -19,7 +19,7 @@ class VideoCategoryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'image' => $this->image,
+            'image' => config('app.admin_panel_url') . '/uploads/' . $this->image,
             $this->mergeWhen(request()->routeIs('tutorials.categories.show'), [
                 'description' => $this->description,
                 'subcategories' => VideoSubcategoryResource::collection($this->subCategories),
