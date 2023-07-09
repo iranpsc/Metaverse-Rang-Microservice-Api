@@ -64,6 +64,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/forgot-password/reset/password', [ResetPasswordController::class, 'reset']);
 });
 
+
 Route::controller(CalendarController::class)->prefix('calendar')->as('calendar.')->group(function () {
     Route::prefix('events')->as('events.')->group(function() {
         Route::get('/', 'getEvents')->name('index');
@@ -72,6 +73,7 @@ Route::controller(CalendarController::class)->prefix('calendar')->as('calendar.'
 
     Route::prefix('versions')->as('versions.')->group(function() {
         Route::get('/', 'getVersionsEvents')->name('index');
+        Route::get('/latest', 'getLatestVersionEvent')->name('latest');
         Route::get('/{versionEvent}', 'getVersionEvent')->name('show');
     });
 

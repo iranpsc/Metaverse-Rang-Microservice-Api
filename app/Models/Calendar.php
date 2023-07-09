@@ -40,4 +40,15 @@ class Calendar extends Model
     {
         $this->views()->create(['ip_address' => request()->ip()]);
     }
+
+    public function scopeCurrentEvents($query)
+    {
+        return $query->where('is_version', 0)
+            ->whereDate('ends_at', '>', now());
+    }
+
+    public function scopeVersionEvents($query)
+    {
+        return $query->where('is_version', 1);
+    }
 }

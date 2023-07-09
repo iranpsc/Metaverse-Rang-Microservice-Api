@@ -16,6 +16,7 @@ class CalendarController extends Controller
             'getSingleEvent',
             'getVersionsEvents',
             'getVersionEvent',
+            'getLatestVersionEvent'
         ]);
     }
 
@@ -25,9 +26,9 @@ class CalendarController extends Controller
      */
     public function getEvents()
     {
-        $events = Calendar::where('is_version', 0)
-            ->whereDate('ends_at', '>', now())
-            ->with(['interactions', 'views'])->get();
+        $events = Calendar::currentEvents()->with(['interactions', 'views'])
+            ->orderBy('starts_at', 'desc')
+            ->get();
         return EventResource::collection($events);
     }
 
@@ -48,9 +49,9 @@ class CalendarController extends Controller
      */
     public function getVersionsEvents()
     {
-        $events = Calendar::where('is_version', 1)
-            ->whereDate('ends_at', '>', now())
-            ->with(['interactions', 'views'])->get();
+        $events = Calendar::versionEvents()->with(['interactions', 'views'])
+            ->orderBy('starts_at', 'desc')
+            ->paginate(20);
         return EventResource::collection($events);
     }
 
@@ -93,5 +94,15 @@ class CalendarController extends Controller
             ['liked' => 0]
         );
         return new EventResource($event->refresh());
+    }
+
+    public function getLatestVersionEvent()
+    {
+        $event = Calendar::versionEvents()->latest('starts_at')->pluck('version_title')->first();
+        return response()->json([
+            'data' => [
+                'version_title' => $event
+            ]
+        ]);
     }
 }

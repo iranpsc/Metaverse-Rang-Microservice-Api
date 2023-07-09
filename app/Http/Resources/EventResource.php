@@ -25,7 +25,9 @@ class EventResource extends JsonResource
             ]),
             'image' => $this->image,
             'starts_at' => jdate($this->starts_at)->format('Y/m/d H:i'),
-            'ends_at' => jdate($this->ends_at)->format('Y/m/d H:i'),
+            $this->mergeWhen(!$this->is_version, [
+                'ends_at' => jdate($this->ends_at)->format('Y/m/d H:i'),
+            ]),
             'views' => $this->views->count(),
             'likes' => $this->likes->count(),
             'dislikes' => $this->dislikes->count(),

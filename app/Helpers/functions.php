@@ -50,7 +50,7 @@ function hourlyProfitInfo(User $user): int
     }
 
     $daysDiff = $profit->dead_line->diffInDays(now());
-    $remainingPercentage = ($userDeadLine - $daysDiff) / $userDeadLine * 100;
+    $remainingPercentage = ((int)$userDeadLine - $daysDiff) / $userDeadLine * 100;
 
     return ($daysDiff > $userDeadLine) ? 100 : $remainingPercentage;
 }
