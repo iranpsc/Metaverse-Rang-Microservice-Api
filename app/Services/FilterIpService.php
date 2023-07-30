@@ -17,7 +17,9 @@ class FilterIpService
         $ip = ip2long($request->ip());
 
         foreach ($allowedIps as $allowedIp) {
-            return $ip === $allowedIp->from;
+            if($ip === $allowedIp->from) {
+                return long2ip($ip);
+            }
         }
 
         return false;

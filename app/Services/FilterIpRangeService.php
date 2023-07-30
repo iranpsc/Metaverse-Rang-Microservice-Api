@@ -24,7 +24,7 @@ class FilterIpRangeService
             $ipRange = $allowedIpRanges[$mid];
 
             if ($ip >= $ipRange->from && $ip <= $ipRange->to) {
-                return true;
+                return long2ip($ip);
             } elseif ($ip < $ipRange->from) {
                 $right = $mid - 1;
             } else {
