@@ -26,20 +26,27 @@ class HomeController extends Controller
         );
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function sendIpToSupport(Request $request)
     {
         $request->validate([
             'ip' => 'required|ip',
-            'email' => 'required|email'
+            'email' => 'nullable|email'
         ]);
 
-        Ip::create([
-            'title' => 'آی پی مسدود شده',
-            'type' => 'api',
-            'from' => ip2long($request->ip),
-            'email' => $request->email,
-            'blocked' => 1
-        ]);
+        Ip::updateOrCreate(
+            ['from' => ip2long($request->ip)],
+            [
+                'title' => 'آی پی مسدود شده',
+                'type' => 'api',
+                'from' => ip2long($request->ip),
+                'email' => $request->email,
+                'blocked' => 1
+            ]
+        );
 
         return new JsonResponse([], 200);
     }
