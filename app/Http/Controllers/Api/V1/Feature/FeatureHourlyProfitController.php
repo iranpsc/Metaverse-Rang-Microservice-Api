@@ -27,7 +27,7 @@ class FeatureHourlyProfitController extends Controller
         $amount = 0;
 
         FeatureHourlyProfit::whereBelongsTo($user)->with('feature', 'feature.properties')
-            ->chunkById(100, function ($profits) use ($request, $user, $time, $amount) {
+            ->chunkById(100, function ($profits) use ($request, $user, $time, &$amount) {
                 foreach ($profits as $profit) {
                     if ($profit->feature->properties->karbari == $request->karbari) {
                         $amount += $profit->amount;
