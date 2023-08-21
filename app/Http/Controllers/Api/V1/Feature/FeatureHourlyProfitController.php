@@ -12,35 +12,28 @@ class FeatureHourlyProfitController extends Controller
 {
     public function index()
     {
-        // Get all hourly profits for the current user and return them as a collection
-        return HourlyProfitResource::collection(FeatureHourlyProfit::whereBelongsTo(request()->user())->get());
+        return HourlyProfitResource::collection(
+            FeatureHourlyProfit::whereBelongsTo(request()->user())->simplePaginate(10)
+        );
     }
 
     public function getProfitsByApplication(Request $request)
     {
-        // Validate the request parameter
         $request->validate(['karbari' => 'required|in:m,t,a']);
 
         $user = $request->user();
 
-        // Calculate the time based on the user's withdraw_profit variable
         $time = $user->variables->withdraw_profit * 86400;
+        $amount = 0;
 
-        // Retrieve hourly profits in chunks and process them
         FeatureHourlyProfit::whereBelongsTo($user)->with('feature', 'feature.properties')
-            ->chunkById(100, function ($profits) use ($request, $user, $time) {
+            ->chunkById(100, function ($profits) use ($request, $user, $time, $amount) {
                 foreach ($profits as $profit) {
-                    // Check if the profit's feature property matches the requested karbari
                     if ($profit->feature->properties->karbari == $request->karbari) {
-                        // Increment the user's assets based on the profit's asset and amount
+                        $amount += $profit->amount;
                         $user->assets->increment($profit->asset, $profit->amount);
-                        // Notify the user about the hourly profit deposit
-                        $user->notify(new FeatureHourlyProfitDeposit([
-                            'asset'   => $profit->asset,
-                            'amount'  => $profit->amount,
-                            'id'      => $profit->feature->properties->id,
-                        ]));
-                        // Update the profit's amount and deadline
+
+
                         $profit->update([
                             'amount'     => 0,
                             'dead_line'  => now()->addSeconds($time)
@@ -49,8 +42,21 @@ class FeatureHourlyProfitController extends Controller
                 }
             });
 
-        // Get all hourly profits for the current user and return them as a collection
-        return HourlyProfitResource::collection(FeatureHourlyProfit::whereBelongsTo(request()->user())->get());
+        $user->notify(new FeatureHourlyProfitDeposit([
+            'asset'   => match ($request->karbari) {
+                'm' => 'red',
+                't' => 'yellow',
+                'a' => 'blue',
+            },
+            'amount'  => $amount,
+            'karbari' => match ($request->karbari) {
+                'm' => 'مسکونی',
+                't' => 'تجاری',
+                'a' => 'آموزشی',
+            },
+        ]));
+
+        return response()->json([], 200);
     }
 
     /**
@@ -63,12 +69,11 @@ class FeatureHourlyProfitController extends Controller
         $feature = $featureHourlyProfit->feature;
         $user = request()->user();
 
-        // Increment the user's assets based on the profit's asset and amount
         $user->assets->increment($featureHourlyProfit->asset, $featureHourlyProfit->amount);
         $time = $user->variables->withdraw_profit * 86400;
 
         if ($featureHourlyProfit->amount > 0) {
-            // Notify the user about the hourly profit deposit
+
             $user->notify(new FeatureHourlyProfitDeposit([
                 'asset'   => $feature->getColor(),
                 'amount'  => $featureHourlyProfit->amount,
@@ -76,13 +81,11 @@ class FeatureHourlyProfitController extends Controller
             ]));
         }
 
-        // Update the profit's amount and deadline
         $featureHourlyProfit->update([
             'amount'     => 0,
             'dead_line'  => now()->addSeconds($time)
         ]);
 
-        // Return the updated hourly profit as a resource
         return new HourlyProfitResource($featureHourlyProfit);
     }
 }

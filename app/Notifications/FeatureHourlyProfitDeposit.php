@@ -43,21 +43,35 @@ class FeatureHourlyProfitDeposit extends Notification implements ShouldQueue
             'sender-name' => 'متارنگ',
             'sender-image' => 'https://dl.qzparadise.ir/public/metarang/logo.png',
             'related-to' => 'transactions',
-            'message'  => sprintf(
-                'مقدار %s %s به حساب شما بابت سود ساعت شمار حاصل از ملک به شناسه %s واریز گردید.',
-                number_format($this->data['amount'], 3),
-                $this->assetTitle($this->data['asset']),
-                $this->data['id'],
-            )
+            'message'  => $this->getMessage()
         ];
     }
 
     private function assetTitle(string $asset)
     {
-        return match($asset) {
+        return match ($asset) {
             'red' => 'رنگ قرمز',
             'yellow' => 'رنگ زرد',
             'blue' => 'رنگ آبی',
         };
+    }
+
+    private function getMessage()
+    {
+        if (!$this->data['id']) {
+            return sprintf(
+                'مقدار %s %s به حساب شما بابت سود ساعت شمار حاصل از ملک های %s واریز گردید.',
+                number_format($this->data['amount'], 3),
+                $this->assetTitle($this->data['asset']),
+                $this->data['karbari'],
+            );
+        } else {
+            return sprintf(
+                'مقدار %s %s به حساب شما بابت سود ساعت شمار حاصل از ملک به شناسه %s واریز گردید.',
+                number_format($this->data['amount'], 3),
+                $this->assetTitle($this->data['asset']),
+                $this->data['id'],
+            );
+        }
     }
 }
