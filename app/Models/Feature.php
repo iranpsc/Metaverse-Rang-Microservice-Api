@@ -144,6 +144,12 @@ class Feature extends Model
             FeatureIndicators::Maskoni =>  'مسکونی',
             FeatureIndicators::Edari => 'اداری',
             FeatureIndicators::Behdashti => 'بهداشتی',
+            FeatureIndicators::FazaSabz => 'فضای سبز',
+            FeatureIndicators::Farhangi => 'فرهنگی',
+            FeatureIndicators::Parking => 'پارکینگ',
+            FeatureIndicators::Mazhabi => 'مذهبی',
+            FeatureIndicators::Nemayeshgah => 'نمایشگاه',
+            FeatureIndicators::Gardeshgari => 'گردشگری',
         };
     }
 
