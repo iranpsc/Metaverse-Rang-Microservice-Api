@@ -92,8 +92,8 @@ Route::controller(PlayerController::class)->prefix('players')->as('players.')->g
 
 Route::controller(HomeController::class)->group(function () {
     Route::post('store', 'getStorePackages');
-    Route::post('/ip/send-to-support', 'sendIpToSupport');
-})->withoutMiddleware('check.ip');
+    Route::post('/ip/send-to-support', 'sendIpToSupport')->withoutMiddleware('check.ip');
+});
 
 Route::middleware(['auth:sanctum', 'verified', 'activity'])->group(function () {
 
