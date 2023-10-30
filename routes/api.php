@@ -66,12 +66,12 @@ Route::middleware('guest')->group(function () {
 
 
 Route::controller(CalendarController::class)->prefix('calendar')->as('calendar.')->group(function () {
-    Route::prefix('events')->as('events.')->group(function() {
+    Route::prefix('events')->as('events.')->group(function () {
         Route::get('/', 'getEvents')->name('index');
         Route::get('/{event}', 'getSingleEvent')->name('show');
     });
 
-    Route::prefix('versions')->as('versions.')->group(function() {
+    Route::prefix('versions')->as('versions.')->group(function () {
         Route::get('/', 'getVersionsEvents')->name('index');
         Route::get('/latest', 'getLatestVersionEvent')->name('latest');
         Route::get('/{versionEvent}', 'getVersionEvent')->name('show');
@@ -252,7 +252,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activity'])->group(function () {
         Route::post('/report/close/{userEvent}', 'closeEventReport');
     });
 
-    Route::controller(NotificationController::class)->prefix('notifications')->group(function() {
+    Route::controller(NotificationController::class)->prefix('notifications')->group(function () {
         Route::get('/', 'index');
         Route::get('/{notification}', 'show');
         Route::post('/read/all', 'markAllAsRead');

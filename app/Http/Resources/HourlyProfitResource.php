@@ -6,8 +6,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class HourlyProfitResource extends JsonResource
 {
-    public static $wrap = '';
-
     /**
      * Transform the resource into an array.
      *

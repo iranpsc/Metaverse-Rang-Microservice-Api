@@ -12,14 +12,30 @@ class FeatureHourlyProfitController extends Controller
 {
     public function index()
     {
-        $totalProfit = FeatureHourlyProfit::whereBelongsTo(request()->user())
-            ->sum('amount');
+        $totalMaskoniProfit = FeatureHourlyProfit::whereBelongsTo(request()->user())
+            ->whereHas('feature.properties', function ($query) {
+                $query->where('karbari', 'm');
+            })->sum('amount');
+
+        $totalTejariProfit = FeatureHourlyProfit::whereBelongsTo(request()->user())
+            ->whereHas('feature.properties', function ($query) {
+                $query->where('karbari', 't');
+            })->sum('amount');
+
+        $totalAmozeshiProfit = FeatureHourlyProfit::whereBelongsTo(request()->user())
+            ->whereHas('feature.properties', function ($query) {
+                $query->where('karbari', 'a');
+            })->sum('amount');
 
         return HourlyProfitResource::collection(
             FeatureHourlyProfit::with('feature.properties')
                 ->whereBelongsTo(request()->user())->simplePaginate(10)
         )->additional([
-            'total_profit' => number_format($totalProfit, 2)
+            'additional' => [
+                'total_maskoni_profit' => number_format($totalMaskoniProfit, 2),
+                'total_tejari_profit' => number_format($totalTejariProfit, 2),
+                'total_amozeshi_profit' => number_format($totalAmozeshiProfit, 2),
+            ]
         ]);
     }
 

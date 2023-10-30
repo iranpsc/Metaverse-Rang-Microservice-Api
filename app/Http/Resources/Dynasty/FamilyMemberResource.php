@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Dynasty;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Carbon;
 
 class FamilyMemberResource extends JsonResource
 {
@@ -18,8 +17,8 @@ class FamilyMemberResource extends JsonResource
         return [
             'id' => $this->user->id,
             'code' => $this->user->code,
-            'profile_photo' => $this->user->profilePhotos->first()?->url,
-            'online' => Carbon::parse($this->user->last_seen)->diffInMinutes(now()) > 2 ? false : true,
+            'profile_photo' => $this->user->profilePhotos->last()?->url,
+            'online' => $this->user->isOnline(),
             'relationship' => $this->relationship,
             'level' => $this->user->level?->slug,
             $this->mergeWhen($this->user->isUnderEighteen(), [

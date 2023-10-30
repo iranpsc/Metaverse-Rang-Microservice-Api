@@ -544,4 +544,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->phone && $this->phone_verified_at;
     }
+
+    /**
+     * Check if user is online
+     * @return bool
+     */
+    public function isOnline(): bool
+    {
+        return $this->last_seen->diffInMinutes(now()) > 2 ? false : true;
+    }
 }
