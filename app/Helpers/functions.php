@@ -67,7 +67,7 @@ function getSubLevels($userLevel): array
                 'score' => $level->score,
                 'image' => config('app.admin_panel_url') . $level->image?->url,
             ];
-        }) : [];
+        })->toArray() : [];
 }
 
 function createUserPrivacy(User $user)
