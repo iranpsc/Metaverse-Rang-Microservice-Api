@@ -65,7 +65,7 @@ function getSubLevels($userLevel): array
                 'name' => $level->name,
                 'slug' => $level->slug,
                 'score' => $level->score,
-                'image' => config('app.admin_panel_url') . $level->image?->url,
+                'image' => config('app.admin_panel_url') . '/uploads/' . $level->image?->url,
             ];
         })->toArray() : [];
 }
