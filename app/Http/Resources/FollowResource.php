@@ -19,7 +19,8 @@ class FollowResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
-            'profile_photos' => $this->profilePhotos->last()?->url,
+            'profile_photos' => $this->profilePhotos->last()?->url ?? [],
+            'level' => $this->level,
             'online' => $this->isOnline(),
         ];
     }

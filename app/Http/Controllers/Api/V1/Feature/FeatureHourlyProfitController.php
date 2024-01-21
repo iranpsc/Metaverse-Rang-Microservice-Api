@@ -67,8 +67,8 @@ class FeatureHourlyProfitController extends Controller
         if ($amount > 0) {
             $user->notify(new FeatureHourlyProfitDeposit([
                 'asset'   => match ($request->karbari) {
-                    'm' => 'red',
-                    't' => 'yellow',
+                    'm' => 'yellow',
+                    't' => 'red',
                     'a' => 'blue',
                 },
                 'amount'  => $amount,
