@@ -40,7 +40,19 @@ class TutorialController extends Controller
             if ($video) $video->incrementViews();
             return $video ? new VideoTutorialResource($video) : [];
         } else {
-            $tutorials = Video::with(['interactions', 'subCategory.category', 'views', 'creator'])
+            $tutorials = Video::with([
+                'subCategory.category',
+                'creator.profilePhotos'
+            ])
+                ->withCount([
+                    'views',
+                    'interactions as likes' => function ($query) {
+                        $query->where('liked', 1);
+                    },
+                    'interactions as dislikes' => function ($query) {
+                        $query->where('liked', 0);
+                    }
+                ])
                 ->orderByDesc('created_at')
                 ->simplePaginate(18);
             return VideoTutorialResource::collection($tutorials);
@@ -53,6 +65,18 @@ class TutorialController extends Controller
             ['ip_address' => request()->ip()],
             ['ip_address' => request()->ip()]
         );
+
+        $video->load('subCategory.category', 'creator.profilePhotos')
+            ->loadCount([
+                'views',
+                'interactions as likes' => function ($query) {
+                    $query->where('liked', 1);
+                },
+                'interactions as dislikes' => function ($query) {
+                    $query->where('liked', 0);
+                }
+            ]);
+
         return new VideoTutorialResource($video);
     }
 
@@ -100,14 +124,35 @@ class TutorialController extends Controller
     public function search(Request $request)
     {
         $request->validate(['searchTerm' => 'required|string|max:255']);
+
         $tutorials = Video::where('title', 'like', '%' . $request->searchTerm . '%')
-            ->with(['interactions', 'subCategory', 'views'])->simplePaginate(18);
-        return VideoTutorialResource::collection($tutorials);
+            ->select('id', 'title', 'creator_code')
+            ->with(['creator.profilePhotos' => function ($query) {
+                $query->limit(1);
+            }])
+            ->withCount(['interactions as likes' => function ($query) {
+                $query->where('liked', 1);
+            }])
+            ->get();
+
+        return response()->json([
+            'data' => [
+                $tutorials->map(function ($tutorial) {
+                    return [
+                        'id' => $tutorial->id,
+                        'title' => $tutorial->title,
+                        'likes' => $tutorial->likes,
+                        'creator_code' => $tutorial->creator->code,
+                        'creator_image' => optional($tutorial->creator->profilePhotos->last())->url,
+                    ];
+                })
+            ]
+        ]);
     }
 
     public function categories()
     {
-        // Get 8 categories with most viiews of the videos in their subcategories
+        // Get 8 categories with most veiws of the videos in their subcategories
         $categories = VideoCategory::with(['subCategories' => function ($query) {
             $query->withCount(['videos' => function ($query) {
                 $query->with('views')->withCount('views');
@@ -116,7 +161,7 @@ class TutorialController extends Controller
             $query->withCount(['videos' => function ($query) {
                 $query->with('views')->withCount('views');
             }]);
-        }])->orderByDesc('sub_categories_count')->limit(8)->get();
+        }])->orderByDesc('sub_categories_count')->paginate(request()->query('count', 30));
         return VideoCategoryResource::collection($categories);
     }
 

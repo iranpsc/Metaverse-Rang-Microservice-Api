@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 class VideoTutorialResource extends JsonResource
 {
@@ -18,20 +18,22 @@ class VideoTutorialResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
+            'description' => $this->when(request()->routeIs('tutorials.index'), Str::limit($this->description, 150), $this->description),
             'creator_code' => $this->creator->code,
-            'creator_name' => $this->creator->name,
             'creator_image' => optional($this->creator->profilePhotos->last())->url,
-            'video' => config('app.admin_panel_url') . '/uploads/' . $this->fileName,
-            'image' => config('app.admin_panel_url') . '/uploads/' . $this->image,
-            'views' => $this->views->count(),
-            'likes' => $this->interactions->where('liked', 1)->count(),
-            'dislikes' => $this->interactions->where('liked', 0)->count(),
+            'image' => $this->image_url,
+            'views' => $this->views_count,
+            'likes' => $this->likes,
+            'dislikes' => $this->dislikes,
             'category_name' => $this->subCategory->category->name,
             'category_slug' => $this->subCategory->category->slug,
             'sub_category_name' => $this->subCategory->name,
             'sub_category_slug' => $this->subCategory->slug,
-            'created_at' => jdate($this->created_at)->format('Y/m/d')
+            $this->mergeWhen(request()->routeIs('tutorials.show'), [
+                'video' => $this->video_url,
+                'creator_name' => $this->creator->name,
+                'created_at' => jdate($this->created_at)->format('Y/m/d')
+            ]),
         ];
     }
 }

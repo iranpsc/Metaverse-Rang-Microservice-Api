@@ -13,6 +13,16 @@ class Video extends Model
 
     protected $guarded = [];
 
+    public function getImageUrlAttribute()
+    {
+        return config('app.admin_panel_url') . '/uploads/' . $this->image;
+    }
+
+    public function getVideoUrlAttribute()
+    {
+        return config('app.admin_panel_url') . '/uploads/' . $this->fileName;
+    }
+
     public function incrementViews()
     {
         $this->views()->updateOrCreate(

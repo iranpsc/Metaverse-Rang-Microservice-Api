@@ -23,7 +23,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
             });
 
             Route::get('/{video}', 'show')->name('show');
-            Route::post('/search', 'search');
+            Route::post('/search', 'search')->name('search');
         });
         Route::post('/like/{video}', 'like');
         Route::post('/dislike/{video}', 'dislike');

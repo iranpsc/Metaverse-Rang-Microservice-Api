@@ -66,7 +66,7 @@ class TicketController extends Controller
     public function store(CreateTicketRequest $request)
     {
         $attachment = $request->hasFile('attachment')
-            ? url('uploads/'.$request->file('attachment')->store('tickets', 'public'))
+            ? url('uploads/' . $request->file('attachment')->store('tickets', 'public'))
             : '';
 
         $ticket = Ticket::create([
@@ -93,7 +93,7 @@ class TicketController extends Controller
     public function update(CreateTicketRequest $request, Ticket $ticket)
     {
         $attachment = $request->hasFile('attachment')
-            ? url('uploads/'.$request->file('attachment')->store('tickets'))
+            ? url('uploads/' . $request->file('attachment')->store('tickets'))
             : '';
 
         $ticket->update([
@@ -114,7 +114,7 @@ class TicketController extends Controller
     {
         $this->authorize('respond', $ticket);
         $attachment = $request->hasFile('attachment')
-            ? url('uploads/'.$request->file('attachment')->store('tickets'))
+            ? url('uploads/' . $request->file('attachment')->store('tickets'))
             : '';
 
         TicketResponse::create([
