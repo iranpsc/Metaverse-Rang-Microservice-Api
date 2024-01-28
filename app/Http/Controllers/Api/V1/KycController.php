@@ -12,7 +12,7 @@ class KycController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Kyc::class);
+        $this->authorizeResource(Kyc::class, 'kyc');
     }
 
     /**
