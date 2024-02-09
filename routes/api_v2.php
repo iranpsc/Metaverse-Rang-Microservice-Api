@@ -5,13 +5,11 @@ use App\Http\Controllers\Api\V1\VideoCommentsController;
 use App\Http\Controllers\Api\V1\TutorialController;
 use App\Http\Controllers\Api\V2\MapsController;
 use App\Http\Controllers\Api\V2\VideoPanelController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::controller(TutorialController::class)->prefix('tutorials')->as('tutorials.')->group(function () {
         Route::withoutMiddleware(['auth:sanctum', 'verified'])->group(function () {
-
 
             Route::name('categories.')->group(function () {
                 Route::get('/categories', 'getCategories')->name('index');
@@ -40,7 +38,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('/{video}/comments/{comment}/dislike', 'dislike');
     });
 });
-
 
 Route::controller(LevelController::class)->prefix('levels')->group(function () {
     Route::get('/', 'index');
