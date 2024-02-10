@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\VideoCommentsController;
 use App\Http\Controllers\Api\V1\TutorialController;
 use App\Http\Controllers\Api\V2\MapsController;
 use App\Http\Controllers\Api\V2\VideoPanelController;
+use App\Http\Controllers\Api\V2\Feature\BuildFeatureController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
@@ -37,7 +38,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('/{video}/comments/{comment}/like', 'like');
         Route::post('/{video}/comments/{comment}/dislike', 'dislike');
     });
+
+    Route::controller(BuildFeatureController::class)->prefix('features')->group(function () {
+        Route::get('/{feature}/build/package', 'getBuildPackage');
+    });
 });
+
 
 Route::controller(LevelController::class)->prefix('levels')->group(function () {
     Route::get('/', 'index');

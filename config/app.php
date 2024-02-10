@@ -57,6 +57,7 @@ return [
     'url' => env('APP_URL', 'http://localhost:8000'),
 
     'admin_panel_url' => env('ADMIN_PANEL_URL', 'https://admin.rgb.irpsc.com'),
+    'three_d_meta_url' => env('THREE_D_META_URL', 'https://3d.irpsc.com'),
 
     'asset_url' => env('ASSET_URL', '/'),
 
