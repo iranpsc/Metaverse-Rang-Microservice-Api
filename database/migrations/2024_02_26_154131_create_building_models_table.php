@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('sku');
             $table->text('images');
             $table->json('attributes');
-            $table->text('file');
-            $table->float('required_satisfaction')->default(0);
+            $table->text('file')->index();
+            $table->double('required_satisfaction')->default(0);
             $table->timestamps();
         });
     }

@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class SearchController extends Controller
 {
@@ -25,11 +26,11 @@ class SearchController extends Controller
         $searchTerms = explode(' ', $request->searchTerm);
 
         $users = User::where(function ($query) use ($searchTerms) {
-                foreach ($searchTerms as $term) {
-                    $query->orWhere('name', 'like', '%' . $term . '%')
-                        ->orWhere('code', 'like', '%' . $term . '%');
-                }
-            })
+            foreach ($searchTerms as $term) {
+                $query->orWhere('name', 'like', '%' . $term . '%')
+                    ->orWhere('code', 'like', '%' . $term . '%');
+            }
+        })
             ->orWhereHas('kyc', function ($query) use ($searchTerms) {
                 $query->where(function ($query) use ($searchTerms) {
                     foreach ($searchTerms as $term) {
@@ -56,5 +57,18 @@ class SearchController extends Controller
             ->take(5)
             ->get();
         return SearchFeatureResultResource::collection($features);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function isicCodes(Request $request): JsonResponse
+    {
+        $isicCodes = DB::table('isic_codes')
+            ->where('name', 'like', '%' . $request->searchTerm . '%')
+            ->select('id', 'name', 'code')
+            ->get();
+        return response()->json(['data' => $isicCodes]);
     }
 }

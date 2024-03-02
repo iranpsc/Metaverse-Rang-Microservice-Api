@@ -2,8 +2,10 @@
 
 namespace App\Models\Feature;
 
+use App\Models\Feature;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class BuildingModel extends Model
 {
@@ -25,8 +27,9 @@ class BuildingModel extends Model
         'file' => 'array',
     ];
 
-    public function feature()
+    public function features(): BelongsToMany
     {
-        // return $this->belongsTo(Feature::class);
+        return $this->belongsToMany(Feature::class, 'building', 'model_id', 'feature_id');
     }
+
 }

@@ -67,7 +67,14 @@ class FeatureRepository extends Repository
         // Retrieve the features with their properties and coordinates, filtering by existing geometries
         return Feature::whereIn('id', $existingGeometries)
             ->selectRaw('id, owner_id as owner')
-            ->with('properties:id,feature_id,rgb', 'geometry.coordinates:id,geometry_id,x,y')
+            ->with([
+                'properties:id,feature_id,rgb',
+                'geometry.coordinates:id,geometry_id,x,y',
+                'buildingModels' => function ($query) {
+                    $query->select('building_models.id', 'building_models.model_id', 'building_models.file')
+                        ->withPivot('construction_end_date', 'rotation', 'position');
+                }
+            ])
             ->lazy();
     }
 }

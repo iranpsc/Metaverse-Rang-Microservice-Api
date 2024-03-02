@@ -19,9 +19,10 @@ return new class extends Migration
             $table->foreignId('feature_id')->constrained('features');
             $table->dateTime('construction_start_date');
             $table->dateTime('construction_end_date');
-            $table->float('launched_satisfaction')->default(0);
+            $table->double('launched_satisfaction')->default(0);
             $table->json('information')->nullable();
-            $table->string('status')->default('under_construction');
+            $table->float('rotation')->default(0);
+            $table->string('position');
             $table->timestamps();
         });
     }

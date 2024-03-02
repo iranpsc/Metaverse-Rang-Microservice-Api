@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api\V2\Feature;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StartBuildingFeatureRequest;
+use App\Http\Requests\UpdateBuildingFeatureRequest;
+use App\Http\Resources\V2\BuildingModelResource;
 use App\Models\Feature;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Http;
 use App\Models\Feature\BuildingModel;
+use App\Models\IsicCode;
 use Illuminate\Support\Facades\DB;
 
 class BuildFeatureController extends Controller
@@ -33,9 +37,7 @@ class BuildFeatureController extends Controller
         $response = $this->calculateRequiredSatisfaction($feature, $response);
         $response = $this->mergeCoordinates($feature, $response);
 
-        // $data = $response['data'];
-
-        // $this->updateOrCreateModels($data);
+        $this->updateOrCreateModels($response['data']);
 
         return response()->json($response);
     }
@@ -54,23 +56,111 @@ class BuildFeatureController extends Controller
         return $data;
     }
 
+    public function buildFeature(StartBuildingFeatureRequest $request, Feature $feature, BuildingModel $buildingModel)
+    {
+        $this->authorize('build', [$feature, $buildingModel]);
+
+        $constructionLengthHours = $buildingModel->required_satisfaction * 288000 / $request->launched_satisfaction;
+
+        $constructionEndDate = $this->getConstructionEndDate($constructionLengthHours);
+
+        if ($request->filled('activity_line')) {
+
+            IsicCode::firstOrCreate(
+                ['name' => trim($request->activity_line)],
+                ['name' => trim($request->activity_line)]
+            );
+
+            $information = $request->only([
+                'activity_line',
+                'name',
+                'address',
+                'postal_code',
+                'website',
+                'description'
+            ]);
+        }
+
+        $feature->buildingModels()->attach($buildingModel, [
+            'construction_start_date' => now(),
+            'construction_end_date' => $constructionEndDate,
+            'launched_satisfaction' => $request->launched_satisfaction,
+            'information' => $information ?? null,
+            'rotation' => $request->rotation,
+            'position' => $request->position,
+        ]);
+
+        return response()->json([], 200);
+    }
+
+    public function getBuildings(Feature $feature)
+    {
+        $feature->load(['buildingModels' => function ($query) {
+            $query->withPivot([
+                'construction_start_date',
+                'construction_end_date',
+                'launched_satisfaction',
+                'information'
+            ]);
+        }]);
+
+        return BuildingModelResource::collection($feature->buildingModels);
+    }
+
+    public function updateBuilding(UpdateBuildingFeatureRequest $request, Feature $feature, BuildingModel $buildingModel)
+    {
+        $this->authorize('build', [$feature, $buildingModel]);
+
+        $constructionLengthHours = $buildingModel->required_satisfaction * 288000 / $request->launched_satisfaction;
+
+        $constructionEndDate = $this->getConstructionEndDate($constructionLengthHours);
+
+        if ($request->filled('activity_line')) {
+
+            IsicCode::firstOrCreate(
+                ['name' => trim($request->activity_line)],
+                ['name' => trim($request->activity_line)]
+            );
+
+            $information = $request->only([
+                'activity_line',
+                'name',
+                'address',
+                'postal_code',
+                'website',
+                'description'
+            ]);
+        }
+
+        $feature->buildingModels()->updateExistingPivot($buildingModel, [
+            'construction_start_date' => now(),
+            'construction_end_date' => $constructionEndDate,
+            'launched_satisfaction' => $request->launched_satisfaction,
+            'information' => $information ?? null,
+            'rotation' => $request->rotation,
+            'position' => $request->position,
+        ]);
+
+        return response()->json([], 200);
+    }
+
     private function updateOrCreateModels(array $data): void
     {
-        DB::transaction(function () use ($data) {
-            $models = [];
-            foreach ($data as $item) {
-                $models[] = [
-                    'model_id' => $item['id'],
-                    'name' => $item['name'],
-                    'sku' => $item['sku'],
-                    'images' => $item['images'],
-                    'attributes' => $item['attributes'],
-                    'file' => $item['file'],
-                    'required_satisfaction' => $item['required_satisfaction'],
-                ];
-            }
+        $models = [];
+        foreach ($data as $item) {
+            $models[] = [
+                'model_id' => $item['id'],
+                'name' => $item['name'],
+                'sku' => $item['sku'],
+                'images' => json_encode($item['images']),
+                'attributes' => json_encode($item['attributes']),
+                'file' => json_encode($item['file']),
+                'required_satisfaction' => $item['required_satisfaction'],
+            ];
+        }
 
-            DB::table('building_models')->upsert($models, ['model_id'], [
+        DB::transaction(function () use ($models) {
+            BuildingModel::upsert($models, ['model_id'], [
                 'name',
                 'sku',
                 'images',
@@ -89,7 +179,7 @@ class BuildFeatureController extends Controller
             return response()->json([
                 'message' => 'Error in sending request to 3D Meta API.',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], $e->getCode());
         }
 
         return $response->json();
@@ -104,5 +194,41 @@ class BuildFeatureController extends Controller
         $response['feature']['coordinates'] = $coordinates;
 
         return $response;
+    }
+
+    private function getConstructionEndDate($constructionLengthHours)
+    {
+        $endTime = $this->calculateEndTime($constructionLengthHours);
+
+        $days = $endTime['days'];
+        $hours = $endTime['hours'];
+        $minutes = $endTime['minutes'];
+        $seconds = $endTime['seconds'];
+
+        return now()->addDays($days)->addHours($hours)->addMinutes($minutes)->addSeconds($seconds);
+    }
+
+    private function calculateEndTime($hours): array
+    {
+
+        // Convert to total seconds
+        $seconds = $hours * 3600;
+
+        // Calculate each unit
+        $days = floor($seconds / 86400);
+        $seconds -= $days * 86400;
+
+        $hours = floor($seconds / 3600);
+        $seconds -= $hours * 3600;
+
+        $minutes = floor($seconds / 60);
+        $seconds -= $minutes * 60;
+
+        return array(
+            "days" => $days,
+            "hours" => $hours,
+            "minutes" => $minutes,
+            "seconds" => round($seconds)
+        );
     }
 }

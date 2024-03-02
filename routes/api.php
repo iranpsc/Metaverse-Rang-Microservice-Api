@@ -287,6 +287,7 @@ Route::controller(PublicProfileController::class)->prefix('citizen')->group(func
 Route::controller(SearchController::class)->prefix('search')->group(function () {
     Route::post('users', 'users');
     Route::post('features', 'features');
+    Route::post('isic-codes', 'isicCodes');
 });
 
 Route::post('/users/get', function(Request $request) {

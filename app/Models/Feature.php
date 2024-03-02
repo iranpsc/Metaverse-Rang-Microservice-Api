@@ -6,6 +6,9 @@ use App\Models\Dynasty\Dynasty;
 use App\Models\Feature\FeatureHourlyProfit;
 use Illuminate\Database\Eloquent\Model;
 use App\Helpers\FeatureIndicators;
+use App\Models\Feature\Building;
+use App\Models\Feature\BuildingModel;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Feature extends Model
 {
@@ -14,6 +17,13 @@ class Feature extends Model
         'type',
         'owner_id',
     ];
+
+    public function buildingModels(): BelongsToMany
+    {
+        return $this->belongsToMany(BuildingModel::class, 'buildings', 'feature_id', 'model_id')
+            ->using(Building::class)
+            ->as('building');
+    }
 
     public function map()
     {

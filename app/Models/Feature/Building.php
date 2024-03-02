@@ -13,11 +13,15 @@ class Building extends Pivot
         'construction_end_date',
         'launched_satisfaction',
         'information',
-        'status',
+        'rotation',
+        'position'
     ];
 
     protected $casts = [
         'information' => 'array',
+        'position' => 'array',
+        'construction_start_date' => 'datetime',
+        'construction_end_date' => 'datetime',
     ];
 
     public $timestamps = true;

@@ -87,8 +87,8 @@ return [
     'max' => [
         'array' => 'The :attribute must not have more than :max items.',
         'file' => 'The :attribute must not be greater than :max kilobytes.',
-        'numeric' => 'The :attribute must not be greater than :max.',
-        'string' => 'The :attribute must not be greater than :max characters.',
+        'numeric' => ':attribute نباید بیشتر از :max باشد.',
+        'string' => ':attribute نباید بیشتر از :max کاراکتر باشد.',
     ],
     'mimes' => 'The :attribute must be a file of type: :values.',
     'mimetypes' => 'The :attribute must be a file of type: :values.',
@@ -214,6 +214,10 @@ return [
         'address' => 'آدرس',
         'fname' => 'نام',
         'lname' => 'نام خانوادگی',
+        'launched_satisfaction' => 'رضایت اولیه',
+        'rotation' => 'چرخش',
+        'position' => 'موقعیت',
+        'name' => 'نام',
     ],
 
 ];

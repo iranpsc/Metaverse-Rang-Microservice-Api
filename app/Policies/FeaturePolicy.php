@@ -6,6 +6,7 @@ use App\Models\Feature;
 use App\Models\User;
 use App\Helpers\FeatureIndicators;
 use App\Models\BuyFeatureRequest;
+use App\Models\Feature\BuildingModel;
 use App\Models\Image;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -106,4 +107,10 @@ class FeaturePolicy
     {
         return $feature->owner->is($user) && $image->imageable->is($feature);
     }
+
+    public function build(User $user, Feature $feature, BuildingModel $buildingModel)
+    {
+        return true;
+    }
+
 }
