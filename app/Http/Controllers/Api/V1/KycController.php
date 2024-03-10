@@ -10,9 +10,10 @@ use App\Models\Kyc;
 
 class KycController extends Controller
 {
+
     public function __construct()
     {
-        $this->authorizeResource(Kyc::class, 'kyc');
+        $this->authorizeResource(Kyc::class);
     }
 
     /**
@@ -22,7 +23,7 @@ class KycController extends Controller
     public function index()
     {
         $kyc = request()->user()->kyc;
-        return $kyc ? new KycResource($kyc) : null;
+        return $kyc ? new KycResource($kyc) : [];
     }
 
     /**
@@ -35,16 +36,17 @@ class KycController extends Controller
         $melliCardFile = $request->file('melli_card');
         $provePictureFile = $request->file('prove_picture');
 
-        $melliCardNameToStore = url('uploads/'.$melliCardFile->store('kyc', 'public'));
+        $melliCardNameToStore = url('uploads/' . $melliCardFile->store('kyc', 'public'));
 
-        $provePictureNameToStore = url('uploads/'.$provePictureFile->store('kyc', 'public'));
+        $provePictureNameToStore = url('uploads/' . $provePictureFile->store('kyc', 'public'));
 
         if ($request->hasFile('resume')) {
             $resumeFile = $request->file('resume');
-            $resumeNameToStore = url('uploads/'.$resumeFile->store('kyc', 'public'));
+            $resumeNameToStore = url('uploads/' . $resumeFile->store('kyc', 'public'));
         }
 
-        $kyc = $request->user()->kyc()->create([
+        $kyc = Kyc::create([
+            'user_id' => $request->user()->id,
             'fname' => $request->fname,
             'lname' => $request->lname,
             'melli_code' => $request->melli_code,
@@ -60,9 +62,19 @@ class KycController extends Controller
             'address' => $request->address,
             'site' => $request->site,
         ]);
+
         return new KycResource($kyc);
     }
 
+    /**
+     * Display the specified resource.
+     * @param Kyc $kyc
+     * @return KycResource
+     */
+    public function show(Kyc $kyc)
+    {
+        return new KycResource($kyc);
+    }
 
     /**
      * @param StoreKycRequest $request
@@ -72,15 +84,15 @@ class KycController extends Controller
     public function update(UpdateKycRequest $request, Kyc $kyc): KycResource
     {
         if ($request->hasFile('melli_card')) {
-            $kyc->melli_card = url('uploads/'.$request->file('melli_card')->store('kyc', 'public'));
+            $kyc->melli_card = url('uploads/' . $request->file('melli_card')->store('kyc', 'public'));
         }
 
         if ($request->hasFile('prove_picture')) {
-            $kyc->prove_picture = url('uploads/'.$request->file('prove_picture')->store('kyc', 'public'));
+            $kyc->prove_picture = url('uploads/' . $request->file('prove_picture')->store('kyc', 'public'));
         }
 
         if ($request->hasFile('resume')) {
-            $kyc->resume = url('uploads/'.$request->file('resume')->store('kyc', 'public'));
+            $kyc->resume = url('uploads/' . $request->file('resume')->store('kyc', 'public'));
         }
 
         $kyc->update([
@@ -99,8 +111,9 @@ class KycController extends Controller
             'address' => $request->address,
             'site' => $request->site,
             'status' => 0,
+            'errors' => null
         ]);
-        $kyc->errors()->delete();
-        return new KycResource($kyc);
+
+        return new KycResource($kyc->fresh());
     }
 }

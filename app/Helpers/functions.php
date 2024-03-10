@@ -7,6 +7,14 @@ use App\Models\Level\Level;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
+function convertShamsiToGregorian($date): string
+{
+    $date = \Morilog\Jalali\CalendarUtils::convertNumbers($date, true);
+    $date = str_replace('/', '-', $date);
+    return \Morilog\Jalali\CalendarUtils::createCarbonFromFormat('Y-m-d', $date)
+        ->format('Y-m-d');
+}
+
 function getUnansweredQuestionsCount(User $user): int
 {
     $answeredQuestions = UserQuestionAnswer::whereUserId($user->id)->select(['id'])->get();

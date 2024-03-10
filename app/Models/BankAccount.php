@@ -13,7 +13,12 @@ class BankAccount extends Model
         'bank_name',
         'shaba_num',
         'card_num',
-        'status'
+        'status',
+        'errors'
+    ];
+
+    protected $casts = [
+        'errors' => 'array'
     ];
 
     public function bankable()
@@ -21,13 +26,18 @@ class BankAccount extends Model
         return $this->morphTo();
     }
 
-    public function verified()
+    public function rejected(): bool
+    {
+        return $this->status === -1;
+    }
+
+    public function verified(): bool
     {
         return $this->status === 1;
     }
 
-    public function errors()
+    public function pending(): bool
     {
-        return $this->morphMany(KycError::class, 'errorable');
+        return $this->status === 0;
     }
 }

@@ -53,7 +53,7 @@ class BankAccountPolicy
      */
     public function update(User $user, BankAccount $bankAccount)
     {
-        return $bankAccount->bankable->is($user) && $bankAccount->status === -1;
+        return $bankAccount->bankable->is($user) && $bankAccount->rejected();
     }
 
     /**

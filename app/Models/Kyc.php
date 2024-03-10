@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class Kyc extends Model
 {
@@ -31,11 +29,13 @@ class Kyc extends Model
         'address',
         'site',
         'status',
-        'user_id'
+        'user_id',
+        'errors'
     ];
 
     protected $casts = [
-        'birthdate' => 'datetime'
+        'birthdate' => 'datetime',
+        'errors' => 'array'
     ];
 
     public function user()
@@ -43,21 +43,23 @@ class Kyc extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function errors()
+    public function setBirthdateAttribute($value)
     {
-        return $this->morphMany(KycError::class, 'errorable');
+        $this->attributes['birthdate'] = convertShamsiToGregorian($value);
     }
 
-    protected function birthdate(): Attribute
+    public function rejected(): bool
     {
-        return Attribute::make(
-            set: function ($value) {
-                $value = \Morilog\Jalali\CalendarUtils::convertNumbers($value, true);
-                $value = str_replace('/', '-', $value);
-                $value = Carbon::parse($value)->format('Y-m-d');
-                return \Morilog\Jalali\CalendarUtils::createCarbonFromFormat('Y-m-d', $value)
-                ->format('Y-m-d');
-            }
-        );
+        return $this->status === -1;
+    }
+
+    public function approved(): bool
+    {
+        return $this->status === 1;
+    }
+
+    public function pending(): bool
+    {
+        return $this->status === 0;
     }
 }

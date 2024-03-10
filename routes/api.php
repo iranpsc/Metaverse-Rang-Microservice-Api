@@ -191,10 +191,12 @@ Route::middleware(['auth:sanctum', 'verified', 'activity'])->group(function () {
         Route::get('/close/{ticket}', 'close');
     });
 
-    Route::apiResource('tickets', TicketController::class);
-    Route::apiResource('notes', NoteController::class);
-    Route::apiResource('kyc', KycController::class)->only(['index', 'store', 'update']);
-    Route::apiResource('bank-accounts', BankAccountController::class);
+    Route::apiResources([
+        'tickets' => TicketController::class,
+        'notes' => NoteController::class,
+        'kyc' => KycController::class,
+        'bank-accounts' => BankAccountController::class,
+    ]);
 
     Route::post('order', [OrderController::class, 'store']);
 

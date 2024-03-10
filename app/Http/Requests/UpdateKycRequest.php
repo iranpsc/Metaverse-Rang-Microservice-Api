@@ -13,7 +13,7 @@ class UpdateKycRequest extends FormRequest
      */
     public function authorize()
     {
-        return !$this->user()->verified();
+        return true;
     }
 
     /**
@@ -26,7 +26,7 @@ class UpdateKycRequest extends FormRequest
         return [
             'fname' => 'required|string|min:2',
             'lname' => 'required|string|min:2',
-            'melli_code' => 'required|ir_national_code',
+            'melli_code' => 'required|ir_national_code|unique:kycs,melli_code,' . $this->route('kyc')->id . ',id',
             'birthdate' => 'required|shamsi_date',
             'father_name' => 'required|string',
             'province' => 'required|string',

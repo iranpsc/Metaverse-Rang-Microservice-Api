@@ -31,9 +31,7 @@ class KycResource extends JsonResource
             'address' => $this->address,
             'site' => $this->site,
             'status' => $this->status,
-            $this->mergeWhen($this->errors->count() > 0, [
-                'errors' => KycErrorsResource::collection($this->errors),
-            ])
+            'errors' => $this->whenNotNull($this->errors),
         ];
     }
 }

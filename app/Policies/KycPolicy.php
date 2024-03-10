@@ -53,7 +53,7 @@ class KycPolicy
      */
     public function update(User $user, Kyc $kyc)
     {
-        return $kyc->user->is($user) && !$user->verified();
+        return $kyc->user->is($user) && $kyc->rejected();
     }
 
     /**

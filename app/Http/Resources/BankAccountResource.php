@@ -20,9 +20,7 @@ class BankAccountResource extends JsonResource
             'shaba_num' => $this->shaba_num,
             'card_num'  => $this->card_num,
             'status' => $this->status,
-            $this->mergeWhen($this->errors->count() > 0, [
-                'errors' => KycErrorsResource::collection($this->errors),
-            ])
+            'errors' => $this->whenNotNull($this->errors),
         ];
     }
 }
