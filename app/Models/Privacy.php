@@ -11,11 +11,8 @@ class Privacy extends Model
 
     protected $guarded = [];
 
-    protected $hidden = [
-        'created_at',
-        'updated_at',
-        'id',
-        'user_id'
+    protected $casts = [
+        'display' => 'boolean',
     ];
 
     public function user()

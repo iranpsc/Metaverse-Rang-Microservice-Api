@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\PublicProfile;
 
+use App\Http\Resources\ProfilePhotoResource;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Morilog\Jalali\Jalalian;
 
 class PersonalInfo extends JsonResource
 {
@@ -16,170 +16,143 @@ class PersonalInfo extends JsonResource
     public function toArray($request)
     {
         return [
-            $this->mergeWhen($this->profilePhotos, [
-                'profilePhotos' => $this->profilePhotos->map(function ($photo) {
-                    return [
-                        'id' => $photo->id,
-                        'url' => $photo->url,
-                    ];
-                }),
-            ]),
-            'kyc' => [
-                $this->mergeWhen($this->verified(), [
-                    $this->mergeWhen($this->privacy->where('name', 'nationality')->pluck('display')->first(), [
-                        'nationality' => config('app.url') . '/uploads/flags/iran.svg',
-                    ]),
-
-                    $this->mergeWhen($this->privacy->where('name', 'fname')->pluck('display')->first(), [
-                        'fname' => $this->kyc?->fname,
-                    ]),
-
-                    $this->mergeWhen($this->privacy->where('name', 'lname')->pluck('display')->first(), [
-                        'lname' => $this->kyc?->lname,
-                    ]),
-
-                    $this->mergeWhen($this->privacy->where('name', 'birthdate')->pluck('display')->first(), [
-
-                        'birth_date' => Jalalian::forge($this->kyc?->birthdate)->format('Y/m/d'),
-                    ]),
-
-                    $this->mergeWhen($this->privacy->where('name', 'phone')->pluck('display')->first(), [
-                        'phone' => $this?->phone,
-                    ]),
-
-                    $this->mergeWhen($this->privacy->where('name', 'email')->pluck('display')->first(), [
-                        'email' => $this?->email,
-                    ]),
-
-                    $this->mergeWhen($this->privacy->where('name', 'address')->pluck('display')->first(), [
-                        'address' => $this->kyc?->address,
-                    ]),
-
-
+            'profilePhotos' => ProfilePhotoResource::collection($this->whenLoaded('profilePhotos')),
+            'kyc' => $this->whenLoaded('kyc', [
+                $this->mergeWhen($this->checkFilter('nationality'), [
+                    'nationality' => url('/uploads/flags/iran.svg'),
                 ]),
-            ],
 
-            $this->mergeWhen($this->privacy->where('name', 'code')->pluck('display')->first(), [
+                $this->mergeWhen($this->checkFilter('fname'), [
+                    'fname' => $this->kyc?->fname,
+                ]),
+
+                $this->mergeWhen($this->checkFilter('lname'), [
+                    'lname' => $this->kyc?->lname,
+                ]),
+
+                $this->mergeWhen($this->checkFilter('birthdate'), [
+                    'birth_date' => jdate($this->kyc?->birthdate)->format('Y/m/d'),
+                ]),
+
+                $this->mergeWhen($this->checkFilter('phone'), [
+                    'phone' => $this?->phone,
+                ]),
+
+                $this->mergeWhen($this->checkFilter('email'), [
+                    'email' => $this?->email,
+                ]),
+
+                $this->mergeWhen($this->checkFilter('address'), [
+                    'address' => $this->kyc?->address,
+                ]),
+            ]),
+
+            $this->mergeWhen($this->checkFilter('code'), [
                 'code' => $this->code,
             ]),
 
-            $this->mergeWhen($this->privacy->where('name', 'name')->pluck('display')->first(), [
+            $this->mergeWhen($this->checkFilter('name'), [
                 'name' => $this->name,
             ]),
 
-            $this->mergeWhen($this->privacy->where('name', 'position')->pluck('display')->first(), [
+            $this->mergeWhen($this->checkFilter('position'), [
                 'position' => 'مدیریت موازی',
             ]),
 
-            $this->mergeWhen($this->privacy->where('name', 'registered_at')->pluck('display')->first(), [
-                'registered_at' => Jalalian::forge($this->email_verified_at)->format('Y/m/d'),
+            $this->mergeWhen($this->checkFilter('registered_at'), [
+                'registered_at' => jdate($this->email_verified_at)->format('Y/m/d'),
             ]),
 
             $this->mergeWhen($this->customs, [
                 'customs' => [
-
-                    $this->mergeWhen($this->privacy->where('name', 'occupation')->pluck('display')->first(), [
+                    $this->mergeWhen($this->checkFilter('occupation'), [
                         'occupation' => $this->customs?->occupation,
                     ]),
 
-                    $this->mergeWhen($this->privacy->where('name', 'education')->pluck('display')->first(), [
+                    $this->mergeWhen($this->checkFilter('education'), [
                         'education' => $this->customs?->education,
                     ]),
 
-                    $this->mergeWhen($this->privacy->where('name', 'loved_city')->pluck('display')->first(), [
+                    $this->mergeWhen($this->checkFilter('loved_city'), [
                         'loved_city' => $this->customs?->loved_city,
                     ]),
 
-                    $this->mergeWhen($this->privacy->where('name', 'loved_country')->pluck('display')->first(), [
+                    $this->mergeWhen($this->checkFilter('loved_country'), [
                         'loved_country' => $this->customs?->loved_country,
                     ]),
 
-                    $this->mergeWhen($this->privacy->where('name', 'loved_language')->pluck('display')->first(), [
+                    $this->mergeWhen($this->checkFilter('loved_language'), [
                         'loved_language' => $this->customs?->loved_language,
                     ]),
 
-                    $this->mergeWhen($this->privacy->where('name', 'prediction')->pluck('display')->first(), [
+                    $this->mergeWhen($this->checkFilter('prediction'), [
                         'prediction' => $this->customs?->prediction,
                     ]),
 
-                    $this->mergeWhen($this->privacy->where('name', 'memory')->pluck('display')->first(), [
+                    $this->mergeWhen($this->checkFilter('memory'), [
                         'memory' => $this->customs?->memory,
                     ]),
 
-                    $this->mergeWhen($this->privacy->where('name', 'about')->pluck('display')->first(), [
+                    $this->mergeWhen($this->checkFilter('about'), [
                         'about' => $this->customs?->about,
                     ]),
 
-                    'about' => $this->customs?->about,
-                    $this->mergeWhen($this->customs?->passions && $this->privacy->where('name', 'passions')->pluck('display')->first(), [
+                    $this->mergeWhen($this->customs?->passions && $this->checkFilter('passions'), [
                         'passions' => [
                             $this->mergeWhen($this->customs?->passions?->music, [
-                                "music" =>  config('app.url') . '/uploads/' . 'favorites/music.png',
+                                "music" => url('/uploads/favorites/music.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->sport_health, [
-
-                                "sport_health" => config('app.url') . '/uploads/' . 'favorites/sport_health.png',
+                                "sport_health" => url('/uploads/favorites/sport_health.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->art, [
-
-                                "art" =>   config('app.url') . '/uploads/' . 'favorites/art.png',
+                                "art" => url('/uploads/favorites/art.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->language_culture, [
-
-                                "language_culture" => config('app.url') . '/uploads/' . 'favorites/language_culture.png',
+                                "language_culture" => url('/uploads/favorites/language_culture.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->philosophy, [
-
-                                "philosophy" =>  config('app.url') . '/uploads/' . 'favorites/philosophy.png',
+                                "philosophy" => url('/uploads/favorites/philosophy.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->animals_nature, [
-
-                                "animals_nature" =>  config('app.url') . '/uploads/' . 'favorites/animals_nature.png',
+                                "animals_nature" => url('/uploads/favorites/animals_nature.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->aliens, [
-
-                                "aliens" =>  config('app.url') . '/uploads/' . 'favorites/aliens.png',
+                                "aliens" => url('/uploads/favorites/aliens.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->food_cooking, [
-
-                                "food_cooking" =>  config('app.url') . '/uploads/' . 'favorites/food_cooking.png',
+                                "food_cooking" => url('/uploads/favorites/food_cooking.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->travel_leature, [
-
-                                "travel_leature" => config('app.url') . '/uploads/' . 'favorites/travel_leature.png',
+                                "travel_leature" => url('/uploads/favorites/travel_leature.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->manufacturing, [
-
-                                "manufacturing" =>  config('app.url') . '/uploads/' . 'favorites/manufacturing.png',
+                                "manufacturing" => url('/uploads/favorites/manufacturing.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->science_technology, [
-
-                                "science_technology" => config('app.url') . '/uploads/' . 'favorites/science_technology.png',
+                                "science_technology" => url('/uploads/favorites/science_technology.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->space_time, [
-
-                                "space_time"  =>  config('app.url') . '/uploads/' . 'favorites/space_time.png',
+                                "space_time" => url('/uploads/favorites/space_time.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->history, [
-
-                                "history" =>  config('app.url') . '/uploads/' . 'favorites/history',
+                                "history" => url('/uploads/favorites/history.png'),
                             ]),
                             $this->mergeWhen($this->customs?->passions?->politics_economy, [
-
-                                "politics_economy" =>  config('app.url') . '/uploads/' . 'favorites/politics_economy.png',
+                                "politics_economy" => url('/uploads/favorites/politics_economy.png'),
                             ])
                         ]
                     ]),
                 ]
             ]),
 
-            $this->mergeWhen($this->privacy->where('name', 'score')->pluck('display')->first(), [
+            $this->mergeWhen($this->checkFilter('score'), [
                 'score' => $this->score,
             ]),
 
-
             'score_percentage_to_next_level' => getScorePercentageToNextLevel($this->level, $this->score),
-            $this->mergeWhen($this->level && $this->privacy->where('name', 'level')->pluck('display')->first(), [
+
+            $this->mergeWhen($this->level && $this->checkFilter('level'), [
                 'current_level' => [
                     'name' => $this->level?->name,
                     'slug' => $this->level?->slug,
@@ -188,9 +161,20 @@ class PersonalInfo extends JsonResource
                 'achieved_levels' => getSubLevels($this->level),
             ]),
 
-            $this->mergeWhen($this->privacy->where('name', 'avatar')->pluck('display')->first(), [
+            $this->mergeWhen($this->checkFilter('avatar'), [
                 'avatar' => 'https://irpsc.com/gb.glb',
             ]),
         ];
+    }
+
+    /**
+     * Check the filter
+     *
+     * @param string $name
+     * @return bool
+     */
+    private function checkFilter(string $name)
+    {
+        return $this->privacy->where('name', $name)->pluck('display')->first();
     }
 }
