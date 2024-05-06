@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Http;
 use App\Models\Feature\BuildingModel;
+use App\Models\Feature\FeatureHourlyProfit;
 use App\Models\IsicCode;
 use Illuminate\Support\Facades\DB;
 
@@ -89,6 +90,9 @@ class BuildFeatureController extends Controller
             'rotation' => $request->rotation,
             'position' => $request->position,
         ]);
+
+        // Deactivate all hourly profits for this feature
+        FeatureHourlyProfit::where('feature_id', $feature->id)->update(['is_active' => false]);
 
         return response()->json([], 200);
     }

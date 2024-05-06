@@ -15,6 +15,7 @@ class FeatureHourlyProfit extends Model
 
     protected $casts = [
         'dead_line' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     public function feature() {

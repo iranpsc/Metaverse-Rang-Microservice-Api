@@ -25,4 +25,9 @@ class Building extends Pivot
     ];
 
     public $timestamps = true;
+
+    public function feature()
+    {
+        return $this->belongsTo(\App\Models\Feature::class);
+    }
 }

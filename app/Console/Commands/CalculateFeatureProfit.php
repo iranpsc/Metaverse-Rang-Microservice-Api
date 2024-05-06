@@ -33,11 +33,11 @@ class CalculateFeatureProfit extends Command
     {
         FeatureHourlyProfit::where('dead_line', '>', now())
             ->where('updated_at', '<', now()->subHours(3))
+            ->where('is_active', true)
             ->select(['id', 'feature_id', 'amount'])
             ->chunkById(100, function ($profits) {
                 foreach ($profits as $profit) {
-                    $stability = FeatureProperties::where('feature_id', $profit->feature_id)
-                        ->pluck('stability')->first();
+                    $stability = FeatureProperties::where('feature_id', $profit->feature_id)->pluck('stability')->first();
                     $profit->increment('amount', $stability * 0.000041666);
                 }
             });
