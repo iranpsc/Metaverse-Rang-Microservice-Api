@@ -30,6 +30,9 @@ class BuildingModelResource extends JsonResource
                 'construction_end_date' => jdate($this->building->construction_end_date)->format('Y/m/d H:i:s'),
                 'launched_satisfaction' => number_format($this->building->launched_satisfaction, 4),
                 'information' => $this->building->information,
+                'rotation' => $this->building->rotation,
+                'position' => $this->building->position,
+                'bubble_diameter' => $this->building->bubble_diameter,
             ],
         ];
     }

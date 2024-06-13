@@ -94,6 +94,13 @@ class BuildFeatureController extends Controller
         // Deactivate all hourly profits for this feature
         FeatureHourlyProfit::where('feature_id', $feature->id)->update(['is_active' => false]);
 
+        // Calculate bubble diameter
+        $bubbleDiameter = $this->calculateBubbleDiameter($buildingModel);
+
+        $feature->buildingModels()->updateExistingPivot($buildingModel, [
+            'bubble_diameter' => $bubbleDiameter,
+        ]);
+
         return response()->json([], 200);
     }
 
@@ -104,7 +111,10 @@ class BuildFeatureController extends Controller
                 'construction_start_date',
                 'construction_end_date',
                 'launched_satisfaction',
-                'information'
+                'information',
+                'rotation',
+                'position',
+                'bubble_diameter',
             ]);
         }]);
 
@@ -234,5 +244,28 @@ class BuildFeatureController extends Controller
             "minutes" => $minutes,
             "seconds" => round($seconds)
         );
+    }
+
+    /**
+     * Calculate bubble diameter
+     *
+     * @param BuildingModel $buildingModel
+     * @return float
+     */
+    private function calculateBubbleDiameter(BuildingModel $buildingModel)
+    {
+        $attributes = collect($buildingModel->attributes);
+        $width = $attributes->firstWhere('slug', 'width')['value'];
+        $length = $attributes->firstWhere('slug', 'length')['value'];
+        $perimeter = 2 * ($width + $length);
+        $density = $attributes->firstWhere('slug', 'density')['value'];
+
+        $coefficient = 1;
+
+        for ($i = 0; $i < $density - 1; $i++) {
+            $coefficient += 0.3;
+        }
+
+        return $perimeter * $coefficient;
     }
 }

@@ -14,7 +14,8 @@ class Building extends Pivot
         'launched_satisfaction',
         'information',
         'rotation',
-        'position'
+        'position',
+        'bubble_diameter'
     ];
 
     protected $casts = [
@@ -22,10 +23,16 @@ class Building extends Pivot
         'position' => 'array',
         'construction_start_date' => 'datetime',
         'construction_end_date' => 'datetime',
+        'bubble_diameter' => 'float'
     ];
 
     public $timestamps = true;
 
+    /**
+     * Get the model that owns the Building
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function feature()
     {
         return $this->belongsTo(\App\Models\Feature::class);
