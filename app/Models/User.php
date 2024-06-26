@@ -528,9 +528,9 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
         }
     }
 
-    public function getNotificationSettings(string $notificationType)
+    public function getNotificationSettings(string $type)
     {
-        return Setting::getChannels($this, $notificationType);
+        return Setting::getChannels($this, $type);
     }
 
     /**

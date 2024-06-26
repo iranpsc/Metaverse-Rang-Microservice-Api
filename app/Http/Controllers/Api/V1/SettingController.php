@@ -14,6 +14,8 @@ use App\Http\Resources\NotificationSettingsResource;
 class SettingController extends Controller
 {
     /**
+     * Show the settings
+     *
      * @return SettingResource
      */
     public function showSettings()

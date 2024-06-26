@@ -25,9 +25,17 @@ class UserObserver
     public function created(User $user)
     {
         $user->assets()->create();
+
         $user->settings()->create();
+
         $user->log()->create();
+
         $user->variables()->create();
+
+        $user->activities()->create([
+            'start' => now(),
+            'ip' => request()->ip(),
+        ]);
 
         if (request()->referral) {
             $reference_user = User::where('code', request()->referral)->select('id')->first();

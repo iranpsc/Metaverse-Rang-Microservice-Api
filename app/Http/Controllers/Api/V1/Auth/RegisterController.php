@@ -24,7 +24,6 @@ class RegisterController extends Controller
 
     protected function registered(RegisterUserRequest $request, $user)
     {
-
         $automaticLogout = $user->settings->automatic_logout;
 
         $user->automaticLogout = $automaticLogout;
