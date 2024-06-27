@@ -109,9 +109,9 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
         return $this->hasOne(AccountSecurity::class);
     }
 
-    public function assets()
+    public function wallet()
     {
-        return $this->hasOne(Asset::class);
+        return $this->hasOne(Wallet::class);
     }
 
     /**
@@ -224,7 +224,7 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
     /**
      * @return MorphMany
      */
-    public function lockedAssets()
+    public function lockedwallet()
     {
         return $this->hasMany(LockedAsset::class);
     }
@@ -430,6 +430,11 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
         return $this->morphMany(Image::class, 'imageable');
     }
 
+    public function latestProfilePhoto()
+    {
+        return $this->morphOne(Image::class, 'imageable')->latestOfMany();
+    }
+
     public function latestPayment()
     {
         return $this->hasOne(Payment::class)->latestOfMany();
@@ -473,7 +478,7 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
 
     public function sendPasswordResetNotification($token)
     {
-        $url = 'https://rgb.irpsc.com/metaverse/reset-password?token=' . $token . '&email=' . $this->getEmailForPasswordReset();
+        $url = 'https://rgb.irpsc.com/metaverse/reset-password?token=' . $token . '?email=' . $this->getEmailForPasswordReset();
         $this->notify(new sendPasswordResetNotification($url, $this));
     }
 
@@ -510,9 +515,9 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
     public function checkColorBalance(Feature $feature)
     {
         return match ($feature->properties->karbari) {
-            FeatureIndicators::Tejari   => $this->assets->red < $feature->properties->stability,
-            FeatureIndicators::Maskoni  => $this->assets->yellow < $feature->properties->stability,
-            FeatureIndicators::Amozeshi => $this->assets->blue < $feature->properties->stability
+            FeatureIndicators::Tejari   => $this->wallet->red < $feature->properties->stability,
+            FeatureIndicators::Maskoni  => $this->wallet->yellow < $feature->properties->stability,
+            FeatureIndicators::Amozeshi => $this->wallet->blue < $feature->properties->stability
         };
     }
 
@@ -521,9 +526,9 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
         $psc_price = $feature->properties->price_psc;
         $irr_price = $feature->properties->price_irr;
 
-        if ($this->assets->psc < $psc_price + $psc_price * config('rgb.fee')) {
+        if ($this->wallet->psc < $psc_price + $psc_price * config('rgb.fee')) {
             abort(403, 'موجودی psc شما کافی نمی باشد.');
-        } elseif ($this->assets->irr < $irr_price + $irr_price * config('rgb.fee')) {
+        } elseif ($this->wallet->irr < $irr_price + $irr_price * config('rgb.fee')) {
             abort(403, 'موجودی ریال شما کافی نمی باشد.');
         }
     }

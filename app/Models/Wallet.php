@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Asset extends Model
+class Wallet extends Model
 {
     use HasFactory;
 
@@ -15,6 +15,22 @@ class Asset extends Model
         'effect' => 0,
     ];
 
+    /**
+     * Get the user that owns the wallet.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Format a number to a string representation with a suffix.
+     *
+     * @param int|float $number The number to format.
+     * @return string The formatted number with a suffix.
+     */
     public function format_number($number): string
     {
         if ($number >= 1000 && $number < 1000000) {

@@ -82,9 +82,9 @@ class ChallengeController extends Controller
             // Increment the question's participants
             $question->increment('participants');
 
-            // If the answer is correct, increment the user's 'psc' assets by the question prize amount
+            // If the answer is correct, increment the user's 'psc' wallet by the question prize amount
             if ($answer->isCorrect()) {
-                $request->user()->assets->increment('psc', $question->prize);
+                $request->user()->wallet->increment('psc', $question->prize);
             }
         }
         return new QuestionResource($question);

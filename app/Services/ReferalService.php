@@ -45,7 +45,7 @@ class ReferalService
             }
 
             // Increment the referer's 'psc' asset with the referral amount
-            $reference->assets->increment('psc', $referer_amount);
+            $reference->wallet->increment('psc', $referer_amount);
 
             // Create a new referal order history entry
             $reference->referalOrderHistories()->create([

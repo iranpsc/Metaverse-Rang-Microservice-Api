@@ -33,7 +33,7 @@ class DeleteUnverifiedUsers extends Command
         ->get();
 
         $users->map(function($user) {
-            $user->assets()->delete();
+            $user->wallet()->delete();
             $user->settings()->delete();
             $user->generalSettings()->delete();
             $user->log()->delete();

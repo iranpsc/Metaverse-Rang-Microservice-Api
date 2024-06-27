@@ -6,6 +6,12 @@ use App\Models\Feature\FeatureHourlyProfit;
 use App\Models\Level\Level;
 use App\Models\User;
 
+/**
+ * Convert Shamsi (Persian) date to Gregorian date.
+ *
+ * @param string $date The Shamsi date to convert.
+ * @return string The converted Gregorian date.
+ */
 function convertShamsiToGregorian($date): string
 {
     $date = \Morilog\Jalali\CalendarUtils::convertNumbers($date, true);
@@ -14,12 +20,24 @@ function convertShamsiToGregorian($date): string
         ->format('Y-m-d');
 }
 
+/**
+ * Get the count of unanswered questions for a user.
+ *
+ * @param User $user The user object.
+ * @return int The count of unanswered questions.
+ */
 function getUnansweredQuestionsCount(User $user): int
 {
     $answeredQuestions = UserQuestionAnswer::whereUserId($user->id)->select(['id'])->get();
     return Question::whereNotIn('id', $answeredQuestions)->count();
 }
 
+/**
+ * Get the title of a relationship based on its key.
+ *
+ * @param string $relationsip The key of the relationship.
+ * @return string The title of the relationship.
+ */
 function getRelationshipTitle(string $relationsip)
 {
     return match ($relationsip) {
@@ -33,20 +51,38 @@ function getRelationshipTitle(string $relationsip)
     };
 }
 
+/**
+ * Get the percentage of score required to reach the next level.
+ *
+ * @param Level|null $level The current level object.
+ * @param int $score The user's score.
+ * @return int The percentage of score required to reach the next level.
+ */
 function getScorePercentageToNextLevel(?Level $level, int $score): int
 {
     if (!$level) {
-        if ($score == 0) return 0;
+        if ($score == 0) {
+            return 0;
+        }
 
-        $firstLevel = Level::first();
-        return ($score / $firstLevel->score) * 100;
-    } else {
-        $nextLevel = Level::find($level->id + 1);
-        if (is_null($nextLevel)) return 0;
-        return ($score / $nextLevel->score) * 100;
+        $firstLevelScore = Level::min('score');
+        return ($score / $firstLevelScore) * 100;
     }
+
+    $nextLevel = Level::where('score', '>', $level->score)->orderBy('score')->first();
+    if (!$nextLevel) {
+        return 0;
+    }
+
+    return ($score / $nextLevel->score) * 100;
 }
 
+/**
+ * Get the hourly profit information for a user.
+ *
+ * @param User $user The user object.
+ * @return int The hourly profit information.
+ */
 function hourlyProfitInfo(User $user): int
 {
     $profit = FeatureHourlyProfit::whereUserId($user->id)->oldest('dead_line')->first();
@@ -57,12 +93,17 @@ function hourlyProfitInfo(User $user): int
     }
 
     $daysDiff = $profit->dead_line->diffInDays(now());
-    $remainingPercentage = ((int)$userDeadLine - $daysDiff) / $userDeadLine * 100;
+    $remainingPercentage = ($userDeadLine - $daysDiff) / $userDeadLine * 100;
 
     return ($daysDiff > $userDeadLine) ? 100 : $remainingPercentage;
 }
 
-
+/**
+ * Get the sub-levels based on the user's level.
+ *
+ * @param mixed $userLevel The user's level object.
+ * @return array The array of sub-levels.
+ */
 function getSubLevels($userLevel): array
 {
     return $userLevel ? Level::where('score', '<', $userLevel->score)->orderBy('score')

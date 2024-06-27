@@ -34,7 +34,7 @@ class UpdateBuildingFeatureRequest extends FormRequest
                 'required',
                 'numeric',
                 'min:' . $this->route('buildingModel')->required_satisfaction,
-                'max:' . $this->user()->assets->satisfaction,
+                'max:' . $this->user()->wallet->satisfaction,
             ],
             'rotation' => 'required|numeric',
             'position' => [

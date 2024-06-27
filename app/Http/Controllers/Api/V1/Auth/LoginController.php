@@ -22,11 +22,16 @@ class LoginController extends Controller
 
         $user->load([
             'settings:id,user_id,automatic_logout',
-            'profilePhotos',
+            'latestProfilePhoto',
             'level',
             'kyc:id,user_id,status,birthdate',
-            'unreadNotifications'
-        ]);
+            'variables',
+        ])
+            ->loadCount([
+                'notifications as unreadNotifications_count' => function ($query) {
+                    $query->where('read_at', null);
+                },
+            ]);
 
         $automaticLogout = $user->settings->automatic_logout;
 

@@ -66,13 +66,13 @@ class BuyRequestsController extends Controller
         }
 
         // Check if the buyer has enough PSC balance
-        if ($buyer->assets->psc < $price_psc + $price_psc * config('rgb.fee')) {
+        if ($buyer->wallet->psc < $price_psc + $price_psc * config('rgb.fee')) {
             throw ValidationException::withMessages([
                 'price_psc' => 'موجودی psc شما کافی نیست!'
             ]);
         }
         // Check if the buyer has enough IRR balance
-        elseif ($buyer->assets->irr < $price_irr + $price_irr * config('rgb.fee')) {
+        elseif ($buyer->wallet->irr < $price_irr + $price_irr * config('rgb.fee')) {
             throw ValidationException::withMessages([
                 'price_irr' => 'موجودی ریال شما کافی نیست!'
             ]);
@@ -93,11 +93,11 @@ class BuyRequestsController extends Controller
         $price_irr = $price_irr + $price_irr * config('rgb.fee');
 
         // Decrement the buyer's PSC and IRR balances
-        $buyer->assets->decrement('psc', $price_psc);
-        $buyer->assets->decrement('irr', $price_irr);
+        $buyer->wallet->decrement('psc', $price_psc);
+        $buyer->wallet->decrement('irr', $price_irr);
 
-        // Create a lockedAssets record for the buyer
-        $buyer->lockedAssets()->create([
+        // Create a lockedwallet record for the buyer
+        $buyer->lockedwallet()->create([
             'buy_feature_request_id' => $buyFeatureRequest->id,
             'feature_id'             => $buyFeatureRequest->feature->id,
             'psc'                    => $price_psc,
@@ -197,9 +197,9 @@ class BuyRequestsController extends Controller
             'minimum_price_percentage' => $buyer->isUnderEighteen() ? $under18PricingLimit : $publicPricingLimit
         ]);
 
-        // Update the seller's assets based on the hourly profit
+        // Update the seller's wallet based on the hourly profit
         $profit = $feature->hourlyProfit->where('user_id', $seller->id)->first();
-        $seller->assets->increment($profit->asset, $profit->amount);
+        $seller->wallet->increment($profit->asset, $profit->amount);
 
         // Update the hourly profit for the buyer
         $feature->hourlyProfit->update([
@@ -261,8 +261,8 @@ class BuyRequestsController extends Controller
         $buyer = $buyFeatureRequest->buyer;
 
         // Release the locked asset for the buyer
-        $buyer->assets->increment('psc', $psc_amount);
-        $buyer->assets->increment('irr', $irr_amount);
+        $buyer->wallet->increment('psc', $psc_amount);
+        $buyer->wallet->increment('irr', $irr_amount);
 
         // Delete the buy request transactions, locked asset and the buy request itself
         $buyFeatureRequest->transactions()->delete();
@@ -286,8 +286,8 @@ class BuyRequestsController extends Controller
         $buyer = $buyFeatureRequest->buyer;
 
         // Release the locked asset for the buyer
-        $buyer->assets->increment('psc', $psc_amount);
-        $buyer->assets->increment('irr', $irr_amount);
+        $buyer->wallet->increment('psc', $psc_amount);
+        $buyer->wallet->increment('irr', $irr_amount);
 
         // Delete the buy request transactions, locked asset and the buy request itself
         $buyFeatureRequest->transactions()->delete();
@@ -314,16 +314,16 @@ class BuyRequestsController extends Controller
         $pscFee = $psc_amount * config('rgb.fee');
         $irrFee = $irr_amount * config('rgb.fee');
 
-        // Add the feature price to the seller's assets
-        $seller->assets->increment('psc', $psc_amount - $pscFee);
-        $seller->assets->increment('irr', $irr_amount - $irrFee);
+        // Add the feature price to the seller's wallet
+        $seller->wallet->increment('psc', $psc_amount - $pscFee);
+        $seller->wallet->increment('irr', $irr_amount - $irrFee);
 
         // Get the rgb user
         $rgb = User::firstWhere('code', 'hm-2000000');
 
-        // Add the fee to the rgb's assets
-        $rgb->assets->increment('psc', $pscFee * 2);
-        $rgb->assets->increment('irr', $irrFee * 2);
+        // Add the fee to the rgb's wallet
+        $rgb->wallet->increment('psc', $pscFee * 2);
+        $rgb->wallet->increment('irr', $irrFee * 2);
 
         // Create a trade
         $trade = Trade::create([
@@ -383,8 +383,8 @@ class BuyRequestsController extends Controller
             if ($buyRequest->is($buyFeatureRequest)) continue;
             $price_psc = $buyRequest->lockedAsset->psc;
             $price_irr = $buyRequest->lockedAsset->irr;
-            $buyRequest->buyer->assets->increment('psc', $price_psc);
-            $buyRequest->buyer->assets->increment('irr', $price_irr);
+            $buyRequest->buyer->wallet->increment('psc', $price_psc);
+            $buyRequest->buyer->wallet->increment('irr', $price_irr);
             $buyRequest->lockedAsset->delete();
             $buyRequest->delete();
         }

@@ -24,7 +24,7 @@ class UserObserver
      */
     public function created(User $user)
     {
-        $user->assets()->create();
+        $user->wallet()->create();
 
         $user->settings()->create();
 
@@ -218,13 +218,13 @@ class UserObserver
             $prize = $next_level->prize;
 
             if ($user->can('recievePrize', $prize)) {
-                $assets = $user->assets;
-                $assets->increment('psc', $prize->psc);
-                $assets->increment('blue', $prize->blue);
-                $assets->increment('red', $prize->red);
-                $assets->increment('yellow', $prize->yellow);
-                $assets->update(['effect' => $prize->effect]);
-                $assets->increment('satisfaction', $prize->satisfaction);
+                $wallet = $user->wallet;
+                $wallet->increment('psc', $prize->psc);
+                $wallet->increment('blue', $prize->blue);
+                $wallet->increment('red', $prize->red);
+                $wallet->increment('yellow', $prize->yellow);
+                $wallet->update(['effect' => $prize->effect]);
+                $wallet->increment('satisfaction', $prize->satisfaction);
                 $user->recievedPrizes()->create([
                     'prize_id' => $prize->id
                 ]);

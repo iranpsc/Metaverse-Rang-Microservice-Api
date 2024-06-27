@@ -93,10 +93,10 @@ class BuyFeatureController extends Controller
         }
 
         // Withdraw the price from the buyer
-        $buyer->assets->decrement($feature->getColor(), $price);
+        $buyer->wallet->decrement($feature->getColor(), $price);
 
         // Deposit the price to the seller
-        $seller->assets->increment($feature->getColor(), $price);
+        $seller->wallet->increment($feature->getColor(), $price);
 
         // Update the feature owner
         $feature->update(['owner_id' => $buyer->id]);
@@ -245,9 +245,9 @@ class BuyFeatureController extends Controller
             'status' => 1
         ]);
 
-        // Increment the psc and irr assets of the system
-        $this->rgb->assets->increment('psc', $this->fee($feature, 'price_psc') * 2);
-        $this->rgb->assets->increment('irr', $this->fee($feature, 'price_irr') * 2);
+        // Increment the psc and irr wallet of the system
+        $this->rgb->wallet->increment('psc', $this->fee($feature, 'price_psc') * 2);
+        $this->rgb->wallet->increment('irr', $this->fee($feature, 'price_irr') * 2);
 
         // Create a new comission for the system
         Comission::create([
@@ -286,8 +286,8 @@ class BuyFeatureController extends Controller
         // Get the hourly profit of the feature
         $profit = $feature->hourlyProfit->where('user_id', $seller->id)->first();
 
-        // Increment the seller assets
-        $seller->assets->increment($profit->asset, $profit->amount);
+        // Increment the seller wallet
+        $seller->wallet->increment($profit->asset, $profit->amount);
 
         // Update the seller hourly profit
         $feature->hourlyProfit->update([
@@ -330,8 +330,8 @@ class BuyFeatureController extends Controller
      */
     protected function chargeBuyer(User $buyer, Feature $feature): void
     {
-        $buyer->assets->decrement('psc', $this->buyerChargeAmount($feature, 'price_psc'));
-        $buyer->assets->decrement('irr', $this->buyerChargeAmount($feature, 'price_irr'));
+        $buyer->wallet->decrement('psc', $this->buyerChargeAmount($feature, 'price_psc'));
+        $buyer->wallet->decrement('irr', $this->buyerChargeAmount($feature, 'price_irr'));
     }
 
     /**
@@ -343,8 +343,8 @@ class BuyFeatureController extends Controller
      */
     protected function paySeller(User $seller, Feature $feature): void
     {
-        $seller->assets->increment('psc', $this->sellerPayAmount($feature, 'price_psc'));
-        $seller->assets->increment('irr', $this->sellerPayAmount($feature, 'price_irr'));
+        $seller->wallet->increment('psc', $this->sellerPayAmount($feature, 'price_psc'));
+        $seller->wallet->increment('irr', $this->sellerPayAmount($feature, 'price_irr'));
     }
 
     /**
@@ -397,8 +397,8 @@ class BuyFeatureController extends Controller
             foreach ($requests as $request) {
                 $buyer = $request->buyer;
                 $lockedAsset = $request->lockedAsset;
-                $buyer->assets->increment('psc', $lockedAsset->psc);
-                $buyer->assets->increment('irr', $lockedAsset->irr);
+                $buyer->wallet->increment('psc', $lockedAsset->psc);
+                $buyer->wallet->increment('irr', $lockedAsset->irr);
                 $request->lockedAsset->delete();
                 $request->delete();
             }

@@ -41,6 +41,7 @@ use App\Http\Controllers\Api\V1\TicketController;
 use App\Http\Controllers\Api\V1\TutorialController;
 use App\Http\Controllers\Api\V1\UserEventsController;
 use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,7 +56,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::controller(AuthController::class)->prefix('auth')->as('auth.')->group(function() {
+Route::controller(AuthController::class)->prefix('auth')->as('auth.')->group(function () {
     Route::post('/register', 'register')->middleware('guest')->name('register');
     Route::get('/redirect', 'redirect')->middleware('guest')->name('redirect');
     Route::get('/callback', 'callback')->middleware('guest')->name('callback');
@@ -88,6 +89,14 @@ Route::controller(CalendarController::class)->prefix('calendar')->as('calendar.'
 
     Route::post('/events/{event}/like', 'likeEvent')->name('like');
     Route::post('/events/{event}/dislike', 'dislikeEvent')->name('dislike');
+});
+
+Route::controller(UserController::class)->prefix('users')->group(function () {
+    Route::get('/top', 'index')->name('index');
+    Route::get('/{user}/profile', 'getProfile');
+    Route::get('/{user}/wallet', 'getWallet');
+    Route::get('/{user}/features/count', 'getFeaturesCount');
+    Route::get('/{user}/level', 'getLevel');
 });
 
 Route::controller(PlayerController::class)->prefix('players')->as('players.')->group(function () {
@@ -292,7 +301,7 @@ Route::controller(SearchController::class)->prefix('search')->group(function () 
     Route::post('isic-codes', 'isicCodes');
 });
 
-Route::post('/users/get', function(Request $request) {
+Route::post('/users/get', function (Request $request) {
     $token = 'K^mLq%k5wY*T9WIHC%dpyqph57x^gfeTjs(2WSZV';
 
     if ($request->token !== $token) {
@@ -300,8 +309,8 @@ Route::post('/users/get', function(Request $request) {
     }
 
     $users = \App\Models\User::select('id', 'name', 'email', 'phone', 'password', 'code')
-    ->with('kyc')
-    ->orderBy('id')->get();
+        ->with('kyc')
+        ->orderBy('id')->get();
 
     $users = $users->makeVisible('password');
 

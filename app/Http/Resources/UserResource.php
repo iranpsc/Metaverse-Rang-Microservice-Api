@@ -3,9 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\AssetResource;
 use Morilog\Jalali\Jalalian;
 use App\Http\Resources\FollowResource;
+
 class UserResource extends JsonResource
 {
     /**
@@ -33,10 +33,10 @@ class UserResource extends JsonResource
             $this->mergeWhen(isset($this->profilePhotos), [
                 'profile_photos' => [$this->profilePhotos->last()]
             ]),
-            'email_verified_at' => Jalalian::forge($this->email_verified_at)->format('Y/m/d'),
-            'assets' => new AssetResource($this->assets),
+            'email_verified_at' => jdate($this->email_verified_at)->format('Y/m/d'),
+            'wallet' => new WalletResource($this->wallet),
             'settings' => new SettingResource($this->settings),
-            'general_settings' => new GeneralSettingsResource($this->generalSettings),
+            'general_settings' => new NotificationSettingsResource($this->settings->notifcations),
             'notifications' => $this->unreadNotifications,
             'referral_link' => $this->referal_link,
             'code' => $this->code,

@@ -17,6 +17,7 @@ class PlayerController extends Controller
     public function __construct(
         private UserRepository $userRepository
     ) {
+        //
     }
     /**
      * Display a listing of the resource.
@@ -25,7 +26,7 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        return response()->json(['data' => $this->userRepository->topPlayers()]);
+        return response()->json(['data' => $this->userRepository->topUsers()]);
     }
 
     /**
@@ -34,7 +35,7 @@ class PlayerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function assets(User $player)
+    public function wallet(User $player)
     {
         $privacy = Privacy::whereUserId($player->id)
             ->select(['name', 'display'])

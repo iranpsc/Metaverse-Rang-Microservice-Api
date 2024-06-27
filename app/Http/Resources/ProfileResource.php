@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Feature;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProfileResource extends JsonResource
@@ -21,38 +20,14 @@ class ProfileResource extends JsonResource
             'code' => $this->code,
             'score' => $this->score,
             'registered_at' => jdate($this->email_verified_at)->format('Y/m/d'),
-            'level' => $this->level,
-            'score_percentage_to_next_level' => $this->level?->getScorePercentageToNextLevel($this->resource) ?? 0,
-            'hourly_profit_time_percentage' => hourlyProfitInfo($this->resource),
-            'notifications' => $this->unreadNotifications->count(),
-            'wallet' => new AssetResource($this->assets),
-            'image' => $this->profilePhotos->last()?->url,
-            $this->mergeWhen($this->features->count() > 0, [
-                'features' => [
-                    'maskoni' => Feature::whereOwnerId($this->id)->where(function ($query) {
-                        $query->select('karbari')
-                            ->from('feature_properties')
-                            ->whereColumn('features.id', 'feature_properties.feature_id')
-                            ->limit(1);
-                    }, 'm')->count(),
-
-                    'tejari' => Feature::whereOwnerId($this->id)->where(function ($query) {
-                        $query->select('karbari')
-                            ->from('feature_properties')
-                            ->whereColumn('features.id', 'feature_properties.feature_id')
-                            ->limit(1);
-                    }, 't')->count(),
-
-                    'amozeshi' => Feature::whereOwnerId($this->id)->where(function ($query) {
-                        $query->select('karbari')
-                            ->from('feature_properties')
-                            ->whereColumn('features.id', 'feature_properties.feature_id')
-                            ->limit(1);
-                    }, 'a')->count(),
-                ]
-            ]),
-            'followers' => $this->followers->count(),
-            'following' => $this->following->count(),
+            'profile_images' => $this->profilePhotos->map(function ($photo) {
+                return [
+                    'id' => $photo->id,
+                    'url' => $photo->url,
+                ];
+            }),
+            'followers' => $this->followers_count,
+            'following' => $this->following_count,
         ];
     }
 }

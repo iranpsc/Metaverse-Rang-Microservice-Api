@@ -53,7 +53,7 @@ class FeatureHourlyProfitController extends Controller
                 foreach ($profits as $profit) {
                     if ($profit->feature->properties->karbari == $request->karbari) {
                         $amount += $profit->amount;
-                        $user->assets->increment($profit->asset, $profit->amount);
+                        $user->wallet->increment($profit->asset, $profit->amount);
 
 
                         $profit->update([
@@ -95,7 +95,7 @@ class FeatureHourlyProfitController extends Controller
         $feature = $featureHourlyProfit->feature;
         $user = request()->user();
 
-        $user->assets->increment($featureHourlyProfit->asset, $featureHourlyProfit->amount);
+        $user->wallet->increment($featureHourlyProfit->asset, $featureHourlyProfit->amount);
         $time = $user->variables->withdraw_profit * 86400;
 
         if ($featureHourlyProfit->amount > 0) {

@@ -40,8 +40,8 @@ class DynastyPrizeController extends Controller
         $user = $request->user();
         $prize = $recievedPrize->prize;
 
-        $user->assets->increment('psc', $prize->psc / Variable::getRate('psc'));
-        $user->assets->increment('satisfaction', $prize->satisfaction);
+        $user->wallet->increment('psc', $prize->psc / Variable::getRate('psc'));
+        $user->wallet->increment('satisfaction', $prize->satisfaction);
 
         $variables = $user->variables;
 

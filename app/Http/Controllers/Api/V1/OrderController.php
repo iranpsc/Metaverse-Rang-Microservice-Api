@@ -118,10 +118,10 @@ class OrderController extends Controller
                     ]);
                     $bonus = $order->amount * 0.5;
                     // Increase the user's asset amount with the order amount and bonus
-                    $user->assets->increment($order->asset, $order->amount + $bonus);
+                    $user->wallet->increment($order->asset, $order->amount + $bonus);
                 } else {
                     // Increase the user's asset amount with the order amount
-                    $user->assets->increment($order->asset, $order->amount);
+                    $user->wallet->increment($order->asset, $order->amount);
                 }
 
                 // Create a payment record

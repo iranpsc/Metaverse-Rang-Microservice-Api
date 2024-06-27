@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Feature;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\WalletResource;
 
 class PlayerProfileResource extends JsonResource
 {
@@ -23,8 +24,13 @@ class PlayerProfileResource extends JsonResource
             'registered_at' => $this->getPrivacyStatus('registered_at') ? jdate($this->email_verified_at)->format('Y/m/d') : null,
             'level' => $this->getPrivacyStatus('level') ? $this->level : null,
             'score_percentage_to_next_level' => $this->getPrivacyStatus('level') ? $this->level->getScorePercentageToNextLevel($this->resource) ?? 0 : null,
-            'wallet' => new AssetResource($this->assets),
-            'images' => $this->profilePhotos,
+            'wallet' => new WalletResource($this->wallet),
+            'images' => $this->profilePhotos->map(function ($photo) {
+                return [
+                    'id' => $photo->id,
+                    'url' => $photo->url,
+                ];
+            }),
             'online' => $this->last_seen->diffInMinutes() < 2,
             $this->mergeWhen($this->features->count() > 0, [
                 'features' => [
