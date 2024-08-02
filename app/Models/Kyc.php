@@ -10,27 +10,17 @@ class Kyc extends Model
     use HasFactory;
 
     protected $fillable = [
-        'shaba',
-        'bank',
         'melli_card',
-        'prove_picture',
-        'resume',
         'fname',
         'lname',
-        'father_name',
         'melli_code',
-        'birthdate',
-        'phone',
-        'email',
         'province',
-        'city',
-        'number',
-        'postal_code',
-        'address',
-        'site',
         'status',
         'user_id',
-        'errors'
+        'errors',
+        'verify_text',
+        'video',
+        'birthdate'
     ];
 
     protected $casts = [
@@ -41,11 +31,6 @@ class Kyc extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function setBirthdateAttribute($value)
-    {
-        $this->attributes['birthdate'] = convertShamsiToGregorian($value);
     }
 
     public function rejected(): bool

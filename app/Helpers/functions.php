@@ -7,7 +7,7 @@ use App\Models\Level\Level;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-function convertShamsiToGregorian($date): string
+function jalali_to_carbon($date): string
 {
     $date = \Morilog\Jalali\CalendarUtils::convertNumbers($date, true);
     $date = str_replace('/', '-', $date);

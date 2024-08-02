@@ -10,7 +10,6 @@ use App\Models\Kyc;
 
 class KycController extends Controller
 {
-
     public function __construct()
     {
         $this->authorizeResource(Kyc::class);
@@ -18,49 +17,43 @@ class KycController extends Controller
 
     /**
      * Get the current user's kyc info.
+     *
      * @return KycResource
      */
     public function index()
     {
         $kyc = request()->user()->kyc;
-        return $kyc ? new KycResource($kyc) : [];
+        return $kyc ? new KycResource($kyc) : null;
     }
 
     /**
      * Store the current user's kyc info.
+     *
      * @param StoreKycRequest $request
      * @return KycResource
      */
     public function store(StoreKycRequest $request)
     {
         $melliCardFile = $request->file('melli_card');
-        $provePictureFile = $request->file('prove_picture');
 
-        $melliCardNameToStore = url('uploads/' . $melliCardFile->store('kyc', 'public'));
+        $melliCard = url('uploads/' . $melliCardFile->store('kyc', 'public'));
 
-        $provePictureNameToStore = url('uploads/' . $provePictureFile->store('kyc', 'public'));
+        $originalPath = storage_path('app/' . $request->video['path'] . '/' . $request->video['name']);
 
-        if ($request->hasFile('resume')) {
-            $resumeFile = $request->file('resume');
-            $resumeNameToStore = url('uploads/' . $resumeFile->store('kyc', 'public'));
-        }
+        rename($originalPath, public_path('uploads/kyc/' . $request->video['name']));
+
+        $video = url('uploads/kyc/' . $request->video['name']);
 
         $kyc = Kyc::create([
             'user_id' => $request->user()->id,
             'fname' => $request->fname,
             'lname' => $request->lname,
             'melli_code' => $request->melli_code,
-            'birthdate' => $request->birthdate,
-            'father_name' => $request->father_name,
-            'melli_card' => $melliCardNameToStore,
-            'prove_picture' => $provePictureNameToStore,
-            'resume' => $resumeNameToStore ?? "",
+            'birthdate' => jalali_to_carbon($request->birthdate),
+            'melli_card' => $melliCard,
             'province' => $request->province,
-            'city' => $request->city,
-            'number' => $request->number,
-            'postal_code' => $request->postal_code,
-            'address' => $request->address,
-            'site' => $request->site,
+            'video' => $video,
+            'verify_text' => $request->verify_text,
         ]);
 
         return new KycResource($kyc);
@@ -68,6 +61,7 @@ class KycController extends Controller
 
     /**
      * Display the specified resource.
+     *
      * @param Kyc $kyc
      * @return KycResource
      */
@@ -77,7 +71,9 @@ class KycController extends Controller
     }
 
     /**
-     * @param StoreKycRequest $request
+     * Update the specified resource in storage.
+     *
+     * @param UpdateKycRequest $request
      * @param Kyc $kyc
      * @return KycResource
      */
@@ -87,31 +83,25 @@ class KycController extends Controller
             $kyc->melli_card = url('uploads/' . $request->file('melli_card')->store('kyc', 'public'));
         }
 
-        if ($request->hasFile('prove_picture')) {
-            $kyc->prove_picture = url('uploads/' . $request->file('prove_picture')->store('kyc', 'public'));
-        }
+        if ($request->has('video')) {
+            $originalPath = storage_path('app/' . $request->video['path'] . '/' . $request->video['name']);
 
-        if ($request->hasFile('resume')) {
-            $kyc->resume = url('uploads/' . $request->file('resume')->store('kyc', 'public'));
+            rename($originalPath, storage_path('app/public/kyc/' . $request->video['name']));
+
+            $kyc->video = url('uploads/kyc/' . $request->video['name']);
         }
 
         $kyc->update([
             'melli_card' => $kyc->melli_card,
-            'prove_picture' => $kyc->prove_picture,
-            'resume' => $kyc->resume,
             'fname' => $request->fname,
             'lname' => $request->lname,
-            'father_name' => $request->father_name,
             'melli_code' => $request->melli_code,
-            'birthdate' => $request->birthdate,
+            'birthdate' => jalali_to_carbon($request->birthdate),
             'province' => $request->province,
-            'city' => $request->city,
-            'number' => $request->number,
-            'postal_code' => $request->postal_code,
-            'address' => $request->address,
-            'site' => $request->site,
             'status' => 0,
-            'errors' => null
+            'errors' => null,
+            'video' => $kyc->video,
+            'verify_text' => $kyc->verify_text,
         ]);
 
         return new KycResource($kyc->fresh());

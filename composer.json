@@ -16,6 +16,7 @@
         "laravel/ui": "^4.2",
         "league/flysystem-ftp": "^3.0",
         "morilog/jalali": "3.*",
+        "pion/laravel-chunk-upload": "^1.5",
         "predis/predis": "^2.0",
         "pusher/pusher-php-server": "^7.2",
         "sadegh19b/laravel-persian-validation": "^1.3",
