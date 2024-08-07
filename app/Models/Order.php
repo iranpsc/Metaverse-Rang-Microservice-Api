@@ -45,6 +45,16 @@ class Order extends Model
     }
 
     /**
+     * Get the payment associated with the order.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
+
+    /**
      * Get the user who placed the order.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

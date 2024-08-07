@@ -117,7 +117,7 @@ class OrderController extends Controller
                     $user->wallet->increment($order->asset, $order->amount);
                 }
 
-                Payment::create([
+                $order->payment()->create([
                     'user_id' => $user->id,
                     'ref_id' => $response->referenceId(),
                     'card_pan' => $response->cardHash() ?? 'card-hash',
