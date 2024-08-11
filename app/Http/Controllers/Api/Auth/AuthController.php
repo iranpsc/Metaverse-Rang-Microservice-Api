@@ -142,9 +142,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->json([
-            'redirect_url' => config('app.oauth_server_url') . '/logout',
-        ]);
+        return response()->noContent();
     }
 
     /**
