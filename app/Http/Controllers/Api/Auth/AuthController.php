@@ -36,7 +36,7 @@ class AuthController extends Controller
     {
         cache()->put('state', $state = Str::random(40), now()->addMinutes(5));
 
-        cache()->put('request_url', $request->query('request_url'), now()->addMinutes(5));
+        cache()->put('redirect_to', $request->query('redirect_to'), now()->addMinutes(5));
 
         $query = http_build_query([
             'client_id' => config('app.oauth_client_id'),
@@ -124,7 +124,7 @@ class AuthController extends Controller
             'expires_at' => now()->diffInMinutes($tokenExpiresAt),
         ]);
 
-        $url = cache()->pull('request_url') . '/auth?' . $query;
+        $url = cache()->pull('redirect_to') . '/auth?' . $query;
 
         return redirect()->away($url);
     }

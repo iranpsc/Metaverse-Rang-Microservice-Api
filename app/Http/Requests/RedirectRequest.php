@@ -24,7 +24,7 @@ class RedirectRequest extends FormRequest
     public function rules()
     {
         return [
-            'redirect_url' => [
+            'redirect_to' => [
                 'required',
                 'url',
             ],
