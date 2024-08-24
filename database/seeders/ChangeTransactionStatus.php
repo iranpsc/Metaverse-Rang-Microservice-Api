@@ -16,7 +16,7 @@ class ChangeTransactionStatus extends Seeder
      */
     public function run()
     {
-        Transaction::chunckById(100, function ($transactions) {
+        Transaction::chunkById(100, function ($transactions) {
             foreach ($transactions as $transaction) {
                 // Unsuccessful transations
                 if ($transaction->status === -1) {
