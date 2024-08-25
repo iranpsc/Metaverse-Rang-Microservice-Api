@@ -40,7 +40,7 @@ class KycController extends Controller
 
         $originalPath = storage_path($request->video['path'] . '/' . $request->video['name']);
 
-        rename($originalPath, public_path('uploads/kyc/' . $request->video['name']));
+        rename($originalPath, storage_path('app/public/kyc/' . $request->video['name']));
 
         $video = url('uploads/kyc/' . $request->video['name']);
 
