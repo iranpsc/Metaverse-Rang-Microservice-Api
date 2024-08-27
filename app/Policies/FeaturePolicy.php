@@ -104,7 +104,7 @@ class FeaturePolicy
             return Response::deny('جهت خرید این ملک باید دارای سلسله باشید.');
         } elseif ($featureLimitation->individual_buy_limit) {
             $limitedFeaturePurchuseCount = LimitedFeaturePurchase::where('user_id', $user->id)
-                ->where('feature_id', $feature->id)
+                ->where('feature_limit_id', $featureLimitation->id)
                 ->count();
 
             if ($limitedFeaturePurchuseCount >= $featureLimitation->individual_buy_count) {
