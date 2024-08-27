@@ -73,7 +73,7 @@ class FeaturePolicy
             $featureLimitation = $this->getLimitation($feature);
 
             if ($featureLimitation) {
-                $this->handleLimitedFeature($user, $featureLimitation);
+                return $this->handleLimitedFeature($user, $featureLimitation);
             }
         }
 
@@ -107,10 +107,7 @@ class FeaturePolicy
                 ->where('feature_limit_id', $featureLimitation->id)
                 ->count();
 
-            Log::info('Limited feature purchase count: ' . $limitedFeaturePurchuseCount);
-
             if ($limitedFeaturePurchuseCount >= $featureLimitation->individual_buy_count) {
-                Log::info('Limited feature purchase count is greater than or equal to individual buy count.');
                 return Response::deny('شما تعداد حداکثر خرید در این طرح را داشته اید.');
             }
         }
