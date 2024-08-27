@@ -12,6 +12,7 @@ use App\Models\Image;
 use App\Models\LimitedFeaturePurchase;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Log;
 
 class FeaturePolicy
 {
@@ -72,7 +73,7 @@ class FeaturePolicy
             $featureLimitation = $this->getLimitation($feature);
 
             if ($featureLimitation) {
-                $this->handleLimitedFeature($user, $featureLimitation, $feature);
+                $this->handleLimitedFeature($user, $featureLimitation);
             }
         }
 
@@ -91,7 +92,7 @@ class FeaturePolicy
      * @param object $properties The properties of the feature.
      * @return Response Returns a response if the user cannot buy the feature.
      */
-    private function handleLimitedFeature(User $user, FeatureLimit $featureLimitation, Feature $feature)
+    private function handleLimitedFeature(User $user, FeatureLimit $featureLimitation)
     {
         if ($featureLimitation->verified_kyc_limit && !$user->verified()) {
             return Response::deny('جهت خرید با احراز هویت خود را انجام داده باشید.');
@@ -105,6 +106,8 @@ class FeaturePolicy
             $limitedFeaturePurchuseCount = LimitedFeaturePurchase::where('user_id', $user->id)
                 ->where('feature_limit_id', $featureLimitation->id)
                 ->count();
+
+            Log::info('Limited feature purchase count: ' . $limitedFeaturePurchuseCount);
 
             if ($limitedFeaturePurchuseCount >= $featureLimitation->individual_buy_count) {
                 return Response::deny('شما تعداد حداکثر خرید در این طرح را داشته اید.');

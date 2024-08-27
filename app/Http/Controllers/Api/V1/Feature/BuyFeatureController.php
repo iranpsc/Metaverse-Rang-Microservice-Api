@@ -99,7 +99,7 @@ class BuyFeatureController extends Controller
         $price = $feature->properties->stability;
         $color = $feature->getFeatureColor();
 
-        if ($featureLimitation->price_limit && $feature->price !== 0) {
+        if ($featureLimitation->price_limit && $feature->price != 0) {
             if ($buyer->checkColorBalance($feature)) {
                 abort(403, "برای خرید این ملک شما نیاز به {$price} لیتر رنگ {$color} دارید!");
             }
