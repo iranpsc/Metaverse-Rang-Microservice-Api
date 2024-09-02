@@ -19,6 +19,7 @@ class HourlyProfitResource extends JsonResource
             'user_id'    => $this->user_id,
             'feature_db_id' => $this->feature->id,
             'feature_id' => $this->feature->properties->id,
+            'is_active' => $this->is_active,
             'amount'     => number_format($this->amount, 3),
             'karbari'    => $this->feature->properties->karbari,
             'dead_line'  => jdate($this->dead_line)->format('Y/m/d')

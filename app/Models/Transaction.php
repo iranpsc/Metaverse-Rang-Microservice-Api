@@ -1,12 +1,7 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
@@ -94,45 +89,22 @@ class Transaction extends Model
     {
         do {
             $id = 'TR-' . random_int(100000000, 999999999);
-        } while (self::where('id', $id)->exists());
+        } while ($this->where('id', $id)->exists());
 
         return $id;
     }
 
-
     /**
-     * Get the title of the transaction based on the payable model.
+     * Get transaction type.
      *
      * @return string
      */
-    protected function asset(): Attribute
+    public function getTypeAttribute()
     {
-        return Attribute::make(
-            get: function ($value) {
-                return match ($value) {
-                    'blue' => 'رنگ آبی',
-                    'yellow' => 'رنگ زرد',
-                    'red' => 'رنگ قرمز',
-                    'psc' => 'PSC',
-                    'irr' => 'ریال',
-                };
-            }
-        );
-    }
-
-    /**
-     * Get the title of the transaction based on the payable model.
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        if ($this->payable instanceof BuyFeatureRequest) {
-            return 'پیشنهاد خرید ملک';
-        } elseif ($this->payable instanceof Trade) {
-            return 'معامله ملک';
-        } elseif ($this->payable instanceof Order) {
-            return 'خرید دارایی';
-        }
+        return match ($this->payable_type) {
+            'App\Models\Trade' => 'trade',
+            'App\Models\Order' => 'order',
+            default => 'unknown',
+        };
     }
 }

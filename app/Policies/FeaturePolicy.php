@@ -12,7 +12,6 @@ use App\Models\Image;
 use App\Models\LimitedFeaturePurchase;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
-use Illuminate\Support\Facades\Log;
 
 class FeaturePolicy
 {

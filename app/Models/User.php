@@ -36,6 +36,11 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
 {
     use Notifiable, HasFactory, HasApiTokens;
 
+    /**
+     * Get the observable events for the model.
+     *
+     * @return array
+     */
     protected $observables = [
         'followed',
         'traded',
@@ -46,6 +51,11 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
         'logedOut'
     ];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'name',
         'email',
@@ -65,12 +75,22 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
         'expires_in',
     ];
 
+    /**
+     * The attributes with default values.
+     *
+     * @var array
+     */
     protected $attributes = [
         'ip' => '',
         'code' => '',
         'referal_link' => ''
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'last_seen'         => 'datetime',
@@ -78,6 +98,11 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
         'score'             => 'integer',
     ];
 
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
     protected $hidden = [
         'password',
         'remember_token'
@@ -130,6 +155,11 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
         return $this->hasOne(AccountSecurity::class);
     }
 
+    /**
+     * Get the user's wallet.
+     *
+     * @return HasOne
+     */
     public function wallet()
     {
         return $this->hasOne(Wallet::class);

@@ -51,16 +51,6 @@ class UserController extends Controller
     }
 
     /**
-     * Get the list of top 10 users.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function topUsers()
-    {
-        return response()->json(['data' => $this->userRepository->topTenUsers()]);
-    }
-
-    /**
      * Get the wallet resource for a specific user.
      *
      * @param User $user The user object.

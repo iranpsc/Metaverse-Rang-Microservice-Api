@@ -4,7 +4,6 @@ use App\Http\Controllers\Api\V2\LevelController;
 use App\Http\Controllers\Api\V1\VideoCommentsController;
 use App\Http\Controllers\Api\V1\TutorialController;
 use App\Http\Controllers\Api\V2\MapsController;
-use App\Http\Controllers\Api\V2\VideoPanelController;
 use App\Http\Controllers\Api\V2\Feature\BuildFeatureController;
 use Illuminate\Support\Facades\Route;
 
@@ -64,7 +63,4 @@ Route::controller(MapsController::class)->prefix('maps')->as('maps.')->group(fun
     Route::get('/', 'index')->name('index');
     Route::get('/{map}', 'show')->name('show');
     Route::get('/{map}/border', 'showBorder');
-});
-
-Route::controller(VideoPanelController::class)->group(function () {
 });

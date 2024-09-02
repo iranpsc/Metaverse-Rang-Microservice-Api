@@ -3,16 +3,12 @@
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\V1\AccountSecurityController;
 use App\Http\Controllers\Api\V1\Auth\ChangePasswordController;
-use App\Http\Controllers\Api\V1\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
-use App\Http\Controllers\Api\V1\Auth\ResetPasswordController;
-use App\Http\Controllers\Api\V1\Auth\SendResetPasswordLinkController;
 use App\Http\Controllers\Api\V1\BankAccountController;
 use App\Http\Controllers\Api\V1\CalendarController;
 use App\Http\Controllers\Api\V1\ChallengeController;
 use App\Http\Controllers\Api\V1\CustomController;
-use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\Dynasty\AcceptJoinRequestController;
 use App\Http\Controllers\Api\V1\Dynasty\ChildernPermissionsController;
 use App\Http\Controllers\Api\V1\Dynasty\DynastyController;
@@ -29,7 +25,6 @@ use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\KycController;
 use App\Http\Controllers\Api\V1\NoteController;
 use App\Http\Controllers\Api\V1\OrderController;
-use App\Http\Controllers\Api\V1\PlayerController;
 use App\Http\Controllers\Api\V1\ProfilePhotoController;
 use App\Http\Controllers\Api\V1\PublicProfileController;
 use App\Http\Controllers\Api\V1\ReportController;
@@ -45,7 +40,6 @@ use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\FileUploadController;
 use App\Http\Controllers\Api\V2\ProfileLimitationController;
 use App\Http\Controllers\Api\V2\TransactionController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -72,12 +66,6 @@ Route::post('login', [LoginController::class, 'login'])->middleware('guest');
 
 Route::post('logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::middleware('guest')->group(function () {
-    Route::post('/forgot-password', [SendResetPasswordLinkController::class, 'sendResetLinkEmail']);
-    Route::post('/forgot-password/reset/password', [ResetPasswordController::class, 'reset']);
-});
-
-
 Route::controller(CalendarController::class)->prefix('calendar')->as('calendar.')->group(function () {
     Route::prefix('events')->as('events.')->group(function () {
         Route::get('/', 'getEvents')->name('index');
@@ -96,7 +84,6 @@ Route::controller(CalendarController::class)->prefix('calendar')->as('calendar.'
 
 Route::controller(UserController::class)->prefix('users')->group(function () {
     Route::get('/', 'index')->withoutMiddleware('auth', 'verified');
-    Route::get('/top', 'topUsers');
     Route::get('/{user}/profile', 'getProfile');
     Route::get('/{user}/wallet', 'getWallet');
     Route::get('/{user}/features/count', 'getFeaturesCount');
@@ -110,46 +97,15 @@ Route::controller(ProfileLimitationController::class)->prefix('profile-limitatio
     Route::delete('/{profileLimitation}', 'destroy');
 });
 
-Route::controller(PlayerController::class)->prefix('players')->as('players.')->group(function () {
-    Route::get('/', 'index');
-    Route::get('/{player}/profile', 'profile');
-    Route::get('/{player}/assets', 'assets')->name('features');
-    Route::get('/{player}/assets/{feature}', 'asset')->name('feature');
-    Route::get('/{player}/followers', 'followers');
-    Route::get('/{player}/following', 'following');
-});
-
 Route::controller(HomeController::class)->group(function () {
     Route::post('store', 'getStorePackages');
 });
 
 Route::middleware(['auth:sanctum', 'verified', 'activity'])->group(function () {
 
-    Route::controller(DashboardController::class)->prefix('user')->group(function () {
-        Route::get('/profile', 'index');
-        Route::get('/wallet', 'showWallet');
-        // Route::get('/transactions', 'transactions');
-        // Route::get('/payments/latest', 'latestTransaction');
-    });
-
-    Route::controller(TransactionController::class)->prefix('user')->group(function() {
+    Route::controller(TransactionController::class)->prefix('user')->group(function () {
         Route::get('/transactions', 'index');
         Route::get('/transactions/latest', 'latestTransaction');
-        Route::post('/transactions/filter', 'filter');
-        Route::post('/search', 'search');
-    });
-
-    Route::controller(EmailVerificationController::class)->prefix('email')->group(function () {
-        Route::get('/verify/{id}/{hash}', 'verify')
-            ->withoutMiddleware(['auth:sanctum', 'verified'])
-            ->middleware(['signed'])
-            ->name('verification.verify');
-        Route::get('/verification-notification', function (Request $request) {
-            $request->user()->sendEmailVerificationNotification();
-        })
-            ->withoutMiddleware('verified')
-            ->middleware('throttle:6,1')
-            ->name('verification.send');
     });
 
     Route::controller(AccountSecurityController::class)->prefix('account/security')->group(function () {
@@ -162,7 +118,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activity'])->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{user}/features/{feature}', 'show')->name('show');
             Route::post('/{user}/add-image/{feature}', 'addFeatureImages');
-            Route::post('/{user}/remove-image/{feature}/image/{image}', 'removeّFeatureImage');
+            Route::post('/{user}/remove-image/{feature}/image/{image}', 'removeFeatureImage');
             Route::post('/{user}/features/{feature}', 'updateFeature');
         });
 
@@ -307,7 +263,7 @@ Route::post('/upload', [FileUploadController::class, 'upload']);
 
 Route::post('video-tutorials', [TutorialController::class, 'showModalTutorial']);
 
-Route::get('ping', static fn () => null);
+Route::get('ping', static fn() => null);
 
 Route::post('/parsian/callback', [OrderController::class, 'callback'])->name('parsian.callback');
 
@@ -319,20 +275,4 @@ Route::controller(SearchController::class)->prefix('search')->group(function () 
     Route::post('users', 'users');
     Route::post('features', 'features');
     Route::post('isic-codes', 'isicCodes');
-});
-
-Route::post('/users/get', function (Request $request) {
-    $token = 'K^mLq%k5wY*T9WIHC%dpyqph57x^gfeTjs(2WSZV';
-
-    if ($request->token !== $token) {
-        return response()->json(['message' => 'Unauthorized'], 401);
-    }
-
-    $users = \App\Models\User::select('id', 'name', 'email', 'phone', 'password', 'code')
-        ->with('kyc')
-        ->orderBy('id')->get();
-
-    $users = $users->makeVisible('password');
-
-    return response()->json($users);
 });

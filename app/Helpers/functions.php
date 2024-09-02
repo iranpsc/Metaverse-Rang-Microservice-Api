@@ -21,6 +21,23 @@ function jalali_to_carbon($date): Carbon
 }
 
 /**
+ * Convert Shamsi (Persian) date and time to Carbon date.
+ *
+ * @param string $dateTime The Shamsi date and time to convert.
+ * @throws \Exception
+ * @return Carbon The converted Gregorian date.
+ */
+function jalali_date_time_to_carbon($dateTime): Carbon
+{
+    try {
+        $dateTime = \Morilog\Jalali\CalendarUtils::convertNumbers($dateTime, true);
+        return Jalalian::fromFormat('Y/m/d H:i:s', $dateTime)->toCarbon();
+    } catch (\Exception $e) {
+        throw new \Exception('Invalid date time format.');
+    }
+}
+
+/**
  * Get the count of unanswered questions for a user.
  *
  * @param User $user The user object.

@@ -14,9 +14,16 @@ use App\Http\Resources\AuthenticatedUserResource;
 
 class AuthController extends Controller
 {
+    /**
+     * Register user
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(Request $request)
     {
         $request->validate([
+            'back_url' => 'required|url',
             'referral' => 'nullable|string|exists:users,code'
         ]);
 
@@ -24,6 +31,7 @@ class AuthController extends Controller
             'client_id' => config('app.oauth_client_id'),
             'redirect_uri' => route('auth.redirect'),
             'referral' => $request->referral,
+            'back_url' => $request->back_url,
         ]);
 
         $url = config('app.oauth_server_url') . '/register?' . $query;
@@ -31,6 +39,12 @@ class AuthController extends Controller
         return response()->json(['url' => $url]);
     }
 
+    /**
+     * Redirect user to the OAuth server
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
     public function redirect(Request $request)
     {
         $request->validate([
@@ -39,7 +53,11 @@ class AuthController extends Controller
 
         cache()->put('state', $state = Str::random(40), now()->addMinutes(5));
 
-        cache()->put('redirect_to', $request->query('redirect_to'), now()->addMinutes(5));
+        cache()->put(
+            'redirect_to',
+            $request->query('redirect_to'),
+            now()->addMinutes(5)
+        );
 
         $query = http_build_query([
             'client_id' => config('app.oauth_client_id'),
@@ -56,6 +74,12 @@ class AuthController extends Controller
             : redirect()->away($url);
     }
 
+    /**
+     * Handle OAuth server callback
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
     public function callback(Request $request)
     {
         $state = cache()->pull('state');
