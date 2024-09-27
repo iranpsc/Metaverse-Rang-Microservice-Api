@@ -66,7 +66,7 @@ class PersonalInfo extends JsonResource
             ]),
 
             $this->whenLoaded('personalInfo', [
-                'personalInfo' => array_merge(
+                'customs' => array_merge(
                     collect([
                         'occupation',
                         'education',
