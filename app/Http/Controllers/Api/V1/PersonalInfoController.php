@@ -17,8 +17,10 @@ class PersonalInfoController extends Controller
      */
     public function show()
     {
+        $personalInfo = request()->user()->personalInfo;
+
         return response()->json([
-            'data' => request()->user()->personalInfo->map(function ($info) {
+            'data' => is_null($personalInfo) ? [] : $personalInfo->map(function ($info) {
                 return [
                     'occupation' => $info->occupation,
                     'education' => $info->education,
