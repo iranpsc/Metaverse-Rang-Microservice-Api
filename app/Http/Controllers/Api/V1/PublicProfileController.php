@@ -11,7 +11,7 @@ class PublicProfileController extends Controller
 {
     public function home(User $user)
     {
-        $user->load(['kyc', 'customs', 'personalInfo', 'profilePhotos']);
+        $user->load(['kyc', 'personalInfo', 'profilePhotos']);
         return new PersonalInfo($user);
     }
 }
