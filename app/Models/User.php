@@ -10,7 +10,6 @@ use App\Models\Feature\FeatureHourlyProfit;
 use App\Models\Levels\Level;
 use App\Models\Levels\RecievedLevelPrize;
 use App\Models\Levels\UserActivity;
-use App\Models\User\Custom;
 use App\Models\User\UserEvent;
 use App\Models\User\UserVariable;
 use App\Notifications\sendPasswordResetNotification;
@@ -28,6 +27,7 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Helpers\FeatureIndicators;
 use App\Models\Levels\LevelPrize;
 use App\Models\Levels\LevelUser;
+use App\Models\User\PersonalInfo;
 use Spatie\Sitemap\Contracts\Sitemapable;
 use Spatie\Sitemap\Tags\Url;
 use Carbon\Carbon;
@@ -561,13 +561,13 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
     }
 
     /**
-     * Get the associated customs for the user.
+     * Get the associated personalInfo for the user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function customs()
+    public function personalInfo()
     {
-        return $this->hasOne(Custom::class);
+        return $this->hasOne(PersonalInfo::class);
     }
 
     /**

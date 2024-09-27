@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\BankAccountController;
 use App\Http\Controllers\Api\V1\CalendarController;
 use App\Http\Controllers\Api\V1\ChallengeController;
-use App\Http\Controllers\Api\V1\CustomController;
+use App\Http\Controllers\Api\V1\PersonalInfoController;
 use App\Http\Controllers\Api\V1\Dynasty\AcceptJoinRequestController;
 use App\Http\Controllers\Api\V1\Dynasty\ChildernPermissionsController;
 use App\Http\Controllers\Api\V1\Dynasty\DynastyController;
@@ -236,7 +236,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activity'])->group(function () {
         Route::post('/{featureHourlyProfit}', 'getSingleProfit');
     });
 
-    Route::apiResource('customs', CustomController::class)->only(['index', 'store', 'update']);
+    Route::apiSingleton('personal-info', PersonalInfoController::class);
 
     Route::controller(UserEventsController::class)->as('user-events.')->prefix('events')->group(function () {
         Route::get('/', 'index')->name('index');

@@ -16,6 +16,6 @@ yarn-error.log
 /.vscode
 .env
 worker.log
-/tests
+tests
 laravel-worker.conf
 /public/sitemap
