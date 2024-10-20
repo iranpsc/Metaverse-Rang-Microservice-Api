@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Constants;
+
 use App\Constants\Enum;
 
 class ChildrenPermissions extends Enum {
