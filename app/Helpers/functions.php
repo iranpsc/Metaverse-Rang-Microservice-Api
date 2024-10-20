@@ -113,7 +113,7 @@ function hourlyProfitInfo(User $user): float
 
     $elapsedPercentage = ($secondsPassed / $totalSeconds) * 100.0;
 
-    return min($elapsedPercentage, 100.0);
+    return number_format($elapsedPercentage, 2);
 }
 
 /**
