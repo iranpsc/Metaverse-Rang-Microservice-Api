@@ -98,9 +98,9 @@ function getScorePercentageToNextLevel(?Level $level, int $score): int
  * Get the hourly profit information for a user.
  *
  * @param User $user The user object.
- * @return int The hourly profit information.
+ * @return string
  */
-function hourlyProfitInfo(User $user): float
+function hourlyProfitInfo(User $user)
 {
     $profit = FeatureHourlyProfit::whereUserId($user->id)->oldest('dead_line')->first();
 
