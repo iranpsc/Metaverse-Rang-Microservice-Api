@@ -110,7 +110,7 @@ function hourlyProfitInfo(User $user): int
 
     $totalDays = $profit->updated_at->diffInDays($profit->dead_line);
     $daysPassed = $profit->updated_at->diffInDays(now());
-    $elapsedPercentage = ($daysPassed / $totalDays) * 100;
+    $elapsedPercentage = ($daysPassed / $totalDays > 0 ? $totalDays : 1) * 100;
 
     return ($daysPassed > $totalDays) ? 100 : $elapsedPercentage;
 }
