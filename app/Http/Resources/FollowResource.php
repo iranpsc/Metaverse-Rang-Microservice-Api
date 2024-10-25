@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Morilog\Jalali\Jalalian;
 
 class FollowResource extends JsonResource
 {
@@ -19,8 +18,8 @@ class FollowResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
-            'profile_photos' => $this->profilePhotos->last()?->url ?? [],
-            'level' => $this->level?->slug,
+            'profile_photos' => $this->latestProfilePhoto?->url ?? [],
+            'level' => $this->latestLevel?->slug ?? '',
             'online' => $this->isOnline(),
         ];
     }

@@ -311,7 +311,7 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
     }
 
     /**
-     * Get the user's following.
+     * Get users who the user is following.
      *
      * @return BelongsToMany
      */
@@ -328,16 +328,6 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class);
-    }
-
-    /**
-     * Get the user's recieved tickets.
-     *
-     * @return HasMany
-     */
-    public function recievedTickets(): HasMany
-    {
-        return $this->hasMany(Ticket::class, 'reciever_id');
     }
 
     /**

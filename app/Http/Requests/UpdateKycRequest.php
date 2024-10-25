@@ -47,4 +47,16 @@ class UpdateKycRequest extends FormRequest
             'verify_text_id' => 'required|integer|exists:kyc_verify_texts,id',
         ];
     }
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'birthdate' => jalali_to_carbon($this->birthdate)->format('Y-m-d'),
+        ]);
+    }
 }
