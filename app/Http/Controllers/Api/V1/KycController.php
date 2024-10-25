@@ -33,7 +33,7 @@ class KycController extends Controller
      */
     public function update(UpdateKycRequest $request)
     {
-        $kycData = $request->only(['fname', 'lname', 'melli_code', 'birthdate', 'province', 'verify_text_id']);
+        $kycData = $request->only(['fname', 'lname', 'melli_code', 'birthdate', 'province', 'verify_text_id', 'status', 'errors']);
 
         if ($request->hasFile('melli_card')) {
             $kycData['melli_card'] = url('uploads/' . $request->file('melli_card')->store('kyc', 'public'));
