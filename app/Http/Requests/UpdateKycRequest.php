@@ -57,6 +57,8 @@ class UpdateKycRequest extends FormRequest
     {
         $this->merge([
             'birthdate' => jalali_to_carbon($this->birthdate)->format('Y-m-d'),
+            'status' => 0,
+            'errors' => null,
         ]);
     }
 }

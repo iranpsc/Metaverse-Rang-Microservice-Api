@@ -33,27 +33,23 @@ class KycController extends Controller
      */
     public function update(UpdateKycRequest $request)
     {
-        $kyc = $request->user()->kyc ?? new Kyc();
+        $kycData = $request->only(['fname', 'lname', 'melli_code', 'birthdate', 'province', 'verify_text_id']);
 
         if ($request->hasFile('melli_card')) {
-            $kyc->melli_card = url('uploads/' . $request->file('melli_card')->store('kyc', 'public'));
+            $kycData['melli_card'] = url('uploads/' . $request->file('melli_card')->store('kyc', 'public'));
         }
 
         if ($request->has('video')) {
             $originalPath = storage_path('app/' . $request->video['path'] . '/' . $request->video['name']);
-
             rename($originalPath, storage_path('app/public/kyc/' . $request->video['name']));
-
-            $kyc->video = url('uploads/kyc/' . $request->video['name']);
+            $kycData['video'] = url('uploads/kyc/' . $request->video['name']);
         }
 
-        $kyc->errors = null;
-        $kyc->status = 0;
+        $kyc = Kyc::updateOrCreate(
+            ['user_id' => $request->user()->id],
+            $kycData
+        );
 
-        $kyc->fill($request->only(['fname', 'lname', 'melli_code', 'birthdate', 'province', 'verify_text_id']));
-
-        $kyc->save();
-
-        return response()->json([]);
+        return new KycResource($kyc->refresh());
     }
 }
