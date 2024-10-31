@@ -104,13 +104,15 @@ class UserController extends Controller
      */
     public function getProfile(User $user)
     {
-        $profileLimitation = ProfileLimitation::where('limiter_user_id', auth()->id())
-            ->where('limited_user_id', $user->id)
-            ->first();
+        $profileLimitation = request()->attributes->get('profileLimitation');
 
-        $user->load(['profilePhotos', 'settings:id,user_id,privacy', 'kyc' => function ($query) {
+        $user->load(['settings:id,user_id,privacy', 'kyc' => function ($query) {
             $query->where('status', 1)->select('id', 'user_id', 'fname', 'lname');
         }])->loadCount(['followers', 'following']);
+
+        if ($profileLimitation && $profileLimitation->options['view_profile_images'] == 1) {
+            $user->load('profilePhotos');
+        }
 
         return new ProfileResource($user);
     }
@@ -166,20 +168,20 @@ class UserController extends Controller
      */
     public function getProfileLimitations(User $user)
     {
-        if ($user->id === auth()->id()) {
-            $profileLimitation = ProfileLimitation::where('limited_user_id', $user->id)
-                ->where('limiter_user_id', auth()->id())
-                ->first();
-        } else {
-            $profileLimitation = ProfileLimitation::where('limiter_user_id', auth()->id())
-                ->where('limited_user_id', $user->id)
-                ->orWhere('limiter_user_id', $user->id)
-                ->where('limited_user_id', auth()->id())
-                ->first();
+        $profileLimitation = ProfileLimitation::where(function ($query) use ($user) {
+            $query->where('limited_user_id', $user->id)
+                ->where('limiter_user_id', auth()->id());
+        })->orWhere(function ($query) use ($user) {
+            $query->where('limiter_user_id', $user->id)
+                ->where('limited_user_id', auth()->id());
+        })->first();
+
+        if (is_null($profileLimitation)) {
+            return response()->json([
+                'data' => []
+            ]);
         }
 
-        return $profileLimitation ?
-            new ProfileLimitationResource($profileLimitation)
-            : response()->json(null, 204);
+        return new ProfileLimitationResource($profileLimitation);
     }
 }

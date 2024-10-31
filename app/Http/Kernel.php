@@ -22,6 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\SecurityHeaders::class,
+        \App\Http\Middleware\ConvertPersianNumbersToLatin::class,
     ];
 
     /**
@@ -67,6 +68,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'account.security' => \App\Http\Middleware\AccountSecurity::class,
         'activity' => \App\Http\Middleware\Activity::class,
+        'check.profile.limitation' => \App\Http\Middleware\CheckProfileLimitation::class,
     ];
 
     /**

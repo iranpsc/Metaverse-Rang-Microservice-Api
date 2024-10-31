@@ -16,7 +16,6 @@ use Morilog\Jalali\Jalalian;
  */
 function jalali_to_carbon($date): Carbon
 {
-    $date = \Morilog\Jalali\CalendarUtils::convertNumbers($date, true);
     return Jalalian::fromFormat('Y/m/d', $date)->toCarbon();
 }
 
@@ -30,7 +29,6 @@ function jalali_to_carbon($date): Carbon
 function jalali_date_time_to_carbon($dateTime): Carbon
 {
     try {
-        $dateTime = \Morilog\Jalali\CalendarUtils::convertNumbers($dateTime, true);
         return Jalalian::fromFormat('Y/m/d H:i:s', $dateTime)->toCarbon();
     } catch (\Exception $e) {
         throw new \Exception('Invalid date time format.');
@@ -110,6 +108,10 @@ function hourlyProfitInfo(User $user)
 
     $totalSeconds = $profit->updated_at->diffInSeconds($profit->dead_line);
     $secondsPassed = $profit->updated_at->diffInSeconds(now());
+
+    if($secondsPassed >= $totalSeconds) {
+        return 0.0;
+    }
 
     $elapsedPercentage = ($secondsPassed / $totalSeconds) * 100.0;
 
