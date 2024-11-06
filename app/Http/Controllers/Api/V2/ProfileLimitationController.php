@@ -39,7 +39,7 @@ class ProfileLimitationController extends Controller
             'note' => $request->note
         ]);
 
-        return new profileLimitationResource($profileLimitation);
+        return new ProfileLimitationResource($profileLimitation);
     }
 
     /**
@@ -60,7 +60,7 @@ class ProfileLimitationController extends Controller
 
         $profileLimitation->update($request->only('options', 'note'));
 
-        return new profileLimitationResource($profileLimitation);
+        return new ProfileLimitationResource($profileLimitation);
     }
 
     /**

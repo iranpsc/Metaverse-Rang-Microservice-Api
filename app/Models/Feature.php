@@ -117,7 +117,7 @@ class Feature extends Model
      */
     function hasPendingRequests()
     {
-        return $this->sellRequests
+        return $this->sellRequests()
             ->where('seller_id', $this->owner_id)
             ->where('status', 0)->exists();
     }
