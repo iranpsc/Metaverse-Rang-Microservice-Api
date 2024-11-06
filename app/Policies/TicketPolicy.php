@@ -43,16 +43,18 @@ class TicketPolicy
      */
     public function create(User $user)
     {
-        $profileLimitation = ProfileLimitation::where('limiter_user_id', request()->input('reciever'))
-            ->where('limited_user_id', $user->id)
-            ->orWhere('limiter_user_id', request()->input('reciever'))
-            ->where('limited_user_id', request()->input('reciever'))
-            ->first();
+        $recieverId = request()->input('reciever');
 
-        if ($profileLimitation) {
-            if (!$profileLimitation->options['send_ticket']) {
-                return Response::deny('کاربر مورد نظر امکان دریافت سند از شما را غیر فعال کرده است..', 403);
-            }
+        $profileLimitation = ProfileLimitation::where(function ($query) use ($user, $recieverId) {
+            $query->where('limiter_user_id', $recieverId)
+                  ->where(function ($query) use ($user, $recieverId) {
+                      $query->where('limited_user_id', $user->id)
+                            ->orWhere('limited_user_id', $recieverId);
+                  });
+        })->first();
+
+        if ($profileLimitation && !$profileLimitation->options['send_ticket']) {
+            return Response::deny('کاربر مورد نظر امکان دریافت سند از شما را غیر فعال کرده است.', 403);
         }
 
         return Response::allow();

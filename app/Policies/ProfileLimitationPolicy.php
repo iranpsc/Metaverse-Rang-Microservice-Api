@@ -19,8 +19,9 @@ class ProfileLimitationPolicy
     public function create(User $user)
     {
         $limitedUserId = request()->input('limited_user_id');
+
         return ProfileLimitation::where('limiter_user_id', $user->id)
-        ->where('limited_user_id', $limitedUserId)->doesntExist();
+            ->where('limited_user_id', $limitedUserId)->doesntExist();
     }
 
     /**
@@ -32,7 +33,7 @@ class ProfileLimitationPolicy
      */
     public function update(User $user, ProfileLimitation $profileLimitation)
     {
-        return $user->id === $profileLimitation->limiter_user_id;
+        return $profileLimitation->limiterUser->is($user);
     }
 
     /**
@@ -44,6 +45,6 @@ class ProfileLimitationPolicy
      */
     public function delete(User $user, ProfileLimitation $profileLimitation)
     {
-        return $user->id === $profileLimitation->limiter_user_id;
+        return $profileLimitation->limiterUser->is($user);
     }
 }
