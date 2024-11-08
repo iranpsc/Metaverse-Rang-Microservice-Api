@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ReportRequest;
 use App\Http\Resources\ReportResource;
 use App\Models\Report;
+
 class ReportController extends Controller
 {
     /**
@@ -15,7 +16,11 @@ class ReportController extends Controller
      */
     public function index()
     {
-        return ReportResource::collection(request()->user()->reports);
+        $reports = Report::whereBelongsTo(request()->user())
+            ->select('id', 'user_id', 'title', 'subject', 'status', 'created_at')
+            ->simplePaginate(10);
+
+        return ReportResource::collection($reports);
     }
 
     /**
@@ -26,6 +31,8 @@ class ReportController extends Controller
      */
     public function show(Report $report)
     {
+        $report->load('image');
+
         return new ReportResource($report);
     }
 
@@ -37,16 +44,18 @@ class ReportController extends Controller
      */
     public function store(ReportRequest $request)
     {
-        $report = $request->user()->reports()->create([
-            'subject' => $request->subject,
-            'title'   => $request->title,
-            'content' => $request->content,
-            'url'     => $request->url
-        ]);
+        $report = $request->user()->reports()->create($request->only([
+            'subject',
+            'title',
+            'content',
+            'url'
+        ]));
 
-        if($request->hasFile('attachment')) {
+        if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
+
             $url = $file->store('public/reports');
+
             $report->image()->create([
                 'url' => $url
             ]);
@@ -54,5 +63,4 @@ class ReportController extends Controller
 
         return new ReportResource($report);
     }
-
 }

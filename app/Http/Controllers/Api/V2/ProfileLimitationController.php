@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\profileLimitationResource;
+use App\Http\Resources\ProfileLimitationResource;
 use App\Models\ProfileLimitation;
 use Illuminate\Http\Request;
 

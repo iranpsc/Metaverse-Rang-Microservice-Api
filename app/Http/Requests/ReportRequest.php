@@ -26,7 +26,7 @@ class ReportRequest extends FormRequest
         return [
             'subject' => 'required|string|in:displayError,spellingError,codingError,FPSError,disrespect',
             'title' => 'required|string|max:130',
-            'content' => 'required|string|max:500',
+            'content' => 'required|string|max:2000',
             'url'     => 'required|active_url',
             'attachment' => 'nullable|file|mimes:png,jpg,pdf,jpeg|max:1024'
         ];

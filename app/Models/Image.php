@@ -9,8 +9,16 @@ class Image extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var string[]
+     */
     protected $fillable = ['url'];
 
+    /**
+     * Get the owning imageable model.
+     */
     public function imageable()
     {
         return $this->morphTo();

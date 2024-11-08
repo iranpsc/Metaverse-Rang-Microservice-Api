@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Morilog\Jalali\Jalalian;
 
 class ReportResource extends JsonResource
 {
@@ -20,12 +19,13 @@ class ReportResource extends JsonResource
             'title' => $this->title,
             'url' => $this->url,
             'subject' => $this->subject,
-            $this->mergeWhen(request()->routeIs('reports.show'), [
-                'content' => $this->content,
-                'attachment' => $this->image?->url,
-            ]),
-            'date' => Jalalian::forge($this->created_at)->format('Y/m/d'),
-            'time' => Jalalian::forge($this->created_at)->format('H:m:s'),
+            'content' => $this->whenNotNull($this->content, function () {
+                return $this->content;
+            }),
+            'attachment' => $this->whenLoaded('image', function () {
+                return $this->image->url;
+            }),
+            'date' => jdate($this->created_at)->format('Y/m/d'),
         ];
     }
 }
