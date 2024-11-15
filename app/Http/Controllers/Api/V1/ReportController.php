@@ -55,7 +55,7 @@ class ReportController extends Controller
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
 
-            $url = $file->store('public/reports');
+            $url = $file->store('reports', 'public');
 
             $report->image()->create([
                 'url' => $url
