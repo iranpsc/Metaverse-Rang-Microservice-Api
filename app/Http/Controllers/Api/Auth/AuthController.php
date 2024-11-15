@@ -187,7 +187,7 @@ class AuthController extends Controller
         $user->load([
             'settings:id,user_id,automatic_logout',
             'profilePhotos',
-            'kyc:id,user_id,status,birthdate',
+            'kyc:id,user_id,fname,lname,status,birthdate',
             'unreadNotifications'
         ]);
 
