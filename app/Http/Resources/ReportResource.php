@@ -25,7 +25,7 @@ class ReportResource extends JsonResource
             'attachment' => $this->whenLoaded('image', function () {
                 return $this->image->url;
             }),
-            'date' => jdate($this->created_at)->format('Y/m/d'),
+            'datetime' => jdate($this->created_at)->format('Y/m/d H:i:s'),
         ];
     }
 }

@@ -18,6 +18,7 @@ class ReportController extends Controller
     {
         $reports = Report::whereBelongsTo(request()->user())
             ->select('id', 'user_id', 'title', 'subject', 'status', 'created_at')
+            ->latest()
             ->simplePaginate(10);
 
         return ReportResource::collection($reports);
