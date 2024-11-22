@@ -12,6 +12,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Feature extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $fillable = [
         'map_id',
         'type',
@@ -265,6 +270,11 @@ class Feature extends Model
         };
     }
 
+    /**
+     * Get the feature's coordinates.
+     *
+     * @return string
+     */
     public function getCoordinates()
     {
         return implode('|', $this->geometry->coordinates->map(function ($coordinate) {
@@ -272,6 +282,11 @@ class Feature extends Model
         })->toArray());
     }
 
+    /**
+     * Get the feature's karbari coefficient.
+     *
+     * @return float
+     */
     public function getKarbariCoefficient()
     {
         return match ($this->properties->karbari) {

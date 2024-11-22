@@ -18,38 +18,32 @@ class FeatureResource extends JsonResource
         return [
             'id' => $this->id,
             'owner_id' => $this->owner_id,
-            'properties' => [
-                'id' => $this->properties->id,
-                'address' => $this->properties->address,
-                'density' => $this->properties->density,
-                'label' => $this->properties->label,
-                'karbari' => $this->properties->karbari,
-                'area' => $this->properties->area,
-                'stability' => $this->properties->stability,
-                'region' => $this->properties->region,
-                'owner' => $this->properties->owner,
-                'rgb' => $this->properties->rgb,
-                'price_psc' => $this->properties->price_psc,
-                'price_irr' => $this->properties->price_irr,
-                'date' => $this->latestTraded?->created_at,
-                'minimum_price_percentage' => $this->properties->minimum_price_percentage,
-            ],
-            'images' => $this->images?->map(function ($image) {
+            'properties' => $this->whenLoaded('properties', new FeaturePropertiesResource($this->properties)),
+            'images' => $this->whenLoaded('images', FeatureImageResource::collection($this->images)),
+            'seller' => $this->whenLoaded('latestTraded', function () {
                 return [
-                    'id' => $image->id,
-                    'url' => $image->url,
+                    'id' => $this->latestTraded->seller->id,
+                    'code' => $this->latestTraded->seller->code,
+                    'name' => $this->latestTraded->seller->name,
                 ];
             }),
-            $this->mergeWhen($this->latestTraded, [
-                'seller' => [
-                    'id' => $this->latestTraded->seller->id ?? "",
-                    'code' => $this->latestTraded->seller->code ?? "",
-                ],
-            ]),
-            $this->mergeWhen(!is_null($this->hourlyProfit), [
-                'is_hourly_profit_active' => $this->hourlyProfit?->is_active,
-            ]),
-            'geometry' => $this->geometry->coordinates,
+            'is_hourly_profit_active' => $this->whenLoaded('hourlyProfit', function () {
+                return $this->hourlyProfit->is_active;
+            }) ?? false,
+            'geometry' => $this->whenLoaded('geometry', function () {
+                return $this->geometry->coordinates;
+            }),
+            'construction_status' => $this->whenLoaded('buildingModels', function () {
+                return $this->buildingModels->map(function ($buildingModel) {
+                    return [
+                        'model_id' => $buildingModel->id,
+                        'name' => $buildingModel->name,
+                        'file' => $buildingModel->file,
+                        'images' => $buildingModel->images,
+                        'status' => $buildingModel->building->construction_end_date < now() ? 'completed' : 'in progress',
+                    ];
+                });
+            }),
 
         ];
     }

@@ -25,7 +25,8 @@ class Kyc extends Model
         'errors',
         'verify_text_id',
         'video',
-        'birthdate'
+        'birthdate',
+        'gender'
     ];
 
     /**

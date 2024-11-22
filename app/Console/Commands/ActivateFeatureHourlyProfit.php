@@ -34,7 +34,7 @@ class ActivateFeatureHourlyProfit extends Command
 
                 $feature->load('dynasty:id,feature_id', 'hourlyProfit:id,feature_id,is_active');
 
-                if ($feature->dynasty->count() > 0) {
+                if ($feature->dynasty) {
                     $feature->hourlyProfit->update(['is_active' => true]);
                 }
             }

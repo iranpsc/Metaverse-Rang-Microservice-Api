@@ -105,6 +105,6 @@ class TicketPolicy
      */
     public function close(User $user, Ticket $ticket)
     {
-        return $ticket->user->is($user) && $ticket->isOpen();
+        return $ticket->sender->is($user) && $ticket->isOpen();
     }
 }

@@ -14,6 +14,16 @@ class PrizeResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'level_id' => $this->level_id,
+            'psc' => $this->psc,
+            'yellow' => $this->yellow,
+            'blue' => $this->blue,
+            'red' => $this->red,
+            'effect' => $this->effect,
+            'satisfaction' => number_format($this->satisfaction, 2),
+            'created_at' => jdate($this->created_at)->format('Y/m/d H:i:s'),
+        ];
     }
 }

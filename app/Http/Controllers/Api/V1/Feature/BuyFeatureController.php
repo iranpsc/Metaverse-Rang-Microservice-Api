@@ -57,13 +57,17 @@ class BuyFeatureController extends Controller
      */
     public function show(Feature $feature)
     {
-        return new FeatureResource($feature->load([
+        $feature->load([
             'properties',
             'images',
-            'latestTraded',
+            'latestTraded.seller',
             'hourlyProfit:id,feature_id,is_active',
-            'geometry.coordinates',
-        ]));
+            'buildingModels' => function ($query) {
+                $query->withPivot('construction_end_date');
+            }
+        ]);
+
+        return new FeatureResource($feature);
     }
 
     /**

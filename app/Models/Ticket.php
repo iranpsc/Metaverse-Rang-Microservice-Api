@@ -87,7 +87,8 @@ class Ticket extends Model
      *
      * @return bool
      */
-    public function isOpen() {
+    public function isOpen()
+    {
         return $this->status !== static::CLOSED;
     }
 

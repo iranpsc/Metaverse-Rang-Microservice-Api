@@ -46,42 +46,33 @@ class FeatureRepository extends Repository
             'load_buildings' => 'nullable|boolean',
         ]);
 
-        $points = [];
+        $points = array_map(function ($point) {
+            return explode(',', $point);
+        }, $request->points);
 
-        // Split the points into x and y coordinates
-        for ($i = 0; $i < count($request->points); $i++) {
-            $points[$i] = explode(',', $request->points[$i]);
-        }
-
-        // Find the existing geometries within the specified range of coordinates
         $existingGeometries = Coordinate::whereBetween('x', [
             $points[0][0],
             $points[1][0]
-        ])
-            ->whereBetween('y', [
-                $points[0][1],
-                $points[2][1]
-            ])
-            ->distinct('geometry_id')
+        ])->whereBetween('y', [
+            $points[0][1],
+            $points[2][1]
+        ])->distinct('geometry_id')
             ->pluck('geometry_id');
 
-        // Retrieve the features with their properties and coordinates, filtering by existing geometries
-        $features =  Feature::whereIn('id', $existingGeometries)
+        $featuresQuery = Feature::whereIn('id', $existingGeometries)
             ->selectRaw('id, owner_id as owner')
             ->with([
                 'properties:id,feature_id,rgb',
                 'geometry.coordinates:id,geometry_id,x,y'
-            ])
-            ->get();
-
-        // If the request specifies to include buildings, load the building models
+            ]);
+            
         if ($request->boolean('load_buildings')) {
-            $features->load(['buildingModels' => function ($query) {
+            $featuresQuery->with(['buildingModels' => function ($query) {
                 $query->select('building_models.id', 'building_models.model_id', 'building_models.file')
                     ->withPivot('construction_start_date', 'construction_end_date', 'rotation', 'position');
             }]);
         }
 
-        return $features;
+        return $featuresQuery->get();
     }
 }

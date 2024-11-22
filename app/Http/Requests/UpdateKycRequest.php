@@ -45,6 +45,7 @@ class UpdateKycRequest extends FormRequest
             'melli_card' => 'required|image|max:5000',
             'video' => 'required|array',
             'verify_text_id' => 'required|integer|exists:kyc_verify_texts,id',
+            'gender' => 'required|string|in:male,female,other',
         ];
     }
 

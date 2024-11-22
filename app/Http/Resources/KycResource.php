@@ -25,6 +25,7 @@ class KycResource extends JsonResource
             'status' => $this->status,
             'video' => $this->video,
             'errors' => $this->whenNotNull($this->errors),
+            'gender' => $this->gender,
         ];
     }
 }
