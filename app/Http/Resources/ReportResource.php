@@ -23,6 +23,11 @@ class ReportResource extends JsonResource
             'attachment' => $this->whenLoaded('image', function () {
                 return url('uploads/' . $this->image->url);
             }),
+            'attachments' => $this->whenLoaded('images', function () {
+                return $this->images->map(function ($image) {
+                    return url('uploads/' . $image->url);
+                });
+            }),
             'datetime' => jdate($this->created_at)->format('Y/m/d H:i:s'),
         ];
     }

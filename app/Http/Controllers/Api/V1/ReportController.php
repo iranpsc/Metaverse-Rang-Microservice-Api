@@ -53,13 +53,10 @@ class ReportController extends Controller
         ]));
 
         if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-
-            $url = $file->store('reports', 'public');
-
-            $report->image()->create([
-                'url' => $url
-            ]);
+            foreach ($request->file('attachment') as $file) {
+                $url = $file->store('reports', 'public');
+                $report->images()->create(['url' => $url]);
+            }
         }
 
         return new ReportResource($report);

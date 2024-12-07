@@ -41,4 +41,14 @@ class Report extends Model
     {
         return $this->morphOne(Image::class, 'imageable');
     }
+
+    /**
+     * Get the images associated with the Report
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
 }

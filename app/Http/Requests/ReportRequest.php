@@ -28,7 +28,8 @@ class ReportRequest extends FormRequest
             'title' => 'required|string|max:130',
             'content' => 'required|string|max:2000',
             'url'     => 'required|active_url',
-            'attachment' => 'nullable|file|mimes:png,jpg,pdf,jpeg|max:1024'
+            'attachment' => 'nullable|array|max:5',
+            'attachment.*' => 'file|mimes:png,jpg,pdf,jpeg|max:1024'
         ];
     }
 }
