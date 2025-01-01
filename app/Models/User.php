@@ -235,7 +235,7 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
     {
         return $this->hasManyThrough(
             __CLASS__,
-            Referal::class,
+            Referral::class,
             'reference_id',
             'id',
             'id',
@@ -262,8 +262,8 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
     {
         return $this->hasOneThrough(
             __CLASS__,
-            Referal::class,
-            'referer_id',
+            Referral::class,
+            'referrer_id',
             'id',
             'id',
             'reference_id'
@@ -271,13 +271,13 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
     }
 
     /**
-     * Get referal orders of the user.
+     * Get referral orders of the user.
      *
      * @return HasMany
      */
-    public function referalOrderHistories(): HasMany
+    public function referralOrderHistories(): HasMany
     {
-        return $this->hasMany(ReferalOrderHistory::class, 'reference_id');
+        return $this->hasMany(ReferralOrderHistory::class, 'reference_id');
     }
 
     /**

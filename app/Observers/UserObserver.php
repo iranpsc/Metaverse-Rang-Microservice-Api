@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Levels\Level;
 use App\Models\Variable;
 use Illuminate\Auth\Events\Registered;
-use App\Models\Referal;
+use App\Models\Referral;
 
 class UserObserver
 {
@@ -41,9 +41,9 @@ class UserObserver
         if (request()->referral) {
             $reference_user = User::where('code', request()->referral)->select('id')->first();
 
-            Referal::create([
+            Referral::create([
                 'reference_id' => $reference_user->id,
-                'referer_id' => $user->id,
+                'referrer_id' => $user->id,
             ]);
         }
 

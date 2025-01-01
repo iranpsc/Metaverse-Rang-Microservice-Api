@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ReferalOrderHistory extends Model
+class Referral extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['reference_id', 'referer_id', 'amount'];
+    protected $fillable = ['reference_id','referrer_id'];
 }

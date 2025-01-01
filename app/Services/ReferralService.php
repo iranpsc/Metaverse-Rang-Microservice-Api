@@ -6,7 +6,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Models\Variable;
 
-class ReferalService
+class ReferralService
 {
     /**
      * Handle referral when an order is placed.
@@ -15,7 +15,7 @@ class ReferalService
      * @param Order $order
      * @return void
      */
-    public static function referal(User $user, Order $order)
+    public static function referral(User $user, Order $order)
     {
         // Check if the user has a reference
         if ($user->has_reference()) {
@@ -48,8 +48,8 @@ class ReferalService
             $reference->wallet->increment('psc', $referer_amount);
 
             // Create a new referal order history entry
-            $reference->referalOrderHistories()->create([
-                'referer_id' => $user->id,
+            $reference->referralOrderHistories()->create([
+                'referrer_id' => $user->id,
                 'amount' => $referer_amount,
             ]);
         }

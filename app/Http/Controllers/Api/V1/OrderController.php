@@ -8,7 +8,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Models\Variable;
 use App\Notifications\TransactionNotification;
-use App\Services\ReferalService;
+use App\Services\ReferralService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -137,7 +137,7 @@ class OrderController extends Controller
 
                 // Check if the order asset is not IRR
                 if ($order->asset !== 'irr') {
-                    ReferalService::referal($user, $order);
+                    ReferralService::referral($user, $order);
                 }
 
                 $user->notify(new TransactionNotification($order));
