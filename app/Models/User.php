@@ -231,7 +231,16 @@ class User extends Authenticatable implements MustVerifyEmail, Sitemapable
      */
     public function referrals()
     {
-        return $this->hasMany(User::class, 'referrer_id');
+        return $this->hasManyThrough(
+            __CLASS__,
+            Referral::class,
+            'reference_id',
+            'id',
+            'id',
+            'referrer_id'
+        );
+
+        // return $this->hasMany(User::class, 'referrer_id');
     }
 
     /**
