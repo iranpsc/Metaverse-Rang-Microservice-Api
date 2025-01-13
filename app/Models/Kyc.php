@@ -40,6 +40,15 @@ class Kyc extends Model
     ];
 
     /**
+     * The attributes with default values.
+     *
+     * @var array<string>
+     */
+    protected $attributes = [
+        'status' => 0,
+    ];
+
+    /**
      * Get the user's full name.
      *
      * @return string
