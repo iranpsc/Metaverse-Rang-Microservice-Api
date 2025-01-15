@@ -22,7 +22,7 @@ class KycController extends Controller
             return new KycResource($kyc);
         }
 
-        return response()->json([], 204);
+        return response()->json([]);
     }
 
     /**
