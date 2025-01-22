@@ -18,8 +18,8 @@ class FeatureResource extends JsonResource
         return [
             'id' => $this->id,
             'owner_id' => $this->owner_id,
-            'properties' => $this->whenLoaded('properties', new FeaturePropertiesResource($this->properties)),
-            'images' => $this->whenLoaded('images', FeatureImageResource::collection($this->images)),
+            'properties' => new FeaturePropertiesResource($this->whenLoaded('properties')),
+            'images' => FeatureImageResource::collection($this->whenLoaded('images')),
             'seller' => $this->whenLoaded('latestTraded', function () {
                 return [
                     'id' => $this->latestTraded->seller->id,

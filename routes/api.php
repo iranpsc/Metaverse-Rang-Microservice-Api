@@ -136,6 +136,7 @@ Route::middleware(['auth:sanctum', 'verified', 'activity'])->group(function () {
             Route::delete('/delete/{buyFeatureRequest}', 'destroy')->can('delete', 'buyFeatureRequest');
             Route::post('/accept/{buyFeatureRequest}', 'acceptBuyRequest')->can('accept', 'buyFeatureRequest');
             Route::post('/reject/{buyFeatureRequest}', 'rejectBuyRequest')->can('reject', 'buyFeatureRequest');
+            Route::post('/add-grace-period/{buyFeatureRequest}', 'addGracePeriod')->can('addGracePeriod', 'buyFeatureRequest');
         });
     });
 

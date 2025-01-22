@@ -28,14 +28,19 @@ class BuyRequestsController extends Controller
     {
         $this->middleware(['account.security', 'verified'])->except(['index', 'recievedBuyRequests']);
     }
+
     /**
      * Display a listing of the Features.
      *
-     * @return Response
+     * @return BuyRequestResource
      */
     public function index()
     {
-        return BuyRequestResource::collection(request()->user()->buyRequests);
+        $buyRequests = BuyFeatureRequest::whereBelongsTo(request()->user(), 'buyer')
+            ->with('feature.coordinates', 'feature.properties')
+            ->get();
+
+        return BuyRequestResource::collection($buyRequests);
     }
 
     /**
@@ -46,7 +51,7 @@ class BuyRequestsController extends Controller
     public function store(BuyFeatureRequestValidate $request, Feature $feature): JsonResponse|BuyRequestResource
     {
         // Get the buyer and seller from the request
-        $buyer = request()->user();
+        $buyer = $request->user();
         $seller = $feature->owner;
 
         // Get the prices from the request
@@ -142,15 +147,22 @@ class BuyRequestsController extends Controller
     }
 
     /**
-     * @param BuyFeatureRequest $buyFeatureRequest
-     * @return JsonResponse|BuyRequestResource
+     * Display a listing of the received buy requests.
+     *
+     * @return BuyRequestResource
      */
     public function recievedBuyRequests()
     {
-        return BuyRequestResource::collection(request()->user()->recievedBuyRequests);
+        $receivedBuyRequests = BuyFeatureRequest::whereBelongsTo(request()->user(), 'seller')
+            ->with('feature.coordinates', 'feature.properties')
+            ->get();
+
+        return BuyRequestResource::collection($receivedBuyRequests);
     }
 
     /**
+     * Accept the buy request
+     *
      * @param BuyFeatureRequest $buyFeatureRequest
      * @return JsonResponse|BuyRequestResource
      */
@@ -250,6 +262,8 @@ class BuyRequestsController extends Controller
     }
 
     /**
+     * Reject the buy request
+     *
      * @param BuyFeatureRequest $buyFeatureRequest
      * @return JsonResponse
      */

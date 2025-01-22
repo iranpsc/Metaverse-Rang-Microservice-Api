@@ -21,6 +21,9 @@ class SellRequestResource extends JsonResource
             'price_psc' => $this->price_psc,
             'price_irr' => $this->price_irr,
             'status' => $this->status,
+            'feature_properties' => new FeaturePropertiesResource($this->whenLoaded('feature.properties')),
+            'feature_coordinates' => new CoordinatesResource($this->whenLoaded('feature.coordinates')),
+            'created_at' => jdate($this->created_at)->format('Y/m/d'),
         ];
     }
 }

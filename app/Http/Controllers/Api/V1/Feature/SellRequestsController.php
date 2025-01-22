@@ -26,7 +26,11 @@ class SellRequestsController extends Controller
      */
     public function index()
     {
-        return SellRequestResource::collection(request()->user()->sellRequests);
+        $sellRequests = SellFeatureRequest::whereBelongsTo(request()->user(), 'seller')
+            ->with('feature.coordinates', 'feature.properties')
+            ->get();
+
+        return SellRequestResource::collection($sellRequests);
     }
 
     /**

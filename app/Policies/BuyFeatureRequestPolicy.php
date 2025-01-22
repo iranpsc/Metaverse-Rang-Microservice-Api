@@ -20,4 +20,8 @@ class BuyFeatureRequestPolicy
     public function accept(User $user, BuyFeatureRequest $buyFeatureRequest) {
         return $buyFeatureRequest->seller->is($user) && $buyFeatureRequest->status === 0;
     }
+
+    public function addGracePeriod(User $user, BuyFeatureRequest $buyFeatureRequest) {
+        return $buyFeatureRequest->seller->is($user) && $buyFeatureRequest->status === 0;
+    }
 }
