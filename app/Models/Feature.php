@@ -48,7 +48,7 @@ class Feature extends Model
     /**
      * The properties that belong to the feature.
      *
-     * @return BelongsToMany
+     * @return HasOne
      */
     public function properties()
     {
@@ -58,7 +58,7 @@ class Feature extends Model
     /**
      * The geometry that belong to the feature.
      *
-     * @return BelongsToMany
+     * @return HasOne
      */
     public function geometry()
     {
@@ -68,7 +68,7 @@ class Feature extends Model
     /**
      * The coordinates that belong to the feature.
      *
-     * @return BelongsToMany
+     * @return HasManyThrough
      */
     public function coordinates()
     {

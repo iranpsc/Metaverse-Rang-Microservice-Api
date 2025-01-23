@@ -33,7 +33,7 @@ class BuyRequestResource extends JsonResource
             'note' => $this->note,
             'price_psc' => $this->price_psc,
             'price_irr' => $this->price_irr,
-            'feature_properties' => FeaturePropertiesResource::collection($this->whenLoaded('feature.properties')),
+            'feature_properties' => new FeaturePropertiesResource($this->whenLoaded('feature.properties')),
             'feature_coordinates' => CoordinatesResource::collection($this->whenLoaded('feature.coordinates')),
             'created_at' => jdate($this->created_at)->format('Y/m/d'),
             'requested_grace_period' => jdate($this->requested_grace_period)->format('Y/m/d H:i:s'),
