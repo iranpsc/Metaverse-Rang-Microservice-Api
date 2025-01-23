@@ -488,26 +488,4 @@ class BuyFeatureController extends Controller
             }
         }
     }
-
-    /**
-     * Add grace period to a buy request
-     *
-     * @param Request $request
-     * @param BuyFeatureRequest $buyFeatureRequest
-     * @return JsonResponse
-     */
-    public function addGracePeriod(Request $request, BuyFeatureRequest $buyFeatureRequest)
-    {
-        $request->validate([
-            'grace_period' => 'required|integer|min:1|max:30'
-        ]);
-
-        $this->authorize('addGracePeriod', $buyFeatureRequest);
-
-        $buyFeatureRequest->update([
-            'requested_grace_period' => now()->addDays($request->grace_period)
-        ]);
-
-        return response()->json([], 200);
-    }
 }
