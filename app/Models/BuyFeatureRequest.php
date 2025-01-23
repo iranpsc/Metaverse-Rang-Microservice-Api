@@ -58,7 +58,7 @@ class BuyFeatureRequest extends Model
      */
     public  function seller()
     {
-        return $this->belongsTo(User::class, 'seller_id');
+        return $this->belongsTo(User::class, 'seller_id', 'id');
     }
 
     /**
@@ -68,7 +68,7 @@ class BuyFeatureRequest extends Model
      */
     public function buyer()
     {
-        return $this->belongsTo(User::class, 'buyer_id');
+        return $this->belongsTo(User::class, 'buyer_id', 'id');
     }
 
     /**
@@ -78,7 +78,7 @@ class BuyFeatureRequest extends Model
      */
     public function feature()
     {
-        return $this->belongsTo(Feature::class, 'feature_id');
+        return $this->belongsTo(Feature::class, 'feature_id', 'id');
     }
 
     /**

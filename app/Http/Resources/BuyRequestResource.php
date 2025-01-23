@@ -16,8 +16,18 @@ class BuyRequestResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'buyer_id' => $this->buyer_id,
-            'seller_id' => $this->seller_id,
+            'buyer' => $this->whenLoaded('buyer', function() {
+                return [
+                    'id' => $this->buyer->id,
+                    'code' => $this->buyer->code,
+                ];
+            }),
+            'seller' => $this->whenLoaded('seller', function() {
+                return [
+                    'id' => $this->seller->id,
+                    'code' => $this->seller->code,
+                ];
+            }),
             'feature_id' => $this->feature_id,
             'status' => $this->status,
             'note' => $this->note,
