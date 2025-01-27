@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 
-class UploadVideoController extends Controller
+class FileUploadController extends Controller
 {
     public function upload(Request $request)
     {
