@@ -41,8 +41,8 @@ class BuyRequestResource extends JsonResource
                 return $this->feature->coordinates;
             })),
             'created_at' => jdate($this->created_at)->format('Y/m/d'),
-            'requested_grace_period' => $this->whenNotNull($this->requested_grace_period, function () {
-                return jdate($this->requested_grace_period)->format('Y/m/d');
+            'requested_grace_period' => $this->when($this->requested_grace_period, function () {
+                return jdate($this->requested_grace_period)->format('Y/m/d H:i:s');
             }),
         ];
     }
