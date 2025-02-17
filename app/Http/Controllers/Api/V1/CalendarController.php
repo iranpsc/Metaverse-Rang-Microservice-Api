@@ -9,11 +9,6 @@ use App\Http\Resources\EventResource;
 
 class CalendarController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum')->only('interact');
-    }
-
     /**
      * Display a listing of the events.
      *
@@ -23,16 +18,23 @@ class CalendarController extends Controller
     public function index(Request $request)
     {
         $type = $request->query('type', 'event');
+        $search = $request->query('search', '');
         $eventsQuery = Calendar::query();
 
         switch ($type) {
             case 'version':
-                $eventsQuery = $eventsQuery->versionEvents();
+                $eventsQuery = $eventsQuery->versions();
                 break;
             case 'event':
-            default:
-                $eventsQuery = $eventsQuery->currentEvents();
+                $eventsQuery = $eventsQuery->events();
                 break;
+            default:
+                $eventsQuery = $eventsQuery->events();
+                break;
+        }
+
+        if ($search) {
+            $eventsQuery->where('title', 'like', '%' . $search . '%');
         }
 
         $events = $eventsQuery->withCount(['views', 'likes', 'dislikes'])->simplePaginate();
@@ -86,6 +88,41 @@ class CalendarController extends Controller
             'data' => [
                 'version_title' => $versionTitle
             ]
+        ]);
+    }
+
+    /**
+     * Filter events based on a date range.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function filterByDateRange(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $startDate = jalali_to_carbon($request->query('start_date'));
+        $endDate = jalali_to_carbon($request->query('end_date'));
+
+        $events = Calendar::whereBetween('starts_at', [$startDate, $endDate])
+            ->events()
+            ->select(['id', 'title', 'color', 'starts_at'])
+            ->get();
+
+        $events = $events->map(function ($event) {
+            return [
+                'id' => $event->id,
+                'title' => $event->title,
+                'starts_at' => jdate($event->starts_at)->format('Y/m/d'),
+                'color' => $event->color,
+            ];
+        });
+
+        return response()->json([
+            'data' => $events
         ]);
     }
 }

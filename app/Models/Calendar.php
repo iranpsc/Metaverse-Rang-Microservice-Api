@@ -80,24 +80,23 @@ class Calendar extends Model
     }
 
     /**
-     * Scope a query to only include current events.
+     * Scope a query to only include events.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeCurrentEvents($query)
+    public function scopeEvents($query)
     {
-        return $query->where('is_version', 0)->whereDate('ends_at', '>', now())
-            ->orderBy('starts_at', 'desc');
+        return $query->where('is_version', 0)->orderBy('starts_at', 'desc');
     }
 
     /**
-     * Scope a query to only include version events.
+     * Scope a query to only include versions.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVersionEvents($query)
+    public function scopeVersions($query)
     {
         return $query->where('is_version', 1)->orderBy('created_at', 'desc');
     }
