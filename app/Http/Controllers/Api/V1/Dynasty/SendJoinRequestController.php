@@ -165,7 +165,7 @@ class SendJoinRequestController extends Controller
                 $query->where('fname', 'like', $searchTerm)
                       ->orWhere('lname', 'like', $searchTerm);
             })
-            ->with(['kyc:id,user_id,fname,lname,birthdate', 'latestProfilePhoto'])
+            ->with(['kyc:id,user_id,fname,lname,birthdate,status', 'latestProfilePhoto'])
             ->get();
 
         return response()->json($users->map(function ($user) {
