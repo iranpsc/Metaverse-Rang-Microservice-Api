@@ -146,7 +146,7 @@ function getSubLevels($userLevel): array
 function formatCompactNumber($number): string
 {
     if ($number < 1000) {
-        return (string) $number;
+        return rtrim(rtrim(number_format($number, 3), '0'), '.');
     }
 
     $units = ['K', 'M', 'B', 'T'];
@@ -156,5 +156,5 @@ function formatCompactNumber($number): string
         $power = count($units);
     }
 
-    return number_format($number / pow(1000, $power), 1) . $units[$power - 1];
+    return rtrim(rtrim(number_format($number / pow(1000, $power), 3), '0'), '.') . $units[$power - 1];
 }
