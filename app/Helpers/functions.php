@@ -158,3 +158,34 @@ function formatCompactNumber($number): string
 
     return rtrim(rtrim(number_format($number / pow(1000, $power), 3), '0'), '.') . $units[$power - 1];
 }
+
+/**
+ * Calculate the centroid of a polygon.
+ *
+ * @param array $points An array of points representing the vertices of the polygon.
+ * Each point should be an associative array with 'x' and 'y' keys.
+ * @return array The centroid of the polygon as an associative array with 'x' and 'y' keys.
+ */
+function calculatePolygonCentroid(array $points): array
+{
+    $numPoints = count($points);
+    $centroid = ['x' => 0, 'y' => 0];
+    $signedArea = 0;
+
+    for ($i = 0; $i < $numPoints; $i++) {
+        $x0 = $points[$i]['x'];
+        $y0 = $points[$i]['y'];
+        $x1 = $points[($i + 1) % $numPoints]['x'];
+        $y1 = $points[($i + 1) % $numPoints]['y'];
+        $a = $x0 * $y1 - $x1 * $y0;
+        $signedArea += $a;
+        $centroid['x'] += ($x0 + $x1) * $a;
+        $centroid['y'] += ($y0 + $y1) * $a;
+    }
+
+    $signedArea *= 0.5;
+    $centroid['x'] /= (6 * $signedArea);
+    $centroid['y'] /= (6 * $signedArea);
+
+    return $centroid;
+}

@@ -44,6 +44,7 @@ class FeatureRepository extends Repository
             'points' => 'required|array|min:4',
             'points.*' => 'required|regex:/^([0-9]+(\.[0-9]+)?,[0-9]+(\.[0-9]+)?)$/',
             'load_buildings' => 'nullable|boolean',
+            'auth_user_features' => 'nullable|boolean',
         ]);
 
         $points = array_map(function ($point) {
@@ -65,7 +66,7 @@ class FeatureRepository extends Repository
                 'properties:id,feature_id,rgb',
                 'geometry.coordinates:id,geometry_id,x,y'
             ]);
-            
+
         if ($request->boolean('load_buildings')) {
             $featuresQuery->with(['buildingModels' => function ($query) {
                 $query->select('building_models.id', 'building_models.model_id', 'building_models.file')
