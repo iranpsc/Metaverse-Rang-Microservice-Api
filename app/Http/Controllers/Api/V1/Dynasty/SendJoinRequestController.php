@@ -163,12 +163,27 @@ class SendJoinRequestController extends Controller
             ->orWhere('code', 'like', $searchTerm)
             ->orWhereHas('kyc', function ($query) use ($searchTerm) {
                 $query->where('fname', 'like', $searchTerm)
-                      ->orWhere('lname', 'like', $searchTerm);
+                    ->orWhere('lname', 'like', $searchTerm);
             })
             ->with(['kyc:id,user_id,fname,lname,birthdate,status', 'latestProfilePhoto'])
             ->get();
 
         return response()->json($users->map(function ($user) {
+            $latestThreeLevels = $user->levels()->with('gem')->take(3)->get();
+            $user->levels = $latestThreeLevels->map(function ($level) {
+                return [
+                    'id' => $level->id,
+                    'name' => $level->name,
+                    'score' => $level->score,
+                    'image' => $level->image->url,
+                    'gem' => [
+                        'id' => $level->gem->id,
+                        'name' => $level->gem->name,
+                        'image' => $level->gem->png_file,
+                    ],
+                ];
+            });
+
             return [
                 'id'       => $user->id,
                 'code'     => $user->code,
@@ -176,6 +191,7 @@ class SendJoinRequestController extends Controller
                 'image'    => $user->latestProfilePhoto?->url,
                 'verified' => $user->verified(),
                 'age'      => $user->verified() ? (int)$user->kyc->birthdate->diffInYears(now()) : null,
+                'levels'   => $user->levels,
             ];
         }));
     }
