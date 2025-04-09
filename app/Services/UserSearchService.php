@@ -15,7 +15,7 @@ class UserSearchService
      */
     public function searchUsers(string $searchTerm): Collection
     {
-        return User::select(['id', 'code', 'name'])
+        return User::select(['id', 'code', 'name', 'score'])
             ->where('name', 'like', $searchTerm)
             ->orWhere('code', 'like', $searchTerm)
             ->orWhereHas('kyc', function ($query) use ($searchTerm) {
