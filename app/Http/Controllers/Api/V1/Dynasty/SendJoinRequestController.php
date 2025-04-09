@@ -176,7 +176,7 @@ class SendJoinRequestController extends Controller
                     'id' => $level->id,
                     'name' => $level->name,
                     'score' => $level->score,
-                    'score_gap' => $level->score - $previousLevelScore,
+                    'score_gap' => $previousLevelScore - $level->score,
                     'slug' => $level->slug,
                     'image' => $level->image->url,
                     'gem' => [
