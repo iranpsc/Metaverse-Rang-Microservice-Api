@@ -26,7 +26,7 @@ class AcceptJoinRequestController extends Controller
      */
     public function index()
     {
-        $requests = Auth::user()->recievedJoinRequests()
+        $requests = Auth::user()->receivedJoinRequests()
             ->with('fromUser')
             ->where('status', 0)
             ->latest()
