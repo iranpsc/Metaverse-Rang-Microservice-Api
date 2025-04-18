@@ -27,7 +27,16 @@ class SentRequestsResource extends JsonResource
             'relationship' => $this->getRelationShipTitle(),
             'date' => jdate($this->created_at)->format('Y/m/d'),
             'time' => jdate($this->created_at)->format('H:i'),
-            'prize' => new DynastyPrizeResource($this->whenLoaded('requestPrize')),
+            'prize' => $this->whenLoaded('requestPrize', function () {
+                return [
+                    'id' => $this->requestPrize->id,
+                    'psc' => $this->requestPrize->psc,
+                    'satisfaction' => number_format($this->requestPrize->satisfaction * 100),
+                    'introducation_profit_increase' => number_format($this->requestPrize->introducation_profit_increase * 100),
+                    'accumulated_capital_reserve' => number_format($this->requestPrize->accumulated_capital_reserve * 100),
+                    'data_storage' => number_format($this->requestPrize->data_storage * 100),
+                ];
+            }),
             $this->mergeWhen(request()->routeIs('dynasty.requests.sent.show'), [
                 'message' => $this->message,
             ]),
