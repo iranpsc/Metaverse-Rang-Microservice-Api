@@ -14,8 +14,6 @@ class EventResource extends JsonResource
      */
     public function toArray($request)
     {
-        $user = $request->user();
-
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -31,16 +29,15 @@ class EventResource extends JsonResource
                 'image' => $this->whenNotNull('image'),
                 'likes' => $this->whenCounted('likes'),
                 'dislikes' => $this->whenCounted('dislikes'),
-                'user_interaction' => $user ? [
-                    'has_liked' => $this->whenLoaded('userInteraction',
-                        fn() => $this->userInteraction && $this->userInteraction->liked === 1,
-                        false
-                    ),
-                    'has_disliked' => $this->whenLoaded('userInteraction',
-                        fn() => $this->userInteraction && $this->userInteraction->liked === 0,
-                        false
-                    ),
-                ] : null,
+                'user_interaction' => $this->whenLoaded(
+                    'userInteraction',
+                    function () {
+                        return [
+                            'has_liked' => $this->userInteraction && $this->userInteraction->liked === 1,
+                            'has_disliked' => $this->userInteraction && $this->userInteraction->liked === 0,
+                        ];
+                    }
+                )
             ]),
 
             $this->mergeWhen($this->is_version, [
