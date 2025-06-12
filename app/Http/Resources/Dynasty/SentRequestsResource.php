@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Dynasty;
 
+use App\Models\Variable;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SentRequestsResource extends JsonResource
@@ -31,7 +32,7 @@ class SentRequestsResource extends JsonResource
             'prize' => $this->whenLoaded('requestPrize', function () {
                 return [
                     'id' => $this->requestPrize->id,
-                    'psc' => $this->requestPrize->psc,
+                    'psc' => number_format($this->requestPrize->psc / Variable::getRate('psc'), 2),
                     'satisfaction' => number_format($this->requestPrize->satisfaction * 100),
                     'introducation_profit_increase' => number_format($this->requestPrize->introducation_profit_increase * 100),
                     'accumulated_capital_reserve' => number_format($this->requestPrize->accumulated_capital_reserve * 100),
