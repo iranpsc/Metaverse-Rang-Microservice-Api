@@ -15,7 +15,6 @@ use Illuminate\Queue\SerializesModels;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class SitemapGenerator implements ShouldQueue
 {
@@ -65,7 +64,7 @@ class SitemapGenerator implements ShouldQueue
         $currentUrlCount = 0;
         $totalUrls = 0;
 
-        User::with('profilePhotos')->chunk(200, function ($users) use ($citizensTemplates, &$urlsPerFile, &$currentFileIndex, &$currentUrlCount, &$totalUrls) {
+        User::chunk(200, function ($users) use ($citizensTemplates, &$urlsPerFile, &$currentFileIndex, &$currentUrlCount, &$totalUrls) {
             foreach ($users as $user) {
                 $userUrls = $this->generateUserUrls($user, $citizensTemplates);
 
@@ -123,11 +122,6 @@ class SitemapGenerator implements ShouldQueue
                     ->setLastModificationDate(Carbon::create($user->updated_at))
                     ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
                     ->setPriority(0.8);
-
-                // Add profile photos as images
-                foreach ($user->profilePhotos as $photo) {
-                    $sitemapUrl->addImage($photo->url);
-                }
 
                 $urls[] = $sitemapUrl;
             }
