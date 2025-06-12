@@ -19,9 +19,18 @@ class VideoCommentsController extends Controller
     public function index(Video $video)
     {
         $comments = $video->comments()
-            ->with(['user:id,name,code', 'user.profilePhotos' => function ($query) {
-                $query->limit(1);
-            }])
+            ->whereNull('parent_id') // Only get parent comments
+            ->with([
+                'user:id,name,code',
+                'user.profilePhotos' => function ($query) {
+                    $query->limit(1);
+                },
+                'replies' => function ($query) {
+                    $query->with(['user:id,name,code', 'user.profilePhotos' => function ($q) {
+                        $q->limit(1);
+                    }])->orderBy('created_at', 'asc');
+                }
+            ])
             ->orderByDesc('likes_count')
             ->simplePaginate(10);
         return VideoCommentResource::collection($comments);
@@ -40,7 +49,55 @@ class VideoCommentsController extends Controller
             'user_id' => $request->user()->id,
             'content' => $request->content
         ]);
-        return new VideoCommentResource($comment);
+        return (new VideoCommentResource($comment))->response()->setStatusCode(201);
+    }
+
+    /**
+     * Store a reply to a comment.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Video  $video
+     * @param  \App\Models\Comment  $comment
+     * @return \Illuminate\Http\Response
+     */
+    public function storeReply(Request $request, Video $video, Comment $comment)
+    {
+        $this->authorize('reply', $comment);
+        $request->validate(['content' => 'required|string|max:2000']);
+
+        // Ensure we're replying to a parent comment, not a reply
+        $parentComment = $comment->isReply() ? $comment->parent : $comment;
+
+        $reply = $video->comments()->create([
+            'user_id' => $request->user()->id,
+            'content' => $request->content,
+            'parent_id' => $parentComment->id
+        ]);
+
+                $reply->load(['user:id,name,code', 'user.profilePhotos' => function ($query) {
+            $query->limit(1);
+        }]);
+
+        return (new VideoCommentResource($reply))->response()->setStatusCode(201);
+    }
+
+    /**
+     * Get replies for a specific comment.
+     *
+     * @param  \App\Models\Video  $video
+     * @param  \App\Models\Comment  $comment
+     * @return \Illuminate\Http\Response
+     */
+    public function getReplies(Video $video, Comment $comment)
+    {
+        $replies = $comment->replies()
+            ->with(['user:id,name,code', 'user.profilePhotos' => function ($query) {
+                $query->limit(1);
+            }])
+            ->orderBy('created_at', 'asc')
+            ->simplePaginate(10);
+
+        return VideoCommentResource::collection($replies);
     }
 
     /**
@@ -76,7 +133,7 @@ class VideoCommentsController extends Controller
     }
 
     /**
-     * Like the video.
+     * Like the comment.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -97,7 +154,7 @@ class VideoCommentsController extends Controller
     }
 
     /**
-     * Dislike the video.
+     * Dislike the comment.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Video  $video
@@ -107,6 +164,54 @@ class VideoCommentsController extends Controller
     {
         $this->authorize('dislike', $comment);
         $comment->interactions()->updateOrCreate(
+            [
+                'user_id' => $request->user()->id
+            ],
+            [
+                'liked' => false,
+                'ip_address' => $request->ip()
+            ]
+        );
+        return new JsonResponse([], 200);
+    }
+
+    /**
+     * Like a reply.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Video  $video
+     * @param  \App\Models\Comment  $comment
+     * @param  \App\Models\Comment  $reply
+     * @return \Illuminate\Http\Response
+     */
+    public function likeReply(Request $request, Video $video, Comment $comment, Comment $reply)
+    {
+        $this->authorize('like', $reply);
+        $reply->interactions()->updateOrCreate(
+            [
+                'user_id' => $request->user()->id
+            ],
+            [
+                'liked' => true,
+                'ip_address' => $request->ip()
+            ]
+        );
+        return new JsonResponse([], 200);
+    }
+
+    /**
+     * Dislike a reply.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Video  $video
+     * @param  \App\Models\Comment  $comment
+     * @param  \App\Models\Comment  $reply
+     * @return \Illuminate\Http\Response
+     */
+    public function dislikeReply(Request $request, Video $video, Comment $comment, Comment $reply)
+    {
+        $this->authorize('dislike', $reply);
+        $reply->interactions()->updateOrCreate(
             [
                 'user_id' => $request->user()->id
             ],

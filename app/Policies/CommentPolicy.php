@@ -59,4 +59,9 @@ class CommentPolicy
     {
         return $comment->user->isNot($user);
     }
+
+    public function reply(User $user, Comment $comment)
+    {
+        return $comment->user->isNot($user);
+    }
 }

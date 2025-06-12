@@ -10,9 +10,9 @@ class Comment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'content'];
+    protected $fillable = ['user_id', 'content', 'parent_id'];
 
-    protected $withCount = ['likes', 'dislikes'];
+    protected $withCount = ['likes', 'dislikes', 'replies'];
 
     public function commentable()
     {
@@ -37,5 +37,25 @@ class Comment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'parent_id');
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    public function isReply()
+    {
+        return !is_null($this->parent_id);
+    }
+
+    public function isParent()
+    {
+        return is_null($this->parent_id);
     }
 }
