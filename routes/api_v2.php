@@ -28,21 +28,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('/{video}/dislike', 'dislike');
     });
 
-    Route::controller(VideoCommentsController::class)->prefix('tutorials')->group(function () {
-        Route::get('/{video}/comments', 'index')->withoutMiddleware(['auth:sanctum', 'verified']);
-        Route::post('/{video}/comments', 'store');
-        Route::put('/{video}/comments/{comment}', 'update');
-        Route::delete('/{video}/comments/{comment}', 'destroy');
-        Route::post('/{video}/comments/{comment}/report', 'report');
-        Route::post('/{video}/comments/{comment}/like', 'like');
-        Route::post('/{video}/comments/{comment}/dislike', 'dislike');
-
-        // Reply routes
-        Route::post('/{video}/comments/{comment}/reply', 'storeReply');
-        Route::get('/{video}/comments/{comment}/replies', 'getReplies')->withoutMiddleware(['auth:sanctum', 'verified']);
-        Route::post('/{video}/comments/{comment}/replies/{reply}/like', 'likeReply');
-        Route::post('/{video}/comments/{comment}/replies/{reply}/dislike', 'dislikeReply');
-    });
 
     Route::controller(BuildFeatureController::class)->prefix('features')->group(function () {
         Route::get('/{feature}/build/package', 'getBuildPackage');
@@ -53,6 +38,21 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     });
 });
 
+Route::controller(VideoCommentsController::class)->middleware(['auth:sanctum', 'verified'])->prefix('tutorials')->group(function () {
+    Route::get('/{video}/comments', 'index')->withoutMiddleware(['auth:sanctum', 'verified']);
+    Route::post('/{video}/comments', 'store');
+    Route::put('/{video}/comments/{comment}', 'update');
+    Route::delete('/{video}/comments/{comment}', 'destroy');
+    Route::post('/{video}/comments/{comment}/report', 'report');
+    Route::post('/{video}/comments/{comment}/like', 'like');
+    Route::post('/{video}/comments/{comment}/dislike', 'dislike');
+
+    // Reply routes
+    Route::post('/{video}/comments/{comment}/reply', 'storeReply');
+    Route::get('/{video}/comments/{comment}/replies', 'getReplies')->withoutMiddleware(['auth:sanctum', 'verified']);
+    Route::post('/{video}/comments/{comment}/replies/{reply}/like', 'likeReply');
+    Route::post('/{video}/comments/{comment}/replies/{reply}/dislike', 'dislikeReply');
+});
 
 Route::controller(LevelController::class)->prefix('levels')->group(function () {
     Route::get('/', 'index');
