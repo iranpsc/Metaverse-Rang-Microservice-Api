@@ -143,6 +143,7 @@ class CalendarController extends Controller
                 'id' => $event->id,
                 'title' => $event->title,
                 'starts_at' => jdate($event->starts_at)->format('Y/m/d'),
+                'ends_at' => jdate($event->ends_at)->format('Y/m/d'),
                 'color' => $event->color,
             ];
         });
