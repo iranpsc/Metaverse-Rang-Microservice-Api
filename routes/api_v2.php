@@ -39,7 +39,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 });
 
 Route::controller(VideoCommentsController::class)->middleware(['auth:sanctum', 'verified'])->prefix('tutorials')->group(function () {
-    Route::get('/{video}/comments', 'index')->withoutMiddleware(['auth:sanctum', 'verified']);
+    Route::get('/{video}/comments', 'index');
     Route::post('/{video}/comments', 'store');
     Route::put('/{video}/comments/{comment}', 'update');
     Route::delete('/{video}/comments/{comment}', 'destroy');
@@ -49,7 +49,7 @@ Route::controller(VideoCommentsController::class)->middleware(['auth:sanctum', '
 
     // Reply routes
     Route::post('/{video}/comments/{comment}/reply', 'storeReply');
-    Route::get('/{video}/comments/{comment}/replies', 'getReplies')->withoutMiddleware(['auth:sanctum', 'verified']);
+    Route::get('/{video}/comments/{comment}/replies', 'getReplies');
     Route::post('/{video}/comments/{comment}/replies/{reply}/like', 'likeReply');
     Route::post('/{video}/comments/{comment}/replies/{reply}/dislike', 'dislikeReply');
     Route::apiResource('videos.comments', VideoCommentsController::class);
