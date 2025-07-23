@@ -18,18 +18,22 @@ class VideoCommentsController extends Controller
      */
     public function index(Video $video)
     {
-        $comments = $video->comments()
-            ->whereNull('parent_id') // Only get parent comments
-            ->with([
-                'user:id,name,code',
-                'user.latestProfilePhoto',
-                'replies' => function ($query) {
-                    $query->with(['user:id,name,code', 'user.latestProfilePhoto'])->orderBy('created_at', 'asc');
-                }
-            ])
-            ->orderByDesc('likes_count')
-            ->simplePaginate(10);
-        return VideoCommentResource::collection($comments);
+        return response()->json([
+            'success' => 'This is a success response'
+        ]);
+
+        // $comments = $video->comments()
+        //     ->whereNull('parent_id') // Only get parent comments
+        //     ->with([
+        //         'user:id,name,code',
+        //         'user.latestProfilePhoto',
+        //         'replies' => function ($query) {
+        //             $query->with(['user:id,name,code', 'user.latestProfilePhoto'])->orderBy('created_at', 'asc');
+        //         }
+        //     ])
+        //     ->orderByDesc('likes_count')
+        //     ->simplePaginate(10);
+        // return VideoCommentResource::collection($comments);
     }
 
     /**
