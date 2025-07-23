@@ -26,7 +26,6 @@ class VideoCommentsController extends Controller
                 'user.latestProfilePhoto',
             ])
             ->withCount('likes')
-            ->orderByDesc('likes_count')
             ->simplePaginate(10);
 
         return VideoCommentResource::collection($comments);
