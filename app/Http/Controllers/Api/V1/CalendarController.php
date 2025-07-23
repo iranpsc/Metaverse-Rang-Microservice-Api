@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Calendar;
 use App\Http\Resources\EventResource;
-use Illuminate\Support\Arr;
 
 class CalendarController extends Controller
 {
@@ -27,6 +26,7 @@ class CalendarController extends Controller
     {
         $type = $request->query('type', 'event');
         $search = $request->query('search', '');
+        $date = $request->query('date');
         $eventsQuery = Calendar::query();
 
         $eventsQuery = match ($type) {
@@ -38,9 +38,22 @@ class CalendarController extends Controller
             $eventsQuery->where('title', 'like', '%' . $search . '%');
         }
 
+        if ($date) {
+            $carbonDate = jalali_to_carbon($date);
+            $eventsQuery->whereDate('starts_at', $carbonDate);
+            $events = $eventsQuery->withCount(['views', 'likes', 'dislikes']);
+
+            if ($this->user) {
+                $events->with('userInteraction');
+            }
+
+            $events = $events->latest()->get();
+
+            return EventResource::collection($events);
+        }
+
         $events = $eventsQuery->withCount(['views', 'likes', 'dislikes']);
 
-        // Load user interaction if user is authenticated
         if ($this->user) {
             $events->with('userInteraction');
         }
@@ -53,21 +66,21 @@ class CalendarController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  array $ids
+     * @param  Calendar  $event
      * @return \Illuminate\Http\Response
      */
-    public function show(array $ids)
+    public function show(Calendar $event)
     {
-        $events = Calendar::whereIn('id', $ids)
-            ->withCount(['likes', 'dislikes', 'views'])
-            ->when($this->user, function ($query) {
-                $query->with(['userInteraction' => function ($query) {
-                    $query->where('user_id', $this->user->id);
-                }]);
-            })
-            ->get();
+        $event->loadCount(['likes', 'dislikes', 'views']);
 
-        return EventResource::collection($events);
+        // Load user interaction if user is authenticated
+        if ($this->user) {
+            $event->load(['userInteraction' => function ($query) {
+                $query->where('user_id', $this->user->id);
+            }]);
+        }
+
+        return new EventResource($event);
     }
 
     /**

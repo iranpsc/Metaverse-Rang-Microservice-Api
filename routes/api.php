@@ -62,7 +62,7 @@ Route::controller(CalendarController::class)->prefix('calendar')->group(function
     Route::get('/', 'index');
     Route::get('/latest-version', 'getLatestVersion');
     Route::get('/filter', 'filterByDateRange');
-    Route::get('/{ids}', 'show');
+    Route::get('/{event}', 'show');
     Route::post('/events/{event}/interact', 'interact')->middleware('auth:sanctum');
 });
 
