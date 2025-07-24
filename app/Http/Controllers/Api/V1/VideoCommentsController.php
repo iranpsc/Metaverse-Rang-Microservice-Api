@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Video;
 use Illuminate\Http\Request;
 use App\Http\Resources\VideoCommentResource;
+use App\Http\Resources\VideoTutorialResource;
 use App\Models\Comment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -21,14 +22,14 @@ class VideoCommentsController extends Controller
      */
     public function index(Request $request, Video $video)
     {
-        Log::info('Fetching comments for video', ['video_id' => $video->id]);
+        return new VideoTutorialResource($video);
+
         $comments = $video->comments()
             ->with('user.latestProfilePhoto')
             ->withCount(['likes', 'dislikes', 'replies'])
-            // ->whereNull('parent_id') // Only get parent comments
+            ->whereNull('parent_id') // Only get parent comments
             ->orderBy('created_at', 'desc')
             ->simplePaginate(10);
-        Log::info('Comments fetched successfully', ['count' => $comments->count()]);
 
         return VideoCommentResource::collection($comments);
     }
