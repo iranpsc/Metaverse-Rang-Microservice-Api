@@ -24,8 +24,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
             Route::get('/{video:slug}', [TutorialController::class, 'show'])->name('show');
             Route::post('/search', 'search')->name('search');
         });
-        Route::post('/{video}/like', 'like');
-        Route::post('/{video}/dislike', 'dislike');
+        Route::post('/{video}/interactions', 'interactions');
     });
 
     Route::controller(BuildFeatureController::class)->prefix('features')->group(function () {
@@ -43,14 +42,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::delete('/{video}/comments/{comment}', 'destroy');
 
         Route::post('/{video}/comments/{comment}/report', 'report');
-        Route::post('/{video}/comments/{comment}/like', 'like');
-        Route::post('/{video}/comments/{comment}/dislike', 'dislike');
+        Route::post('/{video}/comments/{comment}/interactions', 'interactions');
 
         // Reply routes
         Route::post('/{video}/comments/{comment}/reply', 'storeReply');
         Route::get('/{video}/comments/{comment}/replies', 'getReplies');
-        Route::post('/{video}/comments/{comment}/replies/{reply}/like', 'likeReply');
-        Route::post('/{video}/comments/{comment}/replies/{reply}/dislike', 'dislikeReply');
+        Route::post('/{video}/comments/{comment}/replies/{reply}/interactions', 'replyInteractions');
     });
 });
 

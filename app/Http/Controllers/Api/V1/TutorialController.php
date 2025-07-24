@@ -58,43 +58,30 @@ class TutorialController extends Controller
     }
 
     /**
-     * Like the video.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function like(Request $request, Video $video)
-    {
-        $video->interactions()->updateOrCreate(
-            [
-                'user_id' => $request->user()->id
-            ],
-            [
-                'liked' => true,
-                'ip_address' => $request->ip()
-            ]
-        );
-        return new JsonResponse([], 200);
-    }
-
-    /**
-     * Dislike the video.
+     * Handle like or dislike interaction for a video.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Video  $video
      * @return \Illuminate\Http\Response
      */
-    public function dislike(Request $request, Video $video)
+    public function interactions(Request $request, Video $video)
     {
+        $request->validate([
+            'liked' => 'required|boolean'
+        ]);
+
+        $liked = $request->query('liked');
+
         $video->interactions()->updateOrCreate(
             [
                 'user_id' => $request->user()->id
             ],
             [
-                'liked' => false,
+                'liked' => $liked,
                 'ip_address' => $request->ip()
             ]
         );
+
         return new JsonResponse([], 200);
     }
 

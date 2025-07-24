@@ -133,45 +133,27 @@ class VideoCommentsController extends Controller
     }
 
     /**
-     * Like the comment.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function like(Request $request, Video $video, Comment $comment)
-    {
-        $this->authorize('like', $comment);
-
-        $comment->interactions()->updateOrCreate(
-            [
-                'user_id' => $request->user()->id
-            ],
-            [
-                'liked' => true,
-                'ip_address' => $request->ip()
-            ]
-        );
-
-        return new JsonResponse([], 200);
-    }
-
-    /**
-     * Dislike the comment.
+     * Like or dislike the comment based on the 'liked' query parameter.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Video  $video
+     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
-    public function dislike(Request $request, Video $video, Comment $comment)
+    public function interactions(Request $request, Video $video, Comment $comment)
     {
-        $this->authorize('dislike', $comment);
+        $request->validate(['liked' => 'required|boolean']);
+
+        $likedBool = $request->input('liked');
+
+        $this->authorize($likedBool ? 'like' : 'dislike', $comment);
 
         $comment->interactions()->updateOrCreate(
             [
                 'user_id' => $request->user()->id
             ],
             [
-                'liked' => false,
+                'liked' => $likedBool,
                 'ip_address' => $request->ip()
             ]
         );
@@ -180,7 +162,7 @@ class VideoCommentsController extends Controller
     }
 
     /**
-     * Like a reply.
+     * Like or dislike a reply based on the 'liked' query parameter.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Video  $video
@@ -188,42 +170,20 @@ class VideoCommentsController extends Controller
      * @param  \App\Models\Comment  $reply
      * @return \Illuminate\Http\Response
      */
-    public function likeReply(Request $request, Video $video, Comment $comment, Comment $reply)
+    public function replyInteractions(Request $request, Video $video, Comment $comment, Comment $reply)
     {
-        $this->authorize('like', $reply);
+        $request->validate(['liked' => 'required|boolean']);
+
+        $likedBool = (bool) $request->input('liked');
+
+        $this->authorize($likedBool ? 'like' : 'dislike', $reply);
 
         $reply->interactions()->updateOrCreate(
             [
                 'user_id' => $request->user()->id
             ],
             [
-                'liked' => true,
-                'ip_address' => $request->ip()
-            ]
-        );
-
-        return new JsonResponse([], 200);
-    }
-
-    /**
-     * Dislike a reply.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Video  $video
-     * @param  \App\Models\Comment  $comment
-     * @param  \App\Models\Comment  $reply
-     * @return \Illuminate\Http\Response
-     */
-    public function dislikeReply(Request $request, Video $video, Comment $comment, Comment $reply)
-    {
-        $this->authorize('dislike', $reply);
-
-        $reply->interactions()->updateOrCreate(
-            [
-                'user_id' => $request->user()->id
-            ],
-            [
-                'liked' => false,
+                'liked' => $likedBool,
                 'ip_address' => $request->ip()
             ]
         );
