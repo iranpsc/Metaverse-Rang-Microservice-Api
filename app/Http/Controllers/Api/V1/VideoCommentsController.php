@@ -15,16 +15,17 @@ class VideoCommentsController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Video $video
      * @return \Illuminate\Http\Response
      */
-    public function index(Video $video)
+    public function index(Request $request, Video $video)
     {
 
-        $comments = $video->comments()
-            ->whereNull('parent_id') // Only get parent comments
-            ->with('user.latestProfilePhoto')
-            ->withCount('likes')
-            ->orderByDesc('likes_count')
+        $comments = Comment::where('commentable_id', $video->id)
+            ->where('commentable_type', Video::class)
+            ->with(['user:id,name,code', 'user.latestProfilePhoto'])
+            ->orderBy('created_at', 'desc')
             ->simplePaginate(10);
 
         return VideoCommentResource::collection($comments);
