@@ -22,6 +22,7 @@ class CommentReplyController extends Controller
     {
         $replies = $comment->replies()
             ->with(['user:id,name,code', 'user.latestProfilePhoto'])
+            ->withCount(['likes', 'dislikes'])
             ->orderBy('created_at', 'asc')
             ->simplePaginate(10);
 
