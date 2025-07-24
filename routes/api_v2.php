@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\VideoCommentsController;
 use App\Http\Controllers\Api\V1\TutorialController;
 use App\Http\Controllers\Api\V2\MapsController;
 use App\Http\Controllers\Api\V2\Feature\BuildFeatureController;
+use App\Http\Controllers\Api\V2\CommentReplyController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
@@ -43,11 +44,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::post('/{video}/comments/{comment}/report', 'report');
         Route::post('/{video}/comments/{comment}/interactions', 'interactions');
+    });
 
+    Route::controller(CommentReplyController::class)->prefix('comments')->group(function () {
         // Reply routes
-        Route::get('/{video}/comments/{comment}/replies', 'getReplies');
-        Route::post('/{video}/comments/{comment}/reply', 'storeReply');
-        Route::post('/{video}/comments/{comment}/replies/{reply}/interactions', 'replyInteractions');
+        Route::get('{comment}/replies', 'index');
+        Route::post('{comment}/reply', 'store');
+        Route::put('{comment}/replies/{reply}', 'update');
+        Route::delete('{comment}/replies/{reply}', 'destroy');
+        Route::post('{comment}/replies/{reply}/interactions', 'interactions');
     });
 });
 
