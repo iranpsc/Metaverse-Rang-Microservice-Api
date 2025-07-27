@@ -42,10 +42,8 @@ class VideoTutorialResource extends JsonResource
                     'slug' => $this->subCategory->slug
                 ];
             }),
-            $this->mergeWhen($request->routeIs('tutorials.show'), [
-                'video_url' => $this->video_url,
-                'created_at' => jdate($this->created_at)->format('Y/m/d')
-            ]),
+            'video_url' => $this->video_url,
+            'created_at' => jdate($this->created_at)->format('Y/m/d')
         ];
     }
 }

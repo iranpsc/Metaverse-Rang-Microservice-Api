@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\TutorialController;
 use App\Http\Controllers\Api\V2\MapsController;
 use App\Http\Controllers\Api\V2\Feature\BuildFeatureController;
 use App\Http\Controllers\Api\V2\CommentReplyController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
@@ -72,4 +73,10 @@ Route::controller(MapsController::class)->prefix('maps')->as('maps.')->group(fun
     Route::get('/', 'index')->name('index');
     Route::get('/{map}', 'show')->name('show');
     Route::get('/{map}/border', 'showBorder');
+});
+
+Route::get('/users/{user:email}/level', function (User $user) {
+    return response()->json([
+        'level' => $user->latest_level,
+    ]);
 });
