@@ -147,7 +147,21 @@ class CalendarController extends Controller
         $startDate = jalali_to_carbon($request->query('start_date'));
         $endDate = jalali_to_carbon($request->query('end_date'));
 
-        $events = Calendar::whereBetween('starts_at', [$startDate, $endDate])
+        $events = Calendar::where(function ($query) use ($startDate, $endDate) {
+            $query->where(function ($q) use ($startDate, $endDate) {
+                // Event starts within the range
+                $q->whereBetween('starts_at', [$startDate, $endDate]);
+            })
+                ->orWhere(function ($q) use ($startDate, $endDate) {
+                    // Event ends within the range
+                    $q->whereBetween('ends_at', [$startDate, $endDate]);
+                })
+                ->orWhere(function ($q) use ($startDate, $endDate) {
+                    // Event starts before and ends after the range (spans the whole range)
+                    $q->where('starts_at', '<=', $startDate)
+                        ->where('ends_at', '>=', $endDate);
+                });
+        })
             ->events()
             ->latest()
             ->get();
