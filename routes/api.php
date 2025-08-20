@@ -66,12 +66,12 @@ Route::controller(CalendarController::class)->prefix('calendar')->group(function
     Route::post('/events/{event}/interact', 'interact')->middleware('auth:sanctum');
 });
 
-Route::controller(UserController::class)->middleware('auth:sanctum')->prefix('users')->group(function () {
+Route::controller(UserController::class)->prefix('users')->group(function () {
     Route::get('/', 'index')->withoutMiddleware('auth:sanctum', 'verified');
+    Route::get('/{user}/levels', 'getLevel');
     Route::get('/{user}/profile', 'getProfile')->middleware('check.profile.limitation');
     Route::get('/{user}/wallet', 'getWallet');
-    Route::get('/{user}/level', 'getLevel');
-    Route::get('/{user}/profile-limitations', 'getProfileLimitations');
+    Route::get('/{user}/profile-limitations', 'getProfileLimitations')->middleware('auth:sanctum');
     Route::get('/{user}/features/count', 'getFeaturesCount');
 });
 
