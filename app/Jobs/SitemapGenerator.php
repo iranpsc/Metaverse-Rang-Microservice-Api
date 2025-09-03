@@ -98,7 +98,7 @@ class SitemapGenerator implements ShouldQueue
             }
 
             $filename = $fileIndex === 1 ? 'citizen-sitemap.xml' : "citizen-sitemap-{$fileIndex}.xml";
-            $sitemap->writeToDisk('ftp', $filename);
+            $sitemap->writeToDisk('ftp', $filename, true);
 
         }
     }
@@ -141,7 +141,7 @@ class SitemapGenerator implements ShouldQueue
     private function generateVideoSitemaps()
     {
         $sitemap = Sitemap::create()->add(Video::all());
-        $sitemap->writeToDisk('ftp', 'education_single_video-sitemap.xml');
+        $sitemap->writeToDisk('ftp', 'education_single_video-sitemap.xml', true);
     }
 
     /**
@@ -152,7 +152,7 @@ class SitemapGenerator implements ShouldQueue
     private function generateCategorySitemaps()
     {
         $sitemap = Sitemap::create()->add(VideoCategory::all());
-        $sitemap->writeToDisk('ftp', 'education_category-sitemap.xml');
+        $sitemap->writeToDisk('ftp', 'education_category-sitemap.xml', true);
     }
 
     /**
@@ -163,7 +163,7 @@ class SitemapGenerator implements ShouldQueue
     private function generateSubCategorySitemaps()
     {
         $sitemap = Sitemap::create()->add(VideoSubCategory::with('category')->get());
-        $sitemap->writeToDisk('ftp', 'education_sub_category-sitemap.xml');
+        $sitemap->writeToDisk('ftp', 'education_sub_category-sitemap.xml', true);
     }
 
     /**
@@ -186,7 +186,7 @@ class SitemapGenerator implements ShouldQueue
             }
         });
 
-        $sitemap->writeToDisk('ftp', 'calendar_events-sitemap.xml');
+        $sitemap->writeToDisk('ftp', 'calendar_events-sitemap.xml', true);
     }
 
     /**
@@ -210,6 +210,6 @@ class SitemapGenerator implements ShouldQueue
             }
         });
 
-        $sitemap->writeToDisk('ftp', 'calendar_versions-sitemap.xml');
+        $sitemap->writeToDisk('ftp', 'calendar_versions-sitemap.xml', true);
     }
 }
