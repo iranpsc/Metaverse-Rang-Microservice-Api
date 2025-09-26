@@ -178,14 +178,14 @@ class SitemapGenerator implements ShouldQueue
         Calendar::events()->chunk(500, function ($events) use ($sitemap) {
             foreach ($events as $event) {
                 $sitemap->add(
-                    Url::create('https://rgb.irpsc.com/fa/calendar/' . $event->slug)
+                    Url::create('https://rgb.irpsc.com/fa/calendar/' . $event->id)
                         ->setLastModificationDate(Carbon::create($event->updated_at))
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
                         ->setPriority(0.6)
                 );
 
                 $sitemap->add(
-                    Url::create('https://rgb.irpsc.com/en/calendar/' . $event->slug)
+                    Url::create('https://rgb.irpsc.com/en/calendar/' . $event->id)
                         ->setLastModificationDate(Carbon::create($event->updated_at))
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
                         ->setPriority(0.6)
