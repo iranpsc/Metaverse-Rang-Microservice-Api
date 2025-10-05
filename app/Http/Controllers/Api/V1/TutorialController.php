@@ -152,7 +152,8 @@ class TutorialController extends Controller
     {
         $subCategory->load(['videos', 'videos.creator:id,code', 'category', 'videos.creator.profilePhotos' => function ($query) {
             $query->limit(1);
-        }]);
+        }])
+        ->loadCount('likes', 'views', 'dislikes');
 
         return new VideoSubCategoryResource($subCategory);
     }
