@@ -21,13 +21,13 @@ class Activity
         if (Auth::check()) {
 
             $request->user()->update(['last_seen' => now()]);
-            
+
             broadcast(new UserStatusChanged([
                 'id'     => $request->user()->id,
                 'online' => true,
             ]));
         }
-        
+
         return $next($request);
     }
 }

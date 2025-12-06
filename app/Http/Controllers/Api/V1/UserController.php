@@ -134,7 +134,7 @@ class UserController extends Controller
             ]);
         }
 
-        $previousLevels = Level::where('score', '<', $user->latest_level->score)->orderBy('score')->get();
+        $previousLevels = Level::where('score', '<', $user->latest_level->score)->with('gem')->orderBy('score')->get();
         $latestLevel = $user->latest_level;
 
         return response()->json([
@@ -144,7 +144,7 @@ class UserController extends Controller
                     'name' => $latestLevel->name,
                     'score' => $latestLevel->score,
                     'slug' => $latestLevel->slug,
-                    'image' => config('app.admin_panel_url') . '/uploads/' . optional($latestLevel->image)->url,
+                    'fbx_file' => optional($latestLevel->gem)->fbx_file,
                 ],
                 'previous_levels' => $previousLevels->map(function ($level) {
                     return [
@@ -152,7 +152,7 @@ class UserController extends Controller
                         'name' => $level->name,
                         'score' => $level->score,
                         'slug' => $level->slug,
-                        'image' => config('app.admin_panel_url') . '/uploads/' . optional($level->image)->url
+                        'fbx_file' => optional($level->gem)->fbx_file,
                     ];
                 }),
                 'score_percentage_to_next_level' => $latestLevel->getScorePercentageToNextLevel($user),

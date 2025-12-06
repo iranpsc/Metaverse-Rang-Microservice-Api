@@ -31,17 +31,17 @@ class NoteController extends Controller
     {
         $attachment = '';
         if ($request->hasFile('attachment')) {
-            $storedPath = $request->file('attachment')->store('notes');
-            
+            $storedPath = $request->file('attachment')->store('notes', 'public');
+
             // Remove execution permissions from uploaded file (security measure)
-            $fullPath = storage_path('app/' . $storedPath);
+            $fullPath = storage_path('app/public/' . $storedPath);
             if (file_exists($fullPath)) {
                 chmod($fullPath, 0644);
             }
-            
+
             $attachment = url('uploads/' . $storedPath);
         }
-        
+
         $note = Note::create([
             'user_id' => $request->user()->id,
             'title' => $request->title,
@@ -72,19 +72,19 @@ class NoteController extends Controller
     public function update(NoteRequest $request, Note $note): NoteResource
     {
         $attachment = $note->attachment; // Keep existing attachment if no new one uploaded
-        
+
         if ($request->hasFile('attachment')) {
-            $storedPath = $request->file('attachment')->store('notes');
-            
+            $storedPath = $request->file('attachment')->store('notes', 'public');
+
             // Remove execution permissions from uploaded file (security measure)
-            $fullPath = storage_path('app/' . $storedPath);
+            $fullPath = storage_path('app/public/' . $storedPath);
             if (file_exists($fullPath)) {
                 chmod($fullPath, 0644);
             }
-            
+
             $attachment = url('uploads/' . $storedPath);
         }
-        
+
         $note->update([
             'title' => $request->title,
             'content' => $request->content,

@@ -759,6 +759,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isOnline(): bool
     {
-        return $this->last_seen->diffInMinutes(now()) > 2;
+        return $this->last_seen->diffInMinutes(now()) < 2;
     }
 }
