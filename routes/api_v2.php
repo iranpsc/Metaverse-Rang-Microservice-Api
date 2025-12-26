@@ -32,10 +32,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::controller(BuildFeatureController::class)->prefix('features')->group(function () {
         Route::get('/{feature}/build/package', 'getBuildPackage');
-        Route::post('/{feature}/build/{buildingModel:model_id}', 'buildFeature')->withoutScopedBindings();
+        Route::post('/{feature}/build/{buildingModel:model_id}', 'buildFeature')
+        ->middleware('account.security')
+        ->withoutScopedBindings();
         Route::get('/{feature}/build/buildings', 'getBuildings');
-        Route::put('/{feature}/build/buildings/{buildingModel:model_id}', 'updateBuilding');
-        Route::delete('/{feature}/build/buildings/{buildingModel:model_id}', 'destroyBuilding');
+        Route::put('/{feature}/build/buildings/{buildingModel:model_id}', 'updateBuilding')
+        ->middleware('account.security');
+        Route::delete('/{feature}/build/buildings/{buildingModel:model_id}', 'destroyBuilding')
+        ->middleware('account.security');
     });
 
     Route::controller(VideoCommentsController::class)->prefix('tutorials')->group(function () {
