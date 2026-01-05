@@ -237,4 +237,9 @@ class FeaturePolicy
         return $user->wallet->satisfaction >= $buildingModel->required_satisfaction
             && $feature->owner->is($user);
     }
+
+    public function destroyBuilding(User $user, Feature $feature, BuildingModel $buildingModel)
+    {
+        return $feature->owner->is($user) && $buildingModel->building->is($feature);
+    }
 }
