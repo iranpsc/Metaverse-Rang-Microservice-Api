@@ -59,4 +59,9 @@ class BuildingModel extends Model
     {
         return $this->hasMany(ThreeDimentionalEnvironment::class);
     }
+
+    public function building()
+    {
+        return $this->hasOne(Building::class);
+    }
 }
