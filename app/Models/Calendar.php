@@ -85,7 +85,12 @@ class Calendar extends Model
      */
     public function incrementViews()
     {
-        $this->views()->create(['ip_address' => request()->ip()]);
+        $ipAddress = request()->ip();
+
+        // Only create a new view if this IP hasn't viewed this calendar event before
+        if (!$this->views()->where('ip_address', $ipAddress)->exists()) {
+            $this->views()->create(['ip_address' => $ipAddress]);
+        }
     }
 
     /**
