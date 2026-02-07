@@ -30,7 +30,7 @@ class CreateTicketRequest extends FormRequest
         return [
             'title' => 'required|string|max:250',
             'content' => 'required|string|max:500',
-            'attachment' => ['nullable', 'file', new SecureFileUpload(['png', 'jpg', 'jpeg', 'pdf'], 5000)],
+            'attachment' => ['nullable', 'file', new SecureFileUpload(['png', 'jpg', 'jpeg', 'pdf', 'docx', 'doc'], 5000)],
             'reciever' => [
                 'nullable',
                 'integer',

@@ -16,8 +16,8 @@ class FollowResource extends JsonResource
     {
         $authUser = $request->user();
         $isAuthUser = $authUser && $authUser->id === $this->id;
-        $isFollowing = $authUser && $authUser->following()->where('following_id', $this->id)->exists();
-        $isFollower = $authUser && $authUser->followers()->where('id', $this->id)->exists();
+        $isFollowing = $authUser && $authUser->following()->wherePivot('following_id', $this->id)->exists();
+        $isFollower = $authUser && $authUser->followers()->wherePivot('follower_id', $this->id)->exists();
 
         return [
             'id' => $this->id,
