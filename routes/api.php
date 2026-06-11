@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\V1\WalletController;
 use App\Http\Controllers\Api\V1\AccountSecurityController;
 use App\Http\Controllers\Api\V1\BankAccountController;
 use App\Http\Controllers\Api\V1\CalendarController;
@@ -57,6 +58,16 @@ Route::controller(AuthController::class)->prefix('auth')->as('auth.')->group(fun
     Route::post('/me', 'me')->middleware('auth:sanctum')->name('me');
     Route::post('/logout', 'logout')->middleware('auth:sanctum')->name('logout');
 });
+
+Route::controller(WalletController::class)
+    ->prefix('wallet')
+    ->middleware('auth:sanctum')
+    ->group(function () {
+        Route::get('/link/nonce', 'getLinkNonce');
+        Route::post('/link', 'linkWallet');
+        Route::get('/security/nonce', 'getSecurityNonce');
+        Route::post('/security/verify', 'verifySecuritySignature');
+    });
 
 Route::controller(CalendarController::class)->prefix('calendar')->group(function () {
     Route::get('/', 'index');

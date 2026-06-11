@@ -33,6 +33,7 @@ class ExportUsersToJson extends Seeder
                     return [
                         'id' => $level->id,
                         'name' => $level->name,
+                        'slug' => $level->slug,
                         'gem' => [
                             'png_file' => $level->gem->png_file,
                             'fbx_file' => $level->gem->fbx_file,

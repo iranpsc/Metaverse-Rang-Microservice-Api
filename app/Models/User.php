@@ -68,6 +68,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'refresh_token',
         'token_type',
         'expires_in',
+        'wallet_address',
+        'nonce',
     ];
 
     /**
@@ -103,7 +105,9 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $hidden = [
         'password',
-        'remember_token'
+        'remember_token',
+        'wallet_address',
+        'nonce',
     ];
 
     /**
@@ -766,5 +770,13 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isOnline(): bool
     {
         return $this->last_seen->diffInMinutes(now()) < 2;
+    }
+
+    /**
+     * Determine if the user has a connected Web3 wallet.
+     */
+    public function hasConnectedWallet(): bool
+    {
+        return !is_null($this->wallet_address);
     }
 }

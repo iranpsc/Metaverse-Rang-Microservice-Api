@@ -105,20 +105,35 @@ class AuthController extends Controller
             'code' => $request->code,
         ]);
 
-        $user = Http::withHeaders([
+        $ssoUser = Http::withHeaders([
             'Authorization' => 'Bearer ' . $response['access_token'],
         ])->get(config('app.oauth_server_url') . '/api/user');
 
+        $ssoUser = $ssoUser->json();
+
+        if (!empty($ssoUser['email'])) {
+            $identifierKey = 'email';
+            $identifierValue = $ssoUser['email'];
+        } elseif (!empty($ssoUser['wallet_address'])) {
+            $identifierKey = 'wallet_address';
+            $identifierValue = strtolower($ssoUser['wallet_address']);
+        } else {
+            throw new InvalidArgumentException('SSO user response must include email or wallet_address.');
+        }
+
         $user = User::updateOrCreate(
-            ['email' => $user['email']],
+            [$identifierKey => $identifierValue],
             [
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'phone' => $user['mobile'],
+                'name' => $ssoUser['name'] ?? 'User_' . substr($identifierValue, 2, 6),
+                'email' => $ssoUser['email'] ?? null,
+                'wallet_address' => !empty($ssoUser['wallet_address'])
+                    ? strtolower($ssoUser['wallet_address'])
+                    : null,
+                'phone' => $ssoUser['mobile'] ?? null,
                 'password' => Hash::make(Str::random(10)),
-                'code' => $user['code'],
+                'code' => $ssoUser['code'] ?? $this->generateUniqueCode(),
                 'ip' => $request->ip(),
-                'referrer_id' => $this->getReferrerId($user['referral']),
+                'referrer_id' => $this->getReferrerId($ssoUser['referral'] ?? null),
                 'access_token' => $response['access_token'],
                 'refresh_token' => $response['refresh_token'],
                 'expires_in' => $response['expires_in'],
@@ -145,7 +160,7 @@ class AuthController extends Controller
 
         $user->load('settings:id,user_id,automatic_logout');
 
-        $automaticLogout = $user->settings->automatic_logout;
+        $automaticLogout = $user->settings?->automatic_logout;
 
         $tokenExpiresAt = now()->addMinutes($automaticLogout ?: 55);
 
@@ -223,5 +238,17 @@ class AuthController extends Controller
     protected function getReferrerId($code)
     {
         return $code ? User::where('code', $code)->value('id') : null;
+    }
+
+    /**
+     * Generate a unique user code.
+     */
+    protected function generateUniqueCode(): string
+    {
+        do {
+            $code = 'hm-' . random_int(2000000, 9999999);
+        } while (User::where('code', $code)->exists());
+
+        return $code;
     }
 }

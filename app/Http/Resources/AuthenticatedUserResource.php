@@ -35,6 +35,11 @@ class AuthenticatedUserResource extends JsonResource
             'hourly_profit_time_percentage' => hourlyProfitInfo($this->resource),
             'verified_kyc' => $this->verified(),
             'birthdate' => $this->verified() ? jdate($this->kyc->birthdate)->format('Y/m/d') : null,
+            'has_wallet' => $this->hasConnectedWallet(),
+            'wallet_address' => $this->when(
+                $request->user()?->id === $this->id,
+                $this->wallet_address
+            ),
         ];
     }
 }
