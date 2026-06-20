@@ -1,68 +1,363 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# 🌐 Metaverse Rang – Microservice API
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A scalable, secure, and modular **Microservice Backend System** powering the *Metaverse Rang ecosystem*, including:
 
-## About Laravel
+- 🖼 NFT Sovereign Digital Assets
+- 🎥 Video-on-Demand (VOD) Streaming
+- 🌐 Metaverse Asset Infrastructure
+- 🔐 Authentication & Authorization System
+- ⚡ Event-driven microservices architecture
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This project is designed for **high-scale Web3 applications**, decentralized media platforms, and metaverse ecosystems.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🚀 Features
 
-## Learning Laravel
+- 🧩 Microservice-based architecture
+- 🔐 JWT Authentication + Role-based access control
+- 🖼 NFT minting & ownership verification layer
+- 🎥 VOD streaming & media management system
+- 🌐 Metaverse asset registry system
+- ⚡ Redis caching for performance
+- 📦 PostgreSQL / MongoDB support
+- 🐳 Docker & Docker Compose ready
+- 📡 API Gateway architecture
+- 📘 Swagger/OpenAPI documentation
+- 🧪 Unit & integration testing support
+- 🔄 Scalable event-driven design (Kafka/RabbitMQ ready)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🏗 System Architecture
 
-## Laravel Sponsors
+```
+Client (Web / Mobile / Metaverse UI)
+        │
+        ▼
+     API Gateway
+        │
+ ┌────────┬────────┬────────┬────────┐
+ │        │        │        │        │
+Auth     NFT      VOD     Asset   (Future Services)
+Service  Service  Service  Service
+ │        │        │        │
+ └────── Database per Service (PostgreSQL / Redis / MongoDB) ──────┘
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+---
 
-### Premium Partners
+## 🧩 Microservices
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### 🔐 Auth Service
+- User registration & login
+- JWT token generation
+- Role & permission management
+- Session handling
 
-## Contributing
+### 🖼 NFT Service
+- NFT metadata management
+- Ownership validation
+- Minting system (Web3 ready)
+- Asset linking
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 🎥 VOD Service
+- Video upload & processing
+- Streaming URL generation
+- Media library management
 
-## Code of Conduct
+### 🌐 Asset Service
+- Metaverse digital asset registry
+- NFT ↔ Asset mapping
+- Ownership tracking system
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 📦 Project Structure
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+/src
+  /gateway            → API Gateway
+  /auth-service       → Authentication service
+  /nft-service        → NFT management service
+  /vod-service        → Video-on-demand service
+  /asset-service      → Metaverse asset service
 
-## License
+/shared               → DTOs, utils, constants
+/config               → Configuration files
+/docker               → Docker setup
+/docs                 → API documentation
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# meta-api
-# meta-api
-# rgb-api
-# api
+---
+
+## ⚙️ Tech Stack
+
+- Node.js / NestJS / Express
+- TypeScript
+- PostgreSQL
+- MongoDB
+- Redis
+- Docker & Docker Compose
+- JWT Authentication
+- Swagger / OpenAPI
+- Web3 / Blockchain integration ready
+
+---
+
+## 📥 Installation
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/iranpsc/Metaverse-Rang-Microservice-Api.git
+cd Metaverse-Rang-Microservice-Api
+```
+
+---
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+### 3. Setup Environment
+
+Create `.env` file:
+
+```bash
+touch .env
+```
+
+Add configuration:
+
+```env
+PORT=4000
+NODE_ENV=development
+
+DATABASE_URL=postgresql://user:password@localhost:5432/metaverse_db
+
+JWT_SECRET=your_secret_key
+JWT_EXPIRES_IN=7d
+
+REDIS_URL=redis://localhost:6379
+```
+
+---
+
+### 4. Database Setup
+
+```bash
+npx prisma migrate dev
+npm run db:seed
+```
+
+---
+
+## ▶️ Running the Project
+
+### Development Mode
+
+```bash
+npm run dev
+```
+
+---
+
+### Production Mode
+
+```bash
+npm run build
+npm run start:prod
+```
+
+---
+
+### Run Microservices Individually
+
+```bash
+npm run start auth-service
+npm run start nft-service
+npm run start vod-service
+npm run start asset-service
+```
+
+---
+
+## 🐳 Docker Setup
+
+### Build & Run
+
+```bash
+docker-compose up --build
+```
+
+### Background Mode
+
+```bash
+docker-compose up -d
+```
+
+### Stop Services
+
+```bash
+docker-compose down
+```
+
+---
+
+## 📡 API Gateway
+
+Base URL:
+
+```
+http://localhost:4000
+```
+
+---
+
+## 📘 API Documentation
+
+Swagger UI:
+
+```
+http://localhost:4000/api/docs
+```
+
+---
+
+## 🧪 Testing
+
+### Run Tests
+
+```bash
+npm run test
+```
+
+### Watch Mode
+
+```bash
+npm run test:watch
+```
+
+### Coverage Report
+
+```bash
+npm run test:coverage
+```
+
+---
+
+## 🔍 Code Quality
+
+Lint project:
+
+```bash
+npm run lint
+```
+
+Fix issues:
+
+```bash
+npm run lint:fix
+```
+
+---
+
+## 📊 Health Check
+
+```http
+GET /health
+```
+
+Response:
+
+```json
+{
+  "status": "ok",
+  "services": {
+    "auth": "running",
+    "nft": "running",
+    "vod": "running",
+    "asset": "running"
+  }
+}
+```
+
+---
+
+## 🔐 Security
+
+- JWT Authentication
+- Role-based access control (RBAC)
+- Rate limiting
+- Input validation
+- Secure environment variables
+- HTTP security headers
+
+---
+
+## ⚡ Scalability
+
+- Stateless microservices
+- Horizontal scaling ready
+- Redis caching layer
+- Event-driven architecture support
+- Docker/Kubernetes ready
+
+---
+
+## 🧠 Roadmap
+
+- [ ] Blockchain integration (Ethereum / Polygon)
+- [ ] IPFS storage for NFT metadata
+- [ ] Real-time streaming optimization
+- [ ] AI recommendation engine
+- [ ] Multi-chain NFT support
+- [ ] Metaverse 3D asset rendering engine
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions!
+
+Please follow these steps:
+
+1. Fork repository
+2. Create feature branch
+3. Commit changes (Conventional Commits)
+4. Open Pull Request
+5. Wait for review
+
+Please read:
+- `CONTRIBUTING.md`
+- `CODE_OF_CONDUCT.md`
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+## 🌍 Vision
+
+Metaverse Rang aims to build a **decentralized digital ownership infrastructure**, enabling users to:
+
+- Own NFT-based digital assets
+- Stream decentralized media
+- Interact with metaverse environments
+- Control their digital sovereignty
+
+---
+
+## ⭐ Support
+
+If you like this project, please consider giving it a star ⭐ on GitHub.
+
+---
