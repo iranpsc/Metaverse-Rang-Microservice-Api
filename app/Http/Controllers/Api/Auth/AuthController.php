@@ -126,9 +126,6 @@ class AuthController extends Controller
             [
                 'name' => $ssoUser['name'] ?? 'User_' . substr($identifierValue, 2, 6),
                 'email' => $ssoUser['email'] ?? null,
-                'wallet_address' => !empty($ssoUser['wallet_address'])
-                    ? strtolower($ssoUser['wallet_address'])
-                    : null,
                 'phone' => $ssoUser['mobile'] ?? null,
                 'password' => Hash::make(Str::random(10)),
                 'code' => $ssoUser['code'] ?? $this->generateUniqueCode(),

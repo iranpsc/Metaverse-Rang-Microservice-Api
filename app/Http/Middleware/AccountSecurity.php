@@ -19,6 +19,8 @@ class AccountSecurity
     {
         if (!app()->isProduction()) return $next($request);
 
+        if ($request->user()->hasConnectedWallet()) return $next($request);
+
         $accountSecurity = $request->user()->accountSecurity;
 
         if (is_null($accountSecurity) || time() > optional($accountSecurity)->until) {
